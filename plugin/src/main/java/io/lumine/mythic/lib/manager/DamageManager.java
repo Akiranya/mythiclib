@@ -283,7 +283,7 @@ public class DamageManager implements Listener, AttackHandler {
                 final Projectile projectile = (Projectile) damager;
                 final @Nullable CustomProjectile projectileData = MythicLib.plugin.getEntities().getCustomProjectile(projectile);
                 if (projectileData != null) {
-                    final AttackMetadata attackMeta = new ProjectileAttackMetadata(new DamageMetadata(event.getDamage(), DamageType.WEAPON, DamageType.PHYSICAL, DamageType.PROJECTILE),
+                    final AttackMetadata attackMeta = new ProjectileAttackMetadata(new DamageMetadata(event.getDamage(), DamageType.WEAPON, DamageType.PROJECTILE),
                             (LivingEntity) event.getEntity(), projectileData.getCaster(), projectile);
                     event.getEntity().setMetadata(ATTACK_METADATA_TAG, new FixedMetadataValue(MythicLib.plugin, attackMeta));
                     return attackMeta;
@@ -293,7 +293,7 @@ public class DamageManager implements Listener, AttackHandler {
                 final ProjectileSource source = projectile.getShooter();
                 if (source != null && !source.equals(event.getEntity()) && source instanceof LivingEntity) {
                     final StatProvider attacker = StatProvider.generate((LivingEntity) source, EquipmentSlot.MAIN_HAND);
-                    final AttackMetadata attackMeta = new ProjectileAttackMetadata(new DamageMetadata(event.getDamage(), DamageType.WEAPON, DamageType.PHYSICAL, DamageType.PROJECTILE),
+                    final AttackMetadata attackMeta = new ProjectileAttackMetadata(new DamageMetadata(event.getDamage(), DamageType.WEAPON, DamageType.PROJECTILE),
                             (LivingEntity) event.getEntity(), attacker, projectile);
                     event.getEntity().setMetadata(ATTACK_METADATA_TAG, new FixedMetadataValue(MythicLib.plugin, attackMeta));
                     return attackMeta;
@@ -330,7 +330,7 @@ public class DamageManager implements Listener, AttackHandler {
             case ENTITY_ATTACK:
                 return new DamageMetadata(event.getDamage(), DamageType.PHYSICAL);
             case PROJECTILE:
-                return new DamageMetadata(event.getDamage(), DamageType.PHYSICAL, DamageType.PROJECTILE);
+                return new DamageMetadata(event.getDamage(), DamageType.PROJECTILE);
             default:
                 return new DamageMetadata(event.getDamage());
         }

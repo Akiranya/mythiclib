@@ -55,7 +55,7 @@ public class Fire_Storm extends SkillHandler<TargetSkillResult> {
                         randomVector(caster.getPlayer()), () -> {
                     target.getWorld().playSound(target.getLocation(), VersionSound.ENTITY_FIREWORK_ROCKET_TWINKLE.toSound(), 1, 2);
                     target.getWorld().spawnParticle(Particle.SMOKE_NORMAL, target.getLocation().add(0, target.getHeight() / 2, 0), 8, 0, 0, 0, .15);
-                    skillMeta.getCaster().attack(target, damage, DamageType.SKILL, DamageType.MAGIC, DamageType.PROJECTILE);
+                    skillMeta.getCaster().attack(target, damage, DamageType.SKILL, DamageType.MAGIC);
                     target.setFireTicks(ignite);
 
                 }, 2, Particle.FLAME);

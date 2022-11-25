@@ -89,7 +89,7 @@ public class Present_Throw extends SkillHandler<SimpleSkillResult> {
                     item.getEntity().getWorld().playSound(item.getEntity().getLocation(), VersionSound.ENTITY_FIREWORK_ROCKET_TWINKLE.toSound(), 2, 1.5f);
                     for (Entity entity : UtilityMethods.getNearbyChunkEntities(item.getEntity().getLocation()))
                         if (entity.getLocation().distanceSquared(item.getEntity().getLocation()) < radiusSquared && UtilityMethods.canTarget(caster, entity))
-                            skillMeta.getCaster().attack((LivingEntity) entity, damage, DamageType.SKILL, DamageType.MAGIC, DamageType.PROJECTILE);
+                            skillMeta.getCaster().attack((LivingEntity) entity, damage, DamageType.SKILL, DamageType.MAGIC);
                     item.close();
                     cancel();
                 }
