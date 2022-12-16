@@ -4,6 +4,7 @@ import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
+import io.lumine.mythic.lib.skill.result.def.AttackSkillResult;
 import io.lumine.mythic.lib.skill.result.def.TargetSkillResult;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -13,7 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Vampirism extends SkillHandler<TargetSkillResult> {
+public class Vampirism extends SkillHandler<AttackSkillResult> {
     public Vampirism() {
         super();
 
@@ -21,12 +22,12 @@ public class Vampirism extends SkillHandler<TargetSkillResult> {
     }
 
     @Override
-    public TargetSkillResult getResult(SkillMetadata meta) {
-        return new TargetSkillResult(meta);
+    public AttackSkillResult getResult(SkillMetadata meta) {
+        return new AttackSkillResult(meta);
     }
 
     @Override
-    public void whenCast(TargetSkillResult result, SkillMetadata skillMeta) {
+    public void whenCast(AttackSkillResult result, SkillMetadata skillMeta) {
         LivingEntity target = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 

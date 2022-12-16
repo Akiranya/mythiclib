@@ -1,23 +1,13 @@
 package io.lumine.mythic.lib.skill;
 
-import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.event.skill.PlayerCastSkillEvent;
 import io.lumine.mythic.lib.api.event.skill.SkillCastEvent;
-import io.lumine.mythic.lib.api.util.TemporaryListener;
 import io.lumine.mythic.lib.player.cooldown.CooldownObject;
-import io.lumine.mythic.lib.player.modifier.PlayerModifier;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.result.SkillResult;
 import io.lumine.mythic.lib.skill.trigger.TriggerMetadata;
 import io.lumine.mythic.lib.skill.trigger.TriggerType;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -39,22 +29,11 @@ public abstract class Skill implements CooldownObject {
     }
 
     public SkillResult cast(TriggerMetadata triggerMeta) {
-        return cast(triggerMeta, 0);
-    }
-
-    public SkillResult cast(TriggerMetadata triggerMeta, int delay) {
-        return cast(triggerMeta.toSkillMetadata(this), delay);
+        return cast(triggerMeta.toSkillMetadata(this));
     }
 
     public <T extends SkillResult> SkillResult cast(SkillMetadata meta) {
-        return cast(meta, 0);
-    }
-
-    /**
-     * Used when casting a skill with a delay to it. The player must not move in this delay otherwise the skill will be canceled.
-     */
-    public <T extends SkillResult> SkillResult cast(SkillMetadata meta, int delay) {
-        SkillHandler<T> handler = (SkillHandler<T>) getHandler();
+        final SkillHandler<T> handler = (SkillHandler<T>) getHandler();
 
         // Lower level skill restrictions
         T result = handler.getResult(meta);
@@ -71,64 +50,33 @@ public abstract class Skill implements CooldownObject {
         if (called1.isCancelled())
             return result;
 
-        //If the delay is null we cast normally the skill
-        if (delay == 0) {
-            onCast(meta, result);
-            return result;
-        }
-
-
-        NamespacedKey bossbarNamespacedKey = new NamespacedKey(MythicLib.plugin, "mmocore_quest_progress_" + meta.getCaster().getPlayer().getUniqueId().toString());
-        BossBar bossbar = Bukkit.createBossBar(bossbarNamespacedKey, "CASTING", BarColor.WHITE, BarStyle.SEGMENTED_20);
-        bossbar.addPlayer(meta.getCaster().getPlayer());
-        //Implement a runnable to run the task later
-        BukkitRunnable runnable = new BukkitRunnable() {
-            private int counter = delay;
-
-            @Override
-            public void run() {
-
-                bossbar.setProgress((double) (delay - counter) / (double) delay);
-                counter--;
-                if (counter <= 0) {
-                    onCast(meta, result);
-                    bossbar.removeAll();
-                    cancel();
-                }
-            }
-        };
-        runnable.runTaskTimer(MythicLib.plugin, 0L, 1L);
-
-        //Listener that cancels the event if the player moves.
-        TemporaryListener temporaryListener = new TemporaryListener(PlayerMoveEvent.getHandlerList(), PlayerCastSkillEvent.getHandlerList()) {
-            @EventHandler
-            public void onMove(PlayerMoveEvent event) {
-                if (event.getPlayer().equals(meta.getCaster().getPlayer()))
-                    event.setCancelled(true);
-            }
-
-            @EventHandler
-            public void onCast(PlayerCastSkillEvent e) {
-                if (e.getPlayer().equals(meta.getCaster().getPlayer()))
-                    e.setCancelled(true);
-            }
-
-            @Override
-            public void whenClosed() {
-
-            }
-        };
-
-        //Closes the listener after the delay to avoid memory issues.
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                temporaryListener.close();
-            }
-        }.runTaskLater(MythicLib.plugin, delay);
-
+        // If the delay is null we cast normally the skill
+        final int delayTicks = (int) (meta.getModifier("delay") * 20);
+        if (delayTicks <= 0)
+            castInstantly(meta, result);
+        else
+            new CastingDelayHandler(meta, result);
 
         return result;
+    }
+
+    /**
+     * Called when the casting delay (potentially zero) is passed. This
+     * not DOES call {@link PlayerCastSkillEvent} and not DOES check for
+     * both high & low level skill conditions.
+     * <p>
+     * This method however calls {@link SkillCastEvent} after skill casting.
+     */
+    public <T extends SkillResult> void castInstantly(SkillMetadata meta, T result) {
+
+        // High level skill effects
+        whenCast(meta);
+
+        // Lower level skill effects
+        ((SkillHandler<T>) getHandler()).whenCast(result, meta);
+
+        // Call second Bukkit event
+        Bukkit.getPluginManager().callEvent(new SkillCastEvent(meta, result));
     }
 
     /**
@@ -142,22 +90,6 @@ public abstract class Skill implements CooldownObject {
      */
     @NotNull
     public abstract boolean getResult(SkillMetadata skillMeta);
-
-
-    /**
-     * Everything that happens when a skill is cast.
-     */
-    public <T extends SkillResult> void onCast(SkillMetadata meta, T result) {
-        SkillHandler<T> handler = (SkillHandler<T>) getHandler();
-        // High level skill effects
-        whenCast(meta);
-
-        // Lower level skill effects
-        handler.whenCast(result, meta);
-
-        // Call second Bukkit event
-        Bukkit.getPluginManager().callEvent(new SkillCastEvent(meta, result));
-    }
 
     /**
      * This is NOT where the actual skill effects are applied.

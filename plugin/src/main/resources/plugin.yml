@@ -7,6 +7,10 @@ loadbefore: [ MMOCore,MMOItems ]
 softdepend: [ WorldGuard,Residence,Factions,MythicMobs ]
 description: 'A hard dependency for MMOItems and MMOCore'
 commands:
+  color:
+    description: 'Change your chat color'
+    usage: '/color <color>'
+    aliases: [ chatcolor, chatcolour, colour, ccolor, ccolour ]
   mythiclib:
     description: Reload mythiclib
     permission: mythiclib.reload

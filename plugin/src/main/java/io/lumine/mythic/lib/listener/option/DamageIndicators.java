@@ -64,7 +64,6 @@ public class DamageIndicators extends GameIndicators {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void a(AttackEvent event) {
-
         Entity entity = event.getEntity();
         if (!(entity instanceof LivingEntity) || event.getEntity() instanceof ArmorStand)
             return;

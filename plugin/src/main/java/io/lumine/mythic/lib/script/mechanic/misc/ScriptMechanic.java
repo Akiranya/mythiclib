@@ -17,11 +17,11 @@ import java.util.Arrays;
 import java.util.List;
 
 @MechanicMetadata
-public class SkillMechanic extends Mechanic {
+public class ScriptMechanic extends Mechanic {
     private final Script skill;
 
     /**
-     * Allows to cast the same skill multiple times in a row but
+     * Allows to cast the same script multiple times in a row but
      * everytime the counter is increased by 1 just like in a for loop
      */
     private final int iterations;
@@ -38,7 +38,7 @@ public class SkillMechanic extends Mechanic {
     private final EntityTargeter targetEntity;
 
 
-    public SkillMechanic(ConfigObject config) {
+    public ScriptMechanic(ConfigObject config) {
         config.validateKeys("name");
 
         // Multiple skill casts

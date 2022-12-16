@@ -37,15 +37,45 @@ player-ability-damage: true
 
 critical-strikes:
   weapon:
-    # Default = 2 meaning crits deal 200% of the initial damage
-    coefficient: 2
+    coefficient: 2 # Default = 2 meaning crits deal 200% of the initial damage
     cooldown: 3
     max-chance: 80
   skill:
-    # Default = 1.5 meaning crits deal 150% of the initial damage
-    coefficient: 1.5
+    coefficient: 1.5 # Default = 1.5 meaning crits deal 150% of the initial damage
     cooldown: 3
     max-chance: 80
+
+# What happens when the player is waiting for his skill to cast
+# Does not apply if skill delay (it is a skill modifier) is set to 0
+casting-delay:
+  slowness: 60 # A % based speed reduction when casting
+  cancel-on-move: false # If the casting should cancel if the player moves
+
+  cast-script: # MythicLib script called when the countdown begins
+    enabled: true
+    script:
+      mechanics:
+        play_sound:
+          type: sound
+          sound: BLOCK_END_PORTAL_FRAME_FILL
+          volume: 1
+          pitch: 2
+
+  cancel-script: # MythicLib script called if the countdown is cancelled
+    enabled: true
+    # Other format:
+    # script: <public_script_name>
+    script:
+      mechanics:
+        play_sound:
+          type: sound
+          sound: ENTITY_VILLAGER_NO
+          volume: 1
+          pitch: 2
+
+  bossbar: # Displayed during casting delay
+    enabled: true
+    format: 'CASTING'
 
 # Default and max. values of armor stats. These systems
 # all have a cooldown which can be reduced using the
@@ -172,3 +202,10 @@ fix-movement-speed: true
 damage-particles-cap:
   max-per-tick: 10
   enabled: false
+
+# By enabling this option, the plugin will attempt to fix
+# too large packets sent to the client. This can happen
+# when the recipes are too large and the client cannot
+# handle them.
+# If you change this option value, you must restart your server.
+fix-too-large-packets: false

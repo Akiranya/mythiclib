@@ -127,7 +127,7 @@ public class SkillManager {
         registerMechanic("dispatch_command", DispatchCommandMechanic::new);
         registerMechanic("entity_effect", EntityEffectMechanic::new);
         registerMechanic("lightning", config -> new LightningStrikeMechanic(config));
-        registerMechanic("skill", config -> new SkillMechanic(config));
+        registerMechanic("script", config -> new ScriptMechanic(config));
 
         registerMechanic("teleport", config -> new TeleportMechanic(config));
         registerMechanic("set_velocity", config -> new VelocityMechanic(config));

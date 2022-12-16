@@ -1,5 +1,11 @@
 package io.lumine.mythic.lib.comp.hexcolor;
 
+import io.lumine.mythic.lib.comp.adventure.AdventureParser;
+
+/**
+ * @deprecated Use {@link AdventureParser} instead.
+ */
+@Deprecated
 public interface ColorParser {
 
     /**

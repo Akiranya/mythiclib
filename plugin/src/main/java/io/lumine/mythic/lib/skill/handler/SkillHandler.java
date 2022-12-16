@@ -56,7 +56,7 @@ public abstract class SkillHandler<T extends SkillResult> {
         this.id = formatId(getClass().getSimpleName());
         this.triggerable = triggerable;
 
-        registerModifiers("cooldown", "mana", "stamina", "timer","delay");
+        registerModifiers("cooldown", "mana", "stamina", "timer", "delay");
     }
 
     /**
@@ -68,7 +68,7 @@ public abstract class SkillHandler<T extends SkillResult> {
         this.id = formatId(id);
         this.triggerable = true;
 
-        registerModifiers("cooldown", "mana", "stamina", "timer","delay");
+        registerModifiers("cooldown", "mana", "stamina", "timer", "delay");
     }
 
     /**
@@ -86,7 +86,7 @@ public abstract class SkillHandler<T extends SkillResult> {
             registerModifiers(config.getStringList("modifiers"));
 
         // Default modifiers
-        registerModifiers("cooldown", "mana", "stamina", "timer","delay");
+        registerModifiers("cooldown", "mana", "stamina", "timer", "delay");
     }
 
     private String formatId(String str) {

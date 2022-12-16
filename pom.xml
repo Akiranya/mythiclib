@@ -12,6 +12,7 @@
         <module>v1_18_r2</module>
         <module>dist</module>
         <module>v1_19</module>
+        <module>v1_19_r2</module>
     </modules>
     <name>MythicLib</name>
 
@@ -21,6 +22,9 @@
         <revision>1.4.3-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Dependency versions -->
+        <junit.version>5.9.1</junit.version>
     </properties>
 
     <build>

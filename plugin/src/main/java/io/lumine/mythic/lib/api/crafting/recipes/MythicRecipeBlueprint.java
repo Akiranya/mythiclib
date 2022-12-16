@@ -10,6 +10,8 @@ import io.lumine.mythic.lib.api.util.ui.SilentNumbers;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +29,7 @@ import java.util.HashMap;
  * ingredients mean any item at all) have different spaces dedicated:
  * <p>In furnaces, workbench, anvil, and so on, the result slot is separate.
  * </p>However, this is not true for the enchantment table and brewing stand, where
- *     the result slot is in the same place as the input.
+ * the result slot is in the same place as the input.
  *
  * <p></p>
  * In other intuitive senses, input is not all the same. Notice how basically
@@ -36,7 +38,7 @@ import java.util.HashMap;
  * </p>Smithing Table has the netherite ingot slot thing,
  * <p>Enchantment table has the lapis slot,
  * </p>and so on.
- *
+ * <p>
  * Thus, apart from the main input area, there may be side-input stuff that
  * affects the output somehow.
  *
@@ -57,14 +59,14 @@ public class MythicRecipeBlueprint {
 
     /**
      * A Blueprint has input recipes that must be matched to produce the output.
-     *
+     * <p>
      * The output may be produced for two different scenarios:
      * <p>As a preview
      * </p>As an actual result
      *
      * @param mainCheck The main recipe to check, required.
-     * @param result The result that will happen if the player accepts the recipe,
-     *               which may also have information on how to display it for preview.
+     * @param result    The result that will happen if the player accepts the recipe,
+     *                  which may also have information on how to display it for preview.
      */
     public MythicRecipeBlueprint(@NotNull MythicRecipe mainCheck, @NotNull MythicRecipeOutput result) {
         this.mainCheck = mainCheck;
@@ -75,14 +77,14 @@ public class MythicRecipeBlueprint {
 
     /**
      * A Blueprint has input recipes that must be matched to produce the output.
-     *
+     * <p>
      * The output may be produced for two different scenarios:
      * <p>As a preview
      * </p>As an actual result
      *
      * @param mainCheck The main recipe to check, required.
-     * @param result The result that will happen if the player accepts the recipe,
-     *               which may also have information on how to display it for preview.
+     * @param result    The result that will happen if the player accepts the recipe,
+     *                  which may also have information on how to display it for preview.
      */
     public MythicRecipeBlueprint(@NotNull MythicRecipe mainCheck, @NotNull MythicRecipeOutput result, @NotNull NamespacedKey key) {
         this.mainCheck = mainCheck;
@@ -94,12 +96,14 @@ public class MythicRecipeBlueprint {
     /**
      * Namespace under which this recipe may register onto the Recipe Book
      */
-    @NotNull final NamespacedKey nk;
+    @NotNull
+    final NamespacedKey nk;
 
     /**
      * Namespace under which this recipe may register onto the Recipe Book
      */
-    @NotNull public NamespacedKey getNk() {
+    @NotNull
+    public NamespacedKey getNk() {
         return nk;
     }
 
@@ -109,6 +113,7 @@ public class MythicRecipeBlueprint {
     public boolean canDisplayInRecipeBook() {
         return canDisplayInRecipeBook;
     }
+
     /**
      * Can this be displayed to players in the recipe book?
      */
@@ -122,7 +127,9 @@ public class MythicRecipeBlueprint {
      * is when they match upon the player actually 'crafting;' upon
      * completing the operation.
      */
-    @NotNull final MythicRecipeOutput result;
+    @NotNull
+    final MythicRecipeOutput result;
+
     /**
      * What will happen if all the checks return <code>true</code>?
      * <p></p>
@@ -132,37 +139,51 @@ public class MythicRecipeBlueprint {
      * completing the operation.
      */
     @NotNull
-    public MythicRecipeOutput getResult() { return result; }
+    public MythicRecipeOutput getResult() {
+        return result;
+    }
 
     /**
      * For ease of implementation, It is required that there be at last one Non-null
      * main recipe to check an inventory. This is that one.
      */
-    @NotNull final MythicRecipe mainCheck;
+    @NotNull
+    final MythicRecipe mainCheck;
+
     /**
      * For ease of implementation, It is required that there be at last one Non-null
      * main recipe to check an inventory. This is that one.
      */
-    @NotNull public MythicRecipe getMainCheck() { return mainCheck; }
+    @NotNull
+    public MythicRecipe getMainCheck() {
+        return mainCheck;
+    }
 
     /**
      * Optional, any mount of 'fuel' recipes. Each recipe will contain
      * information on it being required or whatever.
      */
-    @NotNull final HashMap<String, MythicRecipe> sideChecks = new HashMap<>();
+    @NotNull
+    final HashMap<String, MythicRecipe> sideChecks = new HashMap<>();
+
     /**
      * What are the expected side inventory names?
      *
      * @return A new list, with a copy of every name of the side check inventories.
      */
-    @NotNull public ArrayList<String> getSideInventoryNames() { return new ArrayList<>(sideChecks.keySet()); }
+    @NotNull
+    public ArrayList<String> getSideInventoryNames() {
+        return new ArrayList<>(sideChecks.keySet());
+    }
+
     /**
      * <b>It is imperative that you know this name is indeed that of a contained side
      * check, use {@link #hasSideInventory(String)} to corroborate before calling this.</b>
      *
      * @return The side check associated to this string.
      */
-    @NotNull public MythicRecipe getSideCheck(@NotNull String ofName) {
+    @NotNull
+    public MythicRecipe getSideCheck(@NotNull String ofName) {
 
         // Bruh
         Validate.isTrue(hasSideInventory(ofName), "You may not query for a side recipe that does not exist.");
@@ -170,12 +191,17 @@ public class MythicRecipeBlueprint {
         // Well was it?
         return sideChecks.get(ofName);
     }
+
     /**
      * Is there any side recipe associated to this inventory name?
+     *
      * @param ofName What name
      * @return <code>true</code> if there is a side inventory expected of this name.
      */
-    public boolean hasSideInventory(@NotNull String ofName) { return sideChecks.containsKey(ofName); }
+    public boolean hasSideInventory(@NotNull String ofName) {
+        return sideChecks.containsKey(ofName);
+    }
+
     /**
      * Registers a check that must be fulfilled
      *
@@ -191,15 +217,15 @@ public class MythicRecipeBlueprint {
     /**
      * Do all the checks return true upon inspecting this collection of inventories?
      *
-     * @return Will return <code>null</code> if the recipe does not match, and
-     *         a new MythicBlueprintInventory with the recipe executed for you
-     *         to put the items where they are supposed to go.
-     *
      * @param inventories The inventory layout you are testing with this blueprint
-     * @param maxTimes To know how many times this recipe can be carried out before
-     *                 the ingredients run out.
+     * @param maxTimes    To know how many times this recipe can be carried out before
+     *                    the ingredients run out.
+     * @return Will return <code>null</code> if the recipe does not match, and
+     * a new MythicBlueprintInventory with the recipe executed for you
+     * to put the items where they are supposed to go.
      */
-    @Nullable public MythicBlueprintInventory matches(@NotNull MythicBlueprintInventory inventories, @Nullable Ref<Integer> maxTimes) {
+    @Nullable
+    public MythicBlueprintInventory matches(@NotNull MythicBlueprintInventory inventories, @Nullable Ref<Integer> maxTimes) {
 
         // Does the blueprint have information to check with the side checks. That's an automatic no
         if (!SilentNumbers.hasAll(inventories.getSideInventoryNames(), getSideInventoryNames())) {
@@ -214,7 +240,8 @@ public class MythicRecipeBlueprint {
         // Does the main recipe accept the main inventory?
         if (mainResult == null) {
             //MCH// MythicCraftingManager.log("\u00a78Matching \u00a7cM\u00a74 Main Check Failed");
-            return null; }
+            return null;
+        }
         //MCH// MythicCraftingManager.log("\u00a78Matching \u00a7cM\u00a77 Main check passed, building result.");
 
         // That's a success huh, build the results then.
@@ -231,11 +258,18 @@ public class MythicRecipeBlueprint {
             // First failure and you're out
             if (sideResult == null) {
                 //MCH// MythicCraftingManager.log("\u00a78Matching \u00a7cS\u00a74 Side Check '\u00a7e" + getSideCheck(side).getName()  + "\u00a74' Failed");
-                return null; }
+                return null;
+            }
 
             // Include
             ret.addSideInventory(side, sideResult);
-            if (limitingSideReactions == null) { limitingSideReactions = sideTimes.getValue(); } else { if (limitingSideReactions > sideTimes.getValue(32767)) { limitingSideReactions = sideTimes.getValue(); } }
+            if (limitingSideReactions == null) {
+                limitingSideReactions = sideTimes.getValue();
+            } else {
+                if (limitingSideReactions > sideTimes.getValue(32767)) {
+                    limitingSideReactions = sideTimes.getValue();
+                }
+            }
         }
 
         if (maxTimes != null) {
@@ -267,20 +301,20 @@ public class MythicRecipeBlueprint {
      * Players may access this in vanilla stations.
      *
      * @param forStation For which station you are activating this. Will not register the recipe onto the recipe book.
-     *
      * @see #disable()
      */
-    public void deploy(@NotNull MythicRecipeStation forStation) { deploy(forStation, null); }
+    public void deploy(@NotNull MythicRecipeStation forStation) {
+        deploy(forStation, null);
+    }
+
     /**
      * Players may access this in vanilla stations. Also sets the recipe book live if possible
      *
      * @param forStation For which station you are activating this
-     *
      * @param recipeName The Namespaced Key (if it was set live onto the recipe book) so you can remove
      *                   the recipe when your plugin reloads these kinds of things.
      *                   <p></p>
      *                   If <code>null</code>, the recipe wont be included in the crafting book.
-     *
      * @see #disable()
      */
     public void deploy(@NotNull MythicRecipeStation forStation, @Nullable Ref<NamespacedKey> recipeName) {
@@ -298,8 +332,13 @@ public class MythicRecipeBlueprint {
             try {
 
                 // The name of the main check is used as namespace key
-                Bukkit.addRecipe(((VanillaBookableRecipe) getMainCheck()).getBukkitRecipe(getNk(),
-                        ((VanillaBookableOutput) getResult()).getBukkitRecipeResult()));
+                final ItemStack recipeOutput = ((VanillaBookableOutput) getResult()).getBukkitRecipeResult();
+                final ItemMeta recipeOutputMeta = recipeOutput.getItemMeta();
+                if (recipeOutputMeta != null && recipeOutputMeta.hasLore() && MythicLib.plugin.getMMOConfig().fixTooLargePackets) {
+                    recipeOutputMeta.setLore(new ArrayList<>());
+                    recipeOutput.setItemMeta(recipeOutputMeta);
+                }
+                Bukkit.addRecipe(((VanillaBookableRecipe) getMainCheck()).getBukkitRecipe(getNk(), recipeOutput));
 
                 recipeName.setValue(nk);
 
@@ -317,39 +356,69 @@ public class MythicRecipeBlueprint {
                             "Could not register recipe for crafting book: ", ((IllegalArgumentException) runtimeException).getMessage()));
                 }
             }
-        } }
+        }
+    }
 
     /**
      * @return For which stations has this blueprint been set live, which vanilla
      * stations can players use to interact with it?
      */
-    @NotNull public ArrayList<MythicRecipeStation> getDeployedFor() { return deployedFor; }
+    @NotNull
+    public ArrayList<MythicRecipeStation> getDeployedFor() {
+        return deployedFor;
+    }
+
     /**
      * @param st Station its being deployed to.
      */
-    protected void registerAsDeployed(@NotNull MythicRecipeStation st) { getDeployedFor().add(st); }
+    protected void registerAsDeployed(@NotNull MythicRecipeStation st) {
+        getDeployedFor().add(st);
+    }
+
     /**
      * For which stations has this blueprint been set live, which vanilla
      * stations can players use to interact with it?
      */
-    @NotNull final ArrayList<MythicRecipeStation> deployedFor = new ArrayList<>();
+    @NotNull
+    final ArrayList<MythicRecipeStation> deployedFor = new ArrayList<>();
 
     /**
      * Players may no longer access this in vanilla stations.
      *
-     * @see #deploy(MythicRecipeStation,Ref)
+     * @see #deploy(MythicRecipeStation, Ref)
      */
-    public void disable() {  for (MythicRecipeStation st : getDeployedFor()) { MythicCraftingManager.disableBlueprint(this, st); } deployedFor.clear(); }
+    public void disable() {
+        for (MythicRecipeStation st : getDeployedFor()) {
+            MythicCraftingManager.disableBlueprint(this, st);
+        }
+        deployedFor.clear();
+    }
 
     //region Permissions I guess
-    @NotNull public ArrayList<String> getRequiredPermissions() { return requiredPermissions; }
-    @NotNull final ArrayList<String> requiredPermissions = new ArrayList<>();
-    public void addRequiredPermission(@NotNull String perm) { requiredPermissions.add(perm); }
-    public void clearRequiredPermissions() { requiredPermissions.clear(); }
+    @NotNull
+    public ArrayList<String> getRequiredPermissions() {
+        return requiredPermissions;
+    }
+
+    @NotNull
+    final ArrayList<String> requiredPermissions = new ArrayList<>();
+
+    public void addRequiredPermission(@NotNull String perm) {
+        requiredPermissions.add(perm);
+    }
+
+    public void clearRequiredPermissions() {
+        requiredPermissions.clear();
+    }
+
     public boolean checkPermissions(@NotNull Permissible player) {
 
         // Any lack of permission cancels
-        for (String perm : getRequiredPermissions()) { if (!player.hasPermission(perm)) { return false; } }
+        for (String perm : getRequiredPermissions()) {
+            if (!player.hasPermission(perm)) {
+                return false;
+            }
+        }
 
         // No cancellation means success
         return true;

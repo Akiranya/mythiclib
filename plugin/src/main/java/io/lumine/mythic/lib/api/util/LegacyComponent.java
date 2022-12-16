@@ -1,5 +1,7 @@
 package io.lumine.mythic.lib.api.util;
 
+import io.lumine.mythic.lib.comp.adventure.AdventureParser;
+import io.lumine.mythic.lib.util.AdventureUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -11,6 +13,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * A utility class for converting legacy text to Adventure components.
+ *
+ * @deprecated Use {@link AdventureParser} instead.
+ * @see AdventureParser
+ * @see AdventureUtils#parse(String)
+ */
+@Deprecated(forRemoval = true)
 public class LegacyComponent {
 
     /**
