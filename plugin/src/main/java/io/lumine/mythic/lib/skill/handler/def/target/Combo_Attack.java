@@ -1,7 +1,7 @@
 package io.lumine.mythic.lib.skill.handler.def.target;
 
 import io.lumine.mythic.lib.MythicLib;
-import io.lumine.mythic.lib.comp.target.InteractionType;
+import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import io.lumine.mythic.lib.damage.AttackMetadata;
 import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
@@ -30,7 +30,7 @@ public class Combo_Attack extends SkillHandler<TargetSkillResult> {
 
     @Override
     public void whenCast(TargetSkillResult result, SkillMetadata skillMeta) {
-        final int count = (int) skillMeta.getModifier("count");
+        final int count = (int) Math.max(1, skillMeta.getModifier("count"));
         final double damage = skillMeta.getModifier("damage") / count;
         final LivingEntity target = result.getTarget();
 
@@ -42,7 +42,7 @@ public class Combo_Attack extends SkillHandler<TargetSkillResult> {
 
             @Override
             public void run() {
-                if (counter++ >= count || !skillMeta.getCaster().getData().isOnline()) {
+                if (counter++ >= count || !skillMeta.getCaster().getData().isOnline() || target.isDead()) {
                     cancel();
                     return;
                 }

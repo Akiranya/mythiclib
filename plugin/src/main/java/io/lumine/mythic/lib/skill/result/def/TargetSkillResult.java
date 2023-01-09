@@ -1,7 +1,7 @@
 package io.lumine.mythic.lib.skill.result.def;
 
 import io.lumine.mythic.lib.MythicLib;
-import io.lumine.mythic.lib.comp.target.InteractionType;
+import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.result.SkillResult;
 import io.lumine.mythic.lib.util.RayTrace;

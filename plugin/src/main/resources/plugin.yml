@@ -7,22 +7,18 @@ loadbefore: [ MMOCore,MMOItems ]
 softdepend: [ WorldGuard,Residence,Factions,MythicMobs ]
 description: 'A hard dependency for MMOItems and MMOCore'
 commands:
-  color:
-    description: 'Change your chat color'
-    usage: '/color <color>'
-    aliases: [ chatcolor, chatcolour, colour, ccolor, ccolour ]
   mythiclib:
-    description: Reload mythiclib
+    description: MythicLib main command.
     permission: mythiclib.reload
-    aliases: [ml]
+    aliases: [ ml ]
   healthscale:
-    description: Scales the player's health
+    description: Scales the player's health. Deprecated, use /ml debug healthscale
     permission: mythiclib.command.healthscale
   exploreattributes:
-    description: Explore player attributes.
+    description: Explore player attributes. Deprecated, use /ml debug attributes
     permission: mythiclib.explore-attributes
   mmotempstat:
-    description: Add temporary stat modifier to player
+    description: Add temporary stat modifier to player. Deprecated, use /ml statmod
     permission: mythiclib.tempstat
   superworkbench:
     aliases: [ swb ]

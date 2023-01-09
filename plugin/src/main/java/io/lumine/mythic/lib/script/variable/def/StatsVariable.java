@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 @VariableMetadata(name = "statMap")
 public class StatsVariable extends Variable<StatProvider> {
-    public static final VariableRegistry<StatsVariable> VARIABLE_REGISTRY = new VariableRegistry<>() {
+    public static final VariableRegistry<StatsVariable> VARIABLE_REGISTRY = new VariableRegistry<StatsVariable>() {
 
         @NotNull
         @Override

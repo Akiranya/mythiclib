@@ -54,12 +54,22 @@ public enum ModifierSource {
     ARMOR,
 
     /**
-     * Modifier given by anything else. Modifiers always applied
+     * Modifier given by an accessory. Modifiers are applied if worn
+     * in an accessory slot.
+     */
+    ACCESSORY,
+
+    /**
+     * Modifier given by anything else. Modifiers always apply.
+     * <p>
+     * Has a lower priority compared to {@link EquipmentSlot#OTHER}
      */
     OTHER,
 
     /**
-     * Modifiers never applied whatsoever
+     * Modifiers never apply whatsoever.
+     * <p>
+     * Has a lower priority compared to {@link EquipmentSlot#OTHER}
      */
     VOID;
 

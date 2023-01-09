@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * mythiclib
@@ -32,21 +33,21 @@ public class RainbowResolver implements ContextTagResolver {
     }
 
     @Override
-    public @Nullable String resolve(@NotNull String src, @NotNull AdventureArgumentQueue argsQueue, @NotNull String context) {
+    public @Nullable String resolve(@NotNull String src, @NotNull AdventureArgumentQueue argsQueue, @NotNull String context, @NotNull List<String> decorations) {
         if (!argsQueue.hasNext())
-            return GradientBuilder.multiRgbGradient(context, colors, null, Interpolator.LINEAR);
+            return GradientBuilder.multiRgbGradient(context, colors, 0, Interpolator.LINEAR, decorations);
         AdventureArgument argument = argsQueue.pop();
         if (argument.asInt().isPresent())
-            return GradientBuilder.multiRgbGradient(context, reverse(), argument.asInt().getAsInt(), Interpolator.LINEAR);
+            return GradientBuilder.multiRgbGradient(context, reverse(), argument.asInt().getAsInt(), Interpolator.LINEAR, decorations);
         else if (containsNumberAndExclamation(argument.value())) {
             try {
                 int phase = Integer.parseInt(argument.value().substring(1));
-                return GradientBuilder.multiRgbGradient(context, reverse(), phase, Interpolator.LINEAR);
+                return GradientBuilder.multiRgbGradient(context, reverse(), phase, Interpolator.LINEAR, decorations);
             } catch (NumberFormatException e) {
                 return null;
             }
         } else if (argument.value().equals("!"))
-            return GradientBuilder.multiRgbGradient(context, reverse(), null, Interpolator.LINEAR);
+            return GradientBuilder.multiRgbGradient(context, reverse(), null, Interpolator.LINEAR, decorations);
         return null;
     }
 

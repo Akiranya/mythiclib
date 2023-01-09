@@ -1,13 +1,17 @@
 package io.lumine.mythic.lib.comp.mythicmobs;
 
-import io.lumine.mythic.api.adapters.AbstractPlayer;
 import io.lumine.mythic.bukkit.BukkitAdapter;
+import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
-import io.lumine.mythic.lib.api.player.MMOPlayerData;
+import io.lumine.mythic.lib.api.stat.provider.StatProvider;
 import io.lumine.mythic.lib.damage.AttackHandler;
 import io.lumine.mythic.lib.damage.AttackMetadata;
 import io.lumine.mythic.lib.damage.DamageMetadata;
-import io.lumine.mythic.lib.damage.DamageType;
+import io.lumine.mythic.lib.damage.DamagePacket;
+import io.lumine.mythic.lib.element.Element;
+import org.apache.commons.lang.Validate;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.Nullable;
@@ -15,31 +19,42 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 /**
- * This class should never be used under good circumstances. This class
- * only helps MythicLib take into account damage dealt using the default
- * MythicMobs <code>damage</code> mechanic.
+ * This class is the interface between MythicMobs -> MMO damage systems.
  * <p>
- * This mechanic does NOT take into account the player stat snapshot as
- * stats are cached when checking for the player attack. It's fine most of
- * the time though.
- * <p>
- * This mechanic does NOT take into account damage types either. This messes
- * with on-hit effects like elemental damage, critical strikes, other stats too.
+ * The user is strongly advised to use the mmodamage mechanic instead:
+ * - No player stat caching (fine most of the time)
+ * - Bare bones damage type/element support
+ *
+ * @author jules
  */
 public class MythicMobsAttackHandler implements AttackHandler {
 
     @Override
     @Nullable
     public AttackMetadata getAttack(EntityDamageEvent event) {
-        Optional<Object> opt = BukkitAdapter.adapt(event.getEntity()).getMetadata("skill-damage");
+        final Optional<Object> opt = BukkitAdapter.adapt(event.getEntity()).getMetadata("skill-damage");
         if (!opt.isPresent())
             return null;
 
-        io.lumine.mythic.api.skills.damage.DamageMetadata metadata = (io.lumine.mythic.api.skills.damage.DamageMetadata) opt.get();
-        if (!(metadata.getDamager().getEntity() instanceof AbstractPlayer))
-            return null;
+        // Retrieve damage info
+        final io.lumine.mythic.api.skills.damage.DamageMetadata mythic = (io.lumine.mythic.api.skills.damage.DamageMetadata) opt.get();
 
-        DamageMetadata result = new DamageMetadata(metadata.getAmount(), DamageType.MAGIC, DamageType.SKILL);
-        return new AttackMetadata(result, (LivingEntity) event.getEntity(), MMOPlayerData.get(metadata.getDamager().getEntity().getUniqueId()).getStatMap().cache(EquipmentSlot.MAIN_HAND));
+        // Find target
+        final Entity damagerBukkit = mythic.getDamager().getEntity().getBukkitEntity();
+        final @Nullable StatProvider damager = damagerBukkit instanceof LivingEntity ? StatProvider.get((LivingEntity) damagerBukkit, EquipmentSlot.MAIN_HAND, false) : null;
+
+        // Find damage metadata and apply element if found
+        final DamageMetadata damageMeta = new DamageMetadata(mythic.getAmount(), MythicLib.plugin.getDamage().getVanillaDamageTypes(mythic.getDamageCause()));
+        if (mythic.getElement() != null)
+            try {
+                final @Nullable Element element = MythicLib.plugin.getElements().get(UtilityMethods.enumName(mythic.getElement()));
+                Validate.notNull(element);
+                for (DamagePacket packet : damageMeta.getPackets())
+                    packet.setElement(element);
+            } catch (Exception exception) {
+                // Do not apply element
+            }
+
+        return new AttackMetadata(damageMeta, (LivingEntity) event.getEntity(), damager);
     }
 }

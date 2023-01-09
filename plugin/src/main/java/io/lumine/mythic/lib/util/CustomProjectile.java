@@ -16,7 +16,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The one thing about projectiles is that they create some type of
@@ -46,6 +49,8 @@ public class CustomProjectile extends TemporaryListener {
     private final Iterable<PassiveSkill> cachedSkills;
     private final PlayerMetadata caster;
 
+    public static final String METADATA_KEY = "CustomProjectile";
+
     /**
      * Used to trigger skills related to projectiles (either arrows or tridents). This
      * class is instanciated when a player shoots a projectile and triggers TICK, HIT
@@ -70,13 +75,13 @@ public class CustomProjectile extends TemporaryListener {
         runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                caster.triggerSkills(projectileType.getTickTrigger(), CustomProjectile.this.caster, null, projectile, cachedSkills);
+                caster.triggerSkills(projectileType.getTickTrigger(), CustomProjectile.this.caster, projectile, cachedSkills);
             }
         };
         runnable.runTaskTimer(MythicLib.plugin, 0, 1);
 
-        // Register in MythicLib
-        MythicLib.plugin.getEntities().registerCustomProjectile(projectile, this);
+        // Register
+        projectile.setMetadata(METADATA_KEY, new FixedMetadataValue(MythicLib.plugin, this));
     }
 
     public PlayerMetadata getCaster() {
@@ -93,7 +98,7 @@ public class CustomProjectile extends TemporaryListener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void triggerHit(PlayerAttackEvent event) {
         if (event.getAttack() instanceof ProjectileAttackMetadata && ((ProjectileAttackMetadata) event.getAttack()).getProjectile().getEntityId() == entityId)
-            caster.getData().triggerSkills(projectileType.getHitTrigger(), caster, event.getAttack(), event.getEntity(), cachedSkills);
+            caster.getData().triggerSkills(projectileType.getHitTrigger(), caster, event.getEntity(), cachedSkills);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -101,7 +106,7 @@ public class CustomProjectile extends TemporaryListener {
 
         // Make sure the projectile landed on a block
         if (event.getHitBlock() != null && event.getEntity().getEntityId() == entityId)
-            caster.getData().triggerSkills(projectileType.getLandTrigger(), caster, null, event.getEntity(), cachedSkills);
+            caster.getData().triggerSkills(projectileType.getLandTrigger(), caster, event.getEntity(), cachedSkills);
     }
 
     @EventHandler
@@ -144,5 +149,13 @@ public class CustomProjectile extends TemporaryListener {
         public TriggerType getLandTrigger() {
             return land;
         }
+    }
+
+    @Nullable
+    public static CustomProjectile getCustomData(Entity proj) {
+        for (MetadataValue mv : proj.getMetadata(METADATA_KEY))
+            if (mv.getOwningPlugin().equals(MythicLib.plugin))
+                return (CustomProjectile) mv.value();
+        return null;
     }
 }

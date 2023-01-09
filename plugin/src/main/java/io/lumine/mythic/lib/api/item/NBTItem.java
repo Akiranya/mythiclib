@@ -1,7 +1,6 @@
 package io.lumine.mythic.lib.api.item;
 
 import io.lumine.mythic.lib.MythicLib;
-import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -42,14 +41,6 @@ public abstract class NBTItem {
     public abstract ItemStack toItem();
 
     public abstract int getTypeId(String path);
-
-    public abstract Component getDisplayNameComponent();
-
-    public abstract void setDisplayNameComponent(Component component);
-
-    public abstract List<Component> getLoreComponents();
-
-    public abstract void setLoreComponents(List<Component> components);
 
     public NBTItem addTag(ItemTag... tags) {
         return addTag(Arrays.asList(tags));

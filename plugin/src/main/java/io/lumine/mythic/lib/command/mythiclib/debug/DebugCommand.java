@@ -8,9 +8,11 @@ public class DebugCommand extends CommandTreeNode {
         super(parent, "debug");
 
         addChild(new LogsCommand(this));
-        addChild(new NBTCommand(this));
+        // addChild(new NBTCommand(this));
         addChild(new StatsCommand(this));
         addChild(new VersionsCommand(this));
+        addChild(new AttributesCommand(this));
+        addChild(new HealthScaleCommand(this));
         addChild(new TestCommand(this));
     }
 

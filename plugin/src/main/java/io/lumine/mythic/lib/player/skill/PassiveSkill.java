@@ -18,27 +18,16 @@ import java.util.Objects;
  * There is one PassiveSkill instance per passive skill the player has.
  * A passive skill can be registered by MMOItems items or MMOCore passive skills.
  * <p>
- * The distinction between active and passive skills is pretty vague.
+ * Any skill registered by MMOItems is considered passive. The important
+ * distinction here is rather silent skills; see {@link TriggerType#isSilent()}
  * <p>
- * In MMOItems:
- * we consider a skill that is cast when right clicking active (for
- * instance when holding an item) even though it's handled just like
- * an on-hit passive skill within MythicLib. It seems pretty confusing.
- * <p>
- * It's better to consider ANY MMOITEMS SKILL to be passive and
- * distinguish silent from non-silent trigger types.
- * See {@link TriggerType#isSilent()}
- * <p>
- * In MMOCore:
  * Skills that are cast in MMOCore using the casting mode are also
  * active and any skill that has to be triggered is passive. It's
- * much less confusing in that context
+ * much less confusing in MMOCore than in MI.
  * <p>
- * Conclusion:
- * The only active skills are the ones cast using MMOCore casting mode
- * i.e using {@link TriggerType#CAST}; any other skill is passive.
+ * The only active skills are the ones cast by MMOCore using the CAST trigger type.
  *
- * @author indyuce
+ * @author Jules
  */
 public class PassiveSkill extends PlayerModifier {
 

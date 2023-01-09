@@ -4,7 +4,7 @@
     <groupId>io.lumine</groupId>
     <artifactId>MythicLib</artifactId>
     <packaging>pom</packaging>
-    <version>${revision}</version>
+    <version>1.5.1-SNAPSHOT</version>
     <modules>
         <module>plugin</module>
         <module>v1_17</module>
@@ -19,7 +19,7 @@
     <properties>
         <downloadSources>false</downloadSources>
         <downloadJavadocs>false</downloadJavadocs>
-        <revision>1.4.3-SNAPSHOT</revision>
+        <revision>1.5.1-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -35,8 +35,8 @@
                 <version>3.8.1</version>
                 <configuration>
                     <compilerArgument>-proc:none</compilerArgument>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
@@ -60,6 +60,21 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>phoenixdevt-releases</id>
+            <name>PhoenixDevt Releases</name>
+            <url>https://nexus.phoenixdevt.fr/repository/maven-releases/</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>phoenixdevt-snapshots</id>
+            <name>PhoenixDevt Snapshots</name>
+            <url>https://nexus.phoenixdevt.fr/repository/maven-snapshots/</url>
+        </snapshotRepository>
+
+    </distributionManagement>
+
     <dependencies>
 
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-clean-plugin -->
@@ -68,6 +83,7 @@
             <artifactId>maven-clean-plugin</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
     </dependencies>

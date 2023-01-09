@@ -32,7 +32,7 @@ public class CastCommand extends CommandTreeNode {
         }
 
         String skillId = args[1].toUpperCase().replace("-", "_");
-        SkillHandler<?> handler = null;
+        SkillHandler<?> handler;
         try {
             handler = MythicLib.plugin.getSkills().getHandlerOrThrow(skillId);
         } catch (RuntimeException exception) {
@@ -42,7 +42,7 @@ public class CastCommand extends CommandTreeNode {
 
         SimpleSkill castable = new SimpleSkill(TriggerType.CAST, handler);
         PlayerMetadata caster = MMOPlayerData.get((Player) sender).getStatMap().cache(EquipmentSlot.MAIN_HAND);
-        castable.cast(new TriggerMetadata(caster, null, null));
+        castable.cast(new TriggerMetadata(caster, null));
 
         return CommandResult.SUCCESS;
     }

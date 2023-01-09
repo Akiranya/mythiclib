@@ -2,7 +2,7 @@ package io.lumine.mythic.lib.script.condition.misc;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.comp.target.InteractionType;
+import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.script.condition.Condition;
 import io.lumine.mythic.lib.util.configobject.ConfigObject;

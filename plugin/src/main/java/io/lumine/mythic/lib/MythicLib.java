@@ -1,5 +1,6 @@
 package io.lumine.mythic.lib;
 
+import com.google.gson.Gson;
 import io.lumine.mythic.lib.api.crafting.recipes.MythicCraftingManager;
 import io.lumine.mythic.lib.api.crafting.recipes.vmp.MegaWorkbenchMapping;
 import io.lumine.mythic.lib.api.crafting.recipes.vmp.SuperWorkbenchMapping;
@@ -17,16 +18,11 @@ import io.lumine.mythic.lib.comp.anticheat.AntiCheatSupport;
 import io.lumine.mythic.lib.comp.anticheat.SpartanPlugin;
 import io.lumine.mythic.lib.comp.dualwield.DualWieldHook;
 import io.lumine.mythic.lib.comp.dualwield.RealDualWieldHook;
-import io.lumine.mythic.lib.comp.flags.FlagHandler;
-import io.lumine.mythic.lib.comp.flags.FlagPlugin;
-import io.lumine.mythic.lib.comp.flags.ResidenceFlags;
-import io.lumine.mythic.lib.comp.flags.WorldGuardFlags;
+import io.lumine.mythic.lib.comp.flags.*;
 import io.lumine.mythic.lib.comp.mythicmobs.MythicMobsAttackHandler;
 import io.lumine.mythic.lib.comp.mythicmobs.MythicMobsHook;
 import io.lumine.mythic.lib.comp.placeholder.*;
 import io.lumine.mythic.lib.comp.protocollib.DamageParticleCap;
-import io.lumine.mythic.lib.comp.target.CitizensTargetRestriction;
-import io.lumine.mythic.lib.comp.target.FactionsRestriction;
 import io.lumine.mythic.lib.glow.GlowModule;
 import io.lumine.mythic.lib.glow.provided.MythicGlowModule;
 import io.lumine.mythic.lib.gui.PluginInventory;
@@ -69,13 +65,13 @@ public class MythicLib extends JavaPlugin {
     private final ModifierManager modifierManager = new ModifierManager();
     private final FlagHandler flagHandler = new FlagHandler();
     private final IndicatorManager indicatorManager = new IndicatorManager();
+    private final Gson gson = new Gson();
 
     private AntiCheatSupport antiCheatSupport;
     private ServerVersion version;
     private AttackEffects attackEffects;
     private MitigationMechanics mitigationMechanics;
     private AdventureParser adventureParser;
-    @Deprecated
     @Getter
     private PlaceholderParser placeholderParser;
     private GlowModule glowModule;
@@ -129,7 +125,6 @@ public class MythicLib extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MythicCraftingManager(), this);
         Bukkit.getPluginManager().registerEvents(new SkillTriggers(), this);
         Bukkit.getPluginManager().registerEvents(new ElementalDamage(), this);
-        Bukkit.getPluginManager().registerEvents(new EntityListener(), this);
         ArmorEquipEvent.registerListener(this);
 
         if (getConfig().getBoolean("health-scale.enabled"))
@@ -163,16 +158,6 @@ public class MythicLib extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("Spartan") != null) {
             antiCheatSupport = new SpartanPlugin();
             getLogger().log(Level.INFO, "Hooked onto Spartan");
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("Factions") != null) {
-            entityManager.registerRestriction(new FactionsRestriction());
-            getLogger().log(Level.INFO, "Hooked onto Factions");
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
-            entityManager.registerRestriction(new CitizensTargetRestriction());
-            getLogger().log(Level.INFO, "Hooked onto Citizens");
         }
 
         if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
@@ -270,10 +255,15 @@ public class MythicLib extends JavaPlugin {
         return plugin;
     }
 
+    public Gson getGson() {
+        return gson;
+    }
+
     public ServerVersion getVersion() {
         return version;
     }
 
+    @Deprecated
     public JsonManager getJson() {
         return jsonManager;
     }
@@ -359,5 +349,4 @@ public class MythicLib extends JavaPlugin {
     public File getJarFile() {
         return plugin.getFile();
     }
-
 }

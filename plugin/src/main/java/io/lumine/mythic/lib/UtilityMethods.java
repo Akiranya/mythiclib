@@ -3,7 +3,7 @@ package io.lumine.mythic.lib;
 import io.lumine.mythic.lib.api.MMOLineConfig;
 import io.lumine.mythic.lib.api.condition.RegionCondition;
 import io.lumine.mythic.lib.api.condition.type.MMOCondition;
-import io.lumine.mythic.lib.comp.target.InteractionType;
+import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -45,10 +45,10 @@ public class UtilityMethods {
     /**
      * @param loc Where we are looking for nearby entities
      * @return List of all entities surrounding a location. This method loops
-     * through the 9 surrounding chunks and collect all entities from
-     * them. This list can be cached and used multiple times in the same
-     * tick for projectile based spells which need to run entity
-     * checkups
+     *         through the 9 surrounding chunks and collect all entities from
+     *         them. This list can be cached and used multiple times in the same
+     *         tick for projectile based spells which need to run entity
+     *         checkups
      */
     public static List<Entity> getNearbyChunkEntities(Location loc) {
         List<Entity> entities = new ArrayList<>();
@@ -110,14 +110,26 @@ public class UtilityMethods {
      * @param interaction Type of interaction
      * @return If the entity can be damaged, by a specific player, at a specific spot
      */
-    public static boolean canTarget(@Nullable Player source, @Nullable Location loc, Entity target, InteractionType interaction) {
+    public static boolean canTarget(@Nullable Player source, @Nullable Location loc, @NotNull Entity target, @NotNull InteractionType interaction) {
+
+        // Check for bounding box
+        // Small computations first
+        if (loc != null && !target.getBoundingBox().expand(BOUNDING_BOX_EXPANSION).contains(loc.toVector()))
+            return false;
 
         // Interaction type check
         if (!MythicLib.plugin.getEntities().canTarget(source, target, interaction))
             return false;
 
-        // Check for bounding box
-        return loc == null || target.getBoundingBox().expand(BOUNDING_BOX_EXPANSION).contains(loc.toVector());
+        return true;
+    }
+
+    public static boolean isRealPlayer(Entity entity) {
+        return entity instanceof Player && !entity.hasMetadata("NPC");
+    }
+
+    public static boolean isMetaItem(@Nullable ItemStack item) {
+        return item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName();
     }
 
     /**
@@ -228,7 +240,6 @@ public class UtilityMethods {
     public static String ymlName(String str) {
         return str.toLowerCase().replace("_", "-").replace(" ", "-");
     }
-
 
     public static double[] getYawPitch(Vector axis) {
         double _2PI = 6.283185307179586D;

@@ -6,6 +6,7 @@ import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.player.skill.PassiveSkill;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
+import io.lumine.mythic.lib.skill.result.def.AttackSkillResult;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import io.lumine.mythic.lib.skill.trigger.TriggerMetadata;
 import org.bukkit.Particle;
@@ -15,7 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-public class Backstab extends SkillHandler<SimpleSkillResult> implements Listener {
+public class Backstab extends SkillHandler<AttackSkillResult> implements Listener {
     public Backstab() {
         super(false);
 
@@ -23,12 +24,12 @@ public class Backstab extends SkillHandler<SimpleSkillResult> implements Listene
     }
 
     @Override
-    public SimpleSkillResult getResult(SkillMetadata meta) {
-        return new SimpleSkillResult(meta.hasAttackBound() && meta.hasTargetEntity() && meta.getTargetEntityOrNull() instanceof LivingEntity);
+    public AttackSkillResult getResult(SkillMetadata meta) {
+        return new AttackSkillResult(meta);
     }
 
     @Override
-    public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
+    public void whenCast(AttackSkillResult result, SkillMetadata skillMeta) {
         LivingEntity target = (LivingEntity) skillMeta.getTargetEntityOrNull();
         skillMeta.getAttack().getDamage().multiplicativeModifier(1 + skillMeta.getModifier("extra") / 100, DamageType.PHYSICAL);
         target.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, target.getHeight() / 2, 0), 32, 0, 0, 0, .05);
@@ -47,6 +48,6 @@ public class Backstab extends SkillHandler<SimpleSkillResult> implements Listene
         if (skill == null)
             return;
 
-        skill.getTriggeredSkill().cast(new TriggerMetadata(event.getAttacker(), event.getAttack(), event.getEntity()));
+        skill.getTriggeredSkill().cast(new TriggerMetadata(event.getAttacker(), event.getEntity()));
     }
 }

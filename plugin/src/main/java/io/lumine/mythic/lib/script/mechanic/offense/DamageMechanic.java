@@ -64,19 +64,18 @@ public class DamageMechanic extends TargetMechanic {
         final @Nullable Element element = elementName != null ? Objects.requireNonNull(MythicLib.plugin.getElements().get(elementName), "Could not find element with ID '" + elementName + "'") : null;
 
         // This ignores the 'knockback' and 'ignore-immunity' options
-        if (meta.hasAttackBound() && meta.getAttack().getTarget().equals(target)) {
-            if (element == null)
-                meta.getAttack().getDamage().add(amount.evaluate(meta), types);
-            else
-                meta.getAttack().getDamage().add(amount.evaluate(meta), element, types);
-            return;
+        if (meta.hasTargetEntity()) {
+            final @Nullable AttackMetadata opt = MythicLib.plugin.getDamage().getRegisteredAttackMetadata(meta.getTargetEntity());
+            if (opt != null) {
+                if (element == null)
+                    opt.getDamage().add(amount.evaluate(meta), types);
+                else
+                    opt.getDamage().add(amount.evaluate(meta), element, types);
+                return;
+            }
         }
 
-        final DamageMetadata damageMetadata = new DamageMetadata();
-        if (element == null)
-            damageMetadata.add(amount.evaluate(meta), types);
-        else
-            damageMetadata.add(amount.evaluate(meta), element, types);
+        final DamageMetadata damageMetadata = element == null ? new DamageMetadata(amount.evaluate(meta), types) : new DamageMetadata(amount.evaluate(meta), element, types);
         final AttackMetadata attackMetadata = new AttackMetadata(damageMetadata, (LivingEntity) target, meta.getCaster());
         MythicLib.plugin.getDamage().registerAttack(attackMetadata, knockback, ignoreImmunity);
     }

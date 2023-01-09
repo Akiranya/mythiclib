@@ -1,16 +1,17 @@
 package io.lumine.mythic.lib.comp.mythicmobs.condition;
 
+import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.conditions.ISkillMetaCondition;
 import io.lumine.mythic.core.skills.SkillCondition;
 import io.lumine.mythic.core.utils.annotations.MythicCondition;
+import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.damage.AttackMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
-import io.lumine.mythic.lib.skill.result.MythicMobsSkillResult;
-import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,25 +43,14 @@ public class HasDamageTypeCondition extends SkillCondition implements ISkillMeta
          * produced no attack meta, where at least I personally would use this
          * very condition to check if the skill had no damage meta at all.
          */
-        Set<DamageType> attackDamageTypes;
+        final Set<DamageType> attackDamageTypes = new HashSet<>();
 
-        // Skill has no damage types
-        if (!skillMetadata.getVariables().has(MythicMobsSkillResult.MMOSKILL_VAR_ATTACK)) {
-
-            // Empty set
-            attackDamageTypes = new HashSet<>();
-
-        // Skill does have damage types
-        } else {
-
-            // Retrieve Attack Meta
-            AttackMetadata attackMeta = (AttackMetadata) skillMetadata.getVariables().get(MythicMobsSkillResult.MMOSKILL_VAR_ATTACK).get();
-            Validate.isTrue(!attackMeta.hasExpired(), "Attack meta has expired");
-
-            // Read all damage types of this attack
-            attackDamageTypes = attackMeta.getDamage().collectTypes();
+        // Collect all damage types
+        for (AbstractEntity target : skillMetadata.getEntityTargets()) {
+            final @Nullable AttackMetadata opt = MythicLib.plugin.getDamage().getRegisteredAttackMetadata(target.getBukkitEntity());
+            if (opt != null)
+                attackDamageTypes.addAll(opt.getDamage().collectTypes());
         }
-
 
         // Exact match
         if (exact)

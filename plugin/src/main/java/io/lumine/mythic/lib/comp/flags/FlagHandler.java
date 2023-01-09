@@ -3,6 +3,7 @@ package io.lumine.mythic.lib.comp.flags;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,16 @@ public class FlagHandler {
         flagPlugins.add(Objects.requireNonNull(plugin, "Flag plugin cannot be null"));
     }
 
+    @Nullable
+    public <T extends FlagPlugin> T getHandler(Class<T> clazz) {
+        for (FlagPlugin plugin : flagPlugins)
+            if (plugin.getClass().equals(clazz))
+                return (T) plugin;
+        return null;
+    }
+
     /**
-     * True by default when no plugin is registered
+     * PVP is enabled by default.
      *
      * @return If PvP is toggled on at a specific location.
      */
@@ -28,26 +37,22 @@ public class FlagHandler {
     }
 
     /**
-     * True by default when no plugin is registered
-     *
      * @return If some flag is toggled on for some player given their location.
      */
     public boolean isFlagAllowed(Player player, CustomFlag flag) {
         for (FlagPlugin plugin : flagPlugins)
-            if (!plugin.isFlagAllowed(player, flag))
-                return false;
-        return true;
+            if (plugin.isFlagAllowed(player, flag) != flag.getDefault())
+                return !flag.getDefault();
+        return flag.getDefault();
     }
 
     /**
-     * True by default when no plugin is registered
-     *
      * @return If some flag is toggled on at a specific location.
      */
     public boolean isFlagAllowed(Location loc, CustomFlag flag) {
         for (FlagPlugin plugin : flagPlugins)
-            if (!plugin.isFlagAllowed(loc, flag))
-                return false;
-        return true;
+            if (plugin.isFlagAllowed(loc, flag) != flag.getDefault())
+                return !flag.getDefault();
+        return flag.getDefault();
     }
 }

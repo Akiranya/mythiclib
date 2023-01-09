@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class PassiveSkillMap extends ModifierMap<PassiveSkill> {
 
@@ -64,12 +63,13 @@ public class PassiveSkillMap extends ModifierMap<PassiveSkill> {
         for (PassiveSkill passive : getModifiers())
             if (passive.getType().equals(TriggerType.TIMER)) {
                 String key = passive.getTriggeredSkill().getHandler().getId();
-                final long lastCast = Objects.requireNonNullElse(this.lastCast.get(key), 0l); // Avoids one map checkup taking advantage of non null values
+                final Long mapValue = this.lastCast.get(key);
+                final long lastCast = mapValue == null ? 0 : mapValue; // Avoids one map checkup taking advantage of non null values
                 if (lastCast + passive.getTimerPeriod() > System.currentTimeMillis())
                     continue;
 
                 this.lastCast.put(key, System.currentTimeMillis());
-                passive.getTriggeredSkill().cast(triggerMeta != null ? triggerMeta : (triggerMeta = new TriggerMetadata(getPlayerData().getStatMap().cache(EquipmentSlot.MAIN_HAND), null, null)));
+                passive.getTriggeredSkill().cast(triggerMeta != null ? triggerMeta : (triggerMeta = new TriggerMetadata(getPlayerData().getStatMap().cache(EquipmentSlot.MAIN_HAND), null)));
             }
     }
 }

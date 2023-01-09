@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A class containing the information about a player that can
- * be used to temporarily cache its statistics for instance
- * when attacking or casting a skill
+ * A class created a specific point in time. It contains information
+ * about a player like its cached player stats and the hand used
+ * to perform the action, called "action hand".
  *
  * @author jules
  */
@@ -29,6 +29,7 @@ public class PlayerMetadata implements StatProvider {
     private final Player player;
     private final MMOPlayerData playerData;
     private final Map<String, Double> playerStats;
+    private final EquipmentSlot actionHand;
 
     public PlayerMetadata(PlayerMetadata parent) {
         Validate.notNull(parent, "Parent cannot be null");
@@ -36,12 +37,14 @@ public class PlayerMetadata implements StatProvider {
         this.player = parent.player;
         this.playerData = parent.playerData;
         this.playerStats = parent.playerStats;
+        this.actionHand = parent.actionHand;
     }
 
     public PlayerMetadata(StatMap statMap, @NotNull EquipmentSlot actionHand) {
         this.player = statMap.getPlayerData().getPlayer();
         this.playerData = statMap.getPlayerData();
         this.playerStats = new HashMap<>();
+        this.actionHand = actionHand;
 
         Validate.isTrue(Objects.requireNonNull(actionHand).isHand(), "Equipment slot must be a hand");
 
@@ -61,6 +64,10 @@ public class PlayerMetadata implements StatProvider {
 
     public MMOPlayerData getData() {
         return playerData;
+    }
+
+    public EquipmentSlot getActionHand() {
+        return actionHand;
     }
 
     /**

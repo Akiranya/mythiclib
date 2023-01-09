@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 @VariableMetadata(name = "cooldownMap")
 public class CooldownsVariable extends Variable<CooldownMap> {
-    public static final VariableRegistry<CooldownsVariable> VARIABLE_REGISTRY = new VariableRegistry<>() {
+    public static final VariableRegistry<CooldownsVariable> VARIABLE_REGISTRY = new VariableRegistry<CooldownsVariable>() {
 
         @NotNull
         @Override

@@ -27,7 +27,7 @@ public class Element {
     public Element(ConfigurationSection config) {
         Validate.notNull(config, "Config cannot be null");
 
-        this.id = config.getName().toUpperCase().replace("-", "_").replace(" ", "_");
+        this.id = UtilityMethods.enumName(config.getName());
         this.icon = Material.valueOf(UtilityMethods.enumName(config.getString("icon", DEFAULT_MATERIAL)));
         this.name = Objects.requireNonNull(config.getString("name"), "Please specify an element name");
         this.loreIcon = config.getString("lore-icon", DEFAULT_LORE_ICON);

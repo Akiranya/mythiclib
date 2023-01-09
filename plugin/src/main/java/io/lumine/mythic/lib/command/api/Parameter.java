@@ -9,20 +9,15 @@ public class Parameter {
     private final String key;
     private final BiConsumer<CommandTreeExplorer, List<String>> autoComplete;
 
-    // public static final Parameter PROFESSION = new
-    // Parameter("<profession/main>", list -> {
-    // MMOCore.plugin.professionManager.getAll().forEach(profession ->
-    // list.add(profession.getId()));
-    // list.add("main");
-    // });
     public static final Parameter PLAYER = new Parameter("<player>",
             (explorer, list) -> Bukkit.getOnlinePlayers().forEach(online -> list.add(online.getName())));
-    // public static final Parameter QUEST = new Parameter("<quest>",
-    // list -> MMOCore.plugin.questManager.getAll().forEach(quest ->
-    // list.add(quest.getId())));
     public static final Parameter PLAYER_OPTIONAL = new Parameter("(player)",
             (explorer, list) -> Bukkit.getOnlinePlayers().forEach(online -> list.add(online.getName())));
     public static final Parameter AMOUNT = new Parameter("<amount>", (explorer, list) -> {
+        for (int j = 0; j <= 10; j++)
+            list.add("" + j);
+    });
+    public static final Parameter AMOUNT_OPTIONAL = new Parameter("(amount)", (explorer, list) -> {
         for (int j = 0; j <= 10; j++)
             list.add("" + j);
     });

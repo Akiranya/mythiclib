@@ -2,8 +2,6 @@ package io.lumine.mythic.lib.util;
 
 import io.lumine.mythic.lib.MythicLib;
 import lombok.experimental.UtilityClass;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -114,31 +112,6 @@ public class AdventureUtils {
         } catch (Exception e) {
             return Color.WHITE;
         }
-    }
-
-    /**
-     * Convert a legacy string {@link Component}
-     *
-     * @param message The message to convert.
-     * @return The converted component.
-     */
-    public static @NotNull Component asComponent(@NotNull String message) {
-        return LegacyComponentSerializer.legacySection().deserialize(MythicLib.plugin.parseColors(message));
-    }
-
-    /**
-     * Convert a list of legacy strings to a list of {@link Component}.
-     *
-     * @param message The list of messages to convert.
-     * @return The converted list of components.
-     */
-    public static @NotNull Component asComponent(@NotNull List<String> message) {
-        final List<String> parsed = MythicLib.plugin.parseColors(message);
-        Component component = Component.empty();
-        for (String line : parsed)
-            component = component.append(LegacyComponentSerializer.legacySection().deserialize(line))
-                    .append(Component.newline());
-        return component;
     }
 
     /**

@@ -3,22 +3,15 @@ package io.lumine.mythic.lib.damage;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.stat.provider.StatProvider;
 import io.lumine.mythic.lib.player.PlayerMetadata;
-import org.bukkit.entity.Entity;
+import org.apache.commons.lang.Validate;
 import org.bukkit.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Used by melee attacks with melee weapons like custom
  * or vanilla swords, axes...
  */
 public class MeleeAttackMetadata extends AttackMetadata {
-
-    /**
-     * This is used to support the following plugins which implement
-     * off hand item attacks.
-     * - RealDualWield
-     * - DualWield
-     */
-    private final EquipmentSlot hand;
 
     /**
      * Used by AttackHandler instances to register attacks. AttackResult only
@@ -29,15 +22,19 @@ public class MeleeAttackMetadata extends AttackMetadata {
      *
      * @param damage   The attack result
      * @param attacker The entity who dealt the damage
-     * @param hand Hand used in the melee attack
      */
-    public MeleeAttackMetadata(DamageMetadata damage, LivingEntity target, StatProvider attacker, EquipmentSlot hand) {
+    public MeleeAttackMetadata(DamageMetadata damage, @NotNull LivingEntity target, @NotNull StatProvider attacker) {
         super(damage, target, attacker);
-
-        this.hand = hand;
     }
 
+    /**
+     * @return Hand used in the action
+     * @deprecated Useless
+     */
+    @Deprecated
     public EquipmentSlot getHand() {
-        return hand;
+        Validate.notNull(getAttacker(), "No attacker found");
+        Validate.isTrue(getAttacker() instanceof PlayerMetadata, "Attacker is not a player");
+        return ((PlayerMetadata) getAttacker()).getActionHand();
     }
 }

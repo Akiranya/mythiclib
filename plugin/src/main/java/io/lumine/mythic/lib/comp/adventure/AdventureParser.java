@@ -3,20 +3,22 @@ package io.lumine.mythic.lib.comp.adventure;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.comp.adventure.argument.AdventureArgument;
 import io.lumine.mythic.lib.comp.adventure.argument.AdventureArgumentQueue;
+import io.lumine.mythic.lib.comp.adventure.argument.EmptyArgumentQueue;
 import io.lumine.mythic.lib.comp.adventure.resolver.ContextTagResolver;
 import io.lumine.mythic.lib.comp.adventure.tag.AdventureTag;
 import io.lumine.mythic.lib.comp.adventure.tag.implementation.*;
 import io.lumine.mythic.lib.comp.adventure.tag.implementation.decorations.*;
 import io.lumine.mythic.lib.util.AdventureUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math3.util.Pair;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -35,15 +37,13 @@ public class AdventureParser {
     private static final Pattern HEX_REGEX = Pattern.compile("(?i)(#|HEX)[0-9a-f]{6}");
 
     private final List<AdventureTag> tags = new ArrayList<>();
-    private final Function<String, String> fallBackResolver;
 
-    public AdventureParser(@NotNull Function<String, String> fallBackResolver) {
-        this.fallBackResolver = fallBackResolver;
+    @ApiStatus.Internal
+    @TestOnly
+    public AdventureParser(boolean testing) {
     }
 
     public AdventureParser() {
-        this(s -> "<invalid>");
-
         // Context
         add(new GradientTag());
         add(new RainbowTag());
@@ -85,14 +85,16 @@ public class AdventureParser {
                     .map(adventureTag -> parseTag(finalCpy, adventureTag, tagName, tag))
                     .orElseGet(() -> {
                         Matcher matcher1 = HEX_REGEX.matcher(tag);
-                        // Fall back
                         if (!matcher1.find())
-                            return finalCpy.replace("<" + tag + ">", fallBackResolver.apply(tag));
+                            return finalCpy;
+                        // Fall back
+                        // return finalCpy.replace("<" + tag + ">", fallBackResolver.apply(tag));
 
                         String prefix = matcher1.group(1);
                         return findByName(prefix)
                                 .map(adventureTag -> parseTag(finalCpy, adventureTag, prefix, tag))
-                                .orElse(finalCpy.replace("<" + tag + ">", fallBackResolver.apply(tag)));
+                                .orElse(finalCpy);
+                        // .orElse(finalCpy.replace("<" + tag + ">", fallBackResolver.apply(tag)));
                     });
         }
         cpy = removeUnparsedAndUselessTags(cpy);
@@ -166,12 +168,11 @@ public class AdventureParser {
             boolean hasContext = tag.resolver() instanceof ContextTagResolver;
 
             String context = hasContext ? getTagContent(cpy, rawTag, original) : null;
+            Pair<List<String>, String> contextDecorations = hasContext ? processContextDecorations(context) : null;
             String resolved = hasContext ?
-                    ((ContextTagResolver) tag.resolver()).resolve(rawTag, args, context)
+                    ((ContextTagResolver) tag.resolver()).resolve(rawTag, args, contextDecorations.getValue(), contextDecorations.getKey())
                     : tag.resolver().resolve(rawTag, args);
-            cpy = cpy.replace(hasContext ?
-                    Objects.requireNonNullElse("%s%s".formatted(original, context), fallBackResolver.apply(original))
-                    : original, Objects.requireNonNullElse(resolved, fallBackResolver.apply(original)));
+            cpy = cpy.replace(hasContext ? "%s%s".formatted(original, context) : original, resolved != null ? resolved : "");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -243,7 +244,8 @@ public class AdventureParser {
         while (matcher.find() && iterations++ < 50) {
             final String matched = matcher.group();
             final String original = "<%s>".formatted(matched);
-            src = src.replace(original, matched.startsWith("/") ? "§r" : fallBackResolver.apply(original));
+            if (matched.startsWith("/"))
+                src = src.replace(original, "§r");
             matcher = TAG_REGEX.matcher(src);
         }
         return src;
@@ -298,7 +300,7 @@ public class AdventureParser {
                             });
         }
 
-        String vanilla = ChatColor.getLastColors(cpy);
+        String vanilla = getLastLegacyColor(cpy, matchDecorations);
         if (tags.isEmpty())
             return vanilla;
         final String lastTag = matchDecorations ? getSurroundingDecorations(src, tags) : getLastColorTag(tags);
@@ -318,7 +320,7 @@ public class AdventureParser {
         return null;
     }
 
-    private @Nullable String getSurroundingDecorations(final String src, final LinkedList<Map.Entry<AdventureTag, String>> list) {
+    private @Nullable String getSurroundingDecorations(@NotNull final String src, @NotNull final LinkedList<Map.Entry<AdventureTag, String>> list) {
         final String colorTag = getLastColorTag(list);
 
         // If there is no color tag, search for the last decoration tag
@@ -370,6 +372,52 @@ public class AdventureParser {
         previousTags.forEach(builder::append);
         builder.append(colorTag);
         nextTags.forEach(builder::append);
+        return builder.toString();
+    }
+
+    private @NotNull Pair<List<String>, String> processContextDecorations(@NotNull String context) {
+        final Map<String, String> decorations = new HashMap<>();
+        final String cpy = minecraftColorization(context);
+        final Matcher matcher = TAG_REGEX.matcher(cpy);
+
+        // Find decorations
+        while (matcher.find()) {
+            final String tag = matcher.group();
+            final String tagName = tag.contains(":") ? tag.split(":")[0] : tag;
+            if (tagName.isEmpty() || tagName.startsWith("/"))
+                continue;
+
+            findByName(tagName)
+                    .filter(t -> !t.color())
+                    .map(t -> t.resolver().resolve("", new EmptyArgumentQueue()))
+                    .ifPresent(s -> decorations.put(tag, s));
+        }
+
+        // Replace decorations tags
+        for (Map.Entry<String, String> e : decorations.entrySet())
+            context = context.replace("<%s>".formatted(e.getKey()), "");
+
+        return Pair.create(new ArrayList<>(decorations.values()), context);
+    }
+
+    private @NotNull String getLastLegacyColor(@NotNull final String input, boolean matchDecorations) {
+        final StringBuilder builder = new StringBuilder();
+        int length = input.length();
+        for (int index = length - 1; index > -1; --index) {
+            char section = input.charAt(index);
+            if (section != 167 || index >= length - 1)
+                continue;
+            char c = input.charAt(index + 1);
+            ChatColor color = ChatColor.getByChar(c);
+            if (color == null)
+                continue;
+            if (color.isFormat() && !matchDecorations)
+                continue;
+
+            builder.insert(0, color);
+            if (color.isColor() || color.equals(ChatColor.RESET))
+                break;
+        }
         return builder.toString();
     }
 

@@ -119,7 +119,7 @@ wind_critical_strike:
             type: set_velocity
             vector: knockback
         subskill:
-            type: skill
+            type: script
             name: wind_crit_sub_skill
             target:
                 type: nearby_entities
@@ -176,7 +176,7 @@ earth_critical_strike:
             type: set_velocity
             vector: knockup
         subskill:
-            type: skill
+            type: script
             name: earth_crit_subskill
             target:
                 type: nearby_entities
@@ -217,7 +217,7 @@ thunder_critical_strike:
                 radius: 1
                 amount: 32
         subskill:
-            type: skill
+            type: script
             name: thunder_crit_subskill_1
             target:
                 type: nearby_entities
@@ -258,7 +258,7 @@ water_critical_strike:
             radius: 'Sin[<var.angle>]'
             tick: water_crit_subskill_2
         subskill:
-            type: skill
+            type: script
             name: water_crit_subskill_1
             target:
                 type: nearby_entities

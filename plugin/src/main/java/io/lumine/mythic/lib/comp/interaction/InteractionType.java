@@ -1,4 +1,4 @@
-package io.lumine.mythic.lib.comp.target;
+package io.lumine.mythic.lib.comp.interaction;
 
 public enum InteractionType {
 

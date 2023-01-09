@@ -5,7 +5,10 @@ import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.handler.def.passive.Backstab;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class TriggerType {
 
@@ -22,7 +25,7 @@ public class TriggerType {
      * Called when a player attacks any other entity
      * Metadata target is the entity being attacked
      */
-    ATTACK = new TriggerType("ATTACK"),
+    ATTACK = new TriggerType("ATTACK", true, true, true),
 
     /**
      * Called when a player is damaged by any source
@@ -40,31 +43,31 @@ public class TriggerType {
      */
     DEATH = new TriggerType("DEATH"),
 
-    // Bow or crossbows
+    // Bow or crossbow
 
     /**
      * Called when an arrow is shot from a bow
      * Skill target is the arrow fired
      */
-    SHOOT_BOW = new TriggerType("SHOOT_BOW"),
+    SHOOT_BOW = new TriggerType("SHOOT_BOW", true, true, true),
 
     /**
      * Called every tick when an arrow flies in the air
      * Skill target is the arrow fired
      */
-    ARROW_TICK = new TriggerType("ARROW_TICK"),
+    ARROW_TICK = new TriggerType("ARROW_TICK", true, true, true),
 
     /**
      * Called when an arrow hits an entity
      * Skill target is the entity hit (the arrow dies right afterwards)
      */
-    ARROW_HIT = new TriggerType("ARROW_HIT"),
+    ARROW_HIT = new TriggerType("ARROW_HIT", true, true, true),
 
     /**
      * Called when an arrow hits a block
      * Skill target is the arrow fired
      */
-    ARROW_LAND = new TriggerType("ARROW_LAND"),
+    ARROW_LAND = new TriggerType("ARROW_LAND", true, true, true),
 
     // Trident
 
@@ -72,25 +75,25 @@ public class TriggerType {
      * Called when a player shoots a trident
      * Skill target is the thrown trident
      */
-    SHOOT_TRIDENT = new TriggerType("SHOOT_TRIDENT"),
+    SHOOT_TRIDENT = new TriggerType("SHOOT_TRIDENT", true, true, true),
 
     /**
      * Called every tick when a trident flies in the air
      * Skill target is the thrown trident
      */
-    TRIDENT_TICK = new TriggerType("TRIDENT_TICK"),
+    TRIDENT_TICK = new TriggerType("TRIDENT_TICK", true, true, true),
 
     /**
      * Called when an arrow hits an entity
      * Skill target is the thrown trident
      */
-    TRIDENT_HIT = new TriggerType("TRIDENT_HIT"),
+    TRIDENT_HIT = new TriggerType("TRIDENT_HIT", true, true, true),
 
     /**
      * Called when a thrown trident hits a block
      * Skill target is the trident thrown
      */
-    TRIDENT_LAND = new TriggerType("TRIDENT_LAND"),
+    TRIDENT_LAND = new TriggerType("TRIDENT_LAND", true, true, true),
 
     // Clicks
 
@@ -98,25 +101,25 @@ public class TriggerType {
      * Called when a player right clicks
      * This trigger displays cooldown/mana restriction messages.
      */
-    RIGHT_CLICK = new TriggerType("RIGHT_CLICK", false),
+    RIGHT_CLICK = new TriggerType("RIGHT_CLICK", false, true, true),
 
     /**
      * Called when a player left clicks
      * This trigger displays cooldown/mana restriction messages.
      */
-    LEFT_CLICK = new TriggerType("LEFT_CLICK", false),
+    LEFT_CLICK = new TriggerType("LEFT_CLICK", false, true, true),
 
     /**
      * Called when a player right clicks while crouching
      * This trigger displays cooldown/mana restriction messages.
      */
-    SHIFT_RIGHT_CLICK = new TriggerType("SHIFT_RIGHT_CLICK", false),
+    SHIFT_RIGHT_CLICK = new TriggerType("SHIFT_RIGHT_CLICK", false, true, true),
 
     /**
      * Called when a player left clicks while crouching
      * This trigger displays cooldown/mana restriction messages.
      */
-    SHIFT_LEFT_CLICK = new TriggerType("SHIFT_LEFT_CLICK", false),
+    SHIFT_LEFT_CLICK = new TriggerType("SHIFT_LEFT_CLICK", false, true, true),
 
     // Misc
 
@@ -186,7 +189,7 @@ public class TriggerType {
     }
 
     private final String id;
-    private final boolean silent, passive;
+    private final boolean silent, passive, actionHandSpecific;
 
     public TriggerType(String id) {
         this(id, true, true);
@@ -205,9 +208,22 @@ public class TriggerType {
      * @param passive Does this trigger type generate passive skills
      */
     private TriggerType(String id, boolean silent, boolean passive) {
+        this(id, silent, passive, false);
+    }
+
+    /**
+     * This constructor is made private to make sure there is only
+     * one trigger type that generates active skills.
+     *
+     * @param id      The trigger type ID
+     * @param silent  Does this trigger type generate silent skills
+     * @param passive Does this trigger type generate passive skills
+     */
+    private TriggerType(String id, boolean silent, boolean passive, boolean actionHandSpecific) {
         this.id = id;
         this.silent = silent;
         this.passive = passive;
+        this.actionHandSpecific = actionHandSpecific;
     }
 
     /**
@@ -226,6 +242,16 @@ public class TriggerType {
      */
     public boolean isSilent() {
         return silent;
+    }
+
+    /**
+     * When set to true, skills granted by the item held in the
+     * secondary hand (opposite of the action hand) will not be applied.
+     *
+     * These triggers correspond to item interactions (clicks, attacks).
+     */
+    public boolean isActionHandSpecific() {
+        return actionHandSpecific;
     }
 
     /**

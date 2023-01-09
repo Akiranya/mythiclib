@@ -43,6 +43,8 @@ public class AttackEventListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void registerEvents(EntityDamageEvent event) {
+
+        // Ignore fake events from RDW/mcMMO/...
         if (!(event.getEntity() instanceof LivingEntity) || event.getDamage() == 0)
             return;
 
@@ -50,7 +52,6 @@ public class AttackEventListener implements Listener {
         final @NotNull AttackMetadata attack = MythicLib.plugin.getDamage().findAttack(event);
         final AttackEvent attackEvent = attack.isPlayer() ? new PlayerAttackEvent(event, attack) : new AttackEvent(event, attack);
         Bukkit.getPluginManager().callEvent(attackEvent);
-        attack.expire();
         if (attackEvent.isCancelled())
             return;
 

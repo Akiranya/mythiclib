@@ -55,18 +55,6 @@ public class MMOPlayerData {
      */
     private final Map<String, Object> externalData = new HashMap<>();
 
-    /**
-     * When a player logs off, the MythicLib player data is cached for
-     * an extra delay which is set to 24 hours before it is finally removed
-     * from the memory.
-     * <p>
-     * Cache time out is set to one full day. If the player does NOT reconnect
-     * after one day, the temporary player data will be completely lost.
-     */
-    private static final long CACHE_TIME_OUT = 1000 * 60 * 60 * 24;
-
-    private static final Map<UUID, MMOPlayerData> data = new HashMap<>();
-
     private MMOPlayerData(Player player) {
         this.uuid = player.getUniqueId();
         this.player = player;
@@ -125,33 +113,50 @@ public class MMOPlayerData {
      * @param triggerType Action performed to trigger the skills
      * @param target      The potential target to cast the skill onto
      */
-    public void triggerSkills(TriggerType triggerType, @Nullable Entity target) {
-        triggerSkills(triggerType, statMap.cache(EquipmentSlot.MAIN_HAND), null, target, passiveSkillMap.getModifiers());
+    public void triggerSkills(@NotNull TriggerType triggerType, @Nullable Entity target) {
+        Validate.isTrue(!triggerType.isActionHandSpecific(), "You must provide an action hand");
+        triggerSkills(triggerType, EquipmentSlot.MAIN_HAND, target);
     }
 
     /**
-     * Trigger skills with an attack metadata.
+     * Used to trigger skills with no attack metadata. This caches
+     * the player statistics and create an attack metadata.
      *
-     * @param triggerType    Action performed to trigger the skills
-     * @param target         The potential target to cast the skill onto
-     * @param attackMetadata The attack being performed
+     * @param triggerType Action performed to trigger the skills
+     * @param actionHand  Hand used to perform action
+     * @param target      The potential target to cast the skill onto
+     */
+    public void triggerSkills(@NotNull TriggerType triggerType, @NotNull EquipmentSlot actionHand, @Nullable Entity target) {
+        Validate.notNull(actionHand, "Action hand cannot be null");
+        triggerSkills(triggerType, statMap.cache(actionHand), target);
+    }
+
+    /**
+     * @deprecated It is now useless to store AttackMetadatas in SkillMetadatas
      */
     @Deprecated
-    public void triggerSkills(TriggerType triggerType, @NotNull AttackMetadata attackMetadata, @Nullable Entity target) {
-        Validate.notNull(attackMetadata, "Attack meta cannot be null");
-        triggerSkills(triggerType, (PlayerMetadata) attackMetadata.getAttacker(), attackMetadata, target, passiveSkillMap.getModifiers());
+    public void triggerSkills(@NotNull TriggerType triggerType, @NotNull PlayerMetadata caster, @Nullable AttackMetadata attackMetadata, @Nullable Entity target) {
+        final Iterable<PassiveSkill> cast = triggerType.isActionHandSpecific() ? passiveSkillMap.isolateModifiers(caster.getActionHand()) : passiveSkillMap.getModifiers();
+        triggerSkills(triggerType, caster, target, cast);
     }
 
     /**
-     * Trigger skills with an attack metadata.
+     * Trigger skills with an attack metadata and target entity.
      *
-     * @param triggerType    Action performed to trigger the skills
-     * @param target         The potential target to cast the skill onto
-     * @param attackMetadata The attack being performed
+     * @param triggerType Action performed to trigger the skills
+     * @param target      The potential target to cast the skill onto
      */
-    public void triggerSkills(TriggerType triggerType, @NotNull PlayerMetadata caster, @NotNull AttackMetadata attackMetadata, @Nullable Entity target) {
-        Validate.notNull(attackMetadata, "Attack meta cannot be null");
-        triggerSkills(triggerType, caster, attackMetadata, target, passiveSkillMap.getModifiers());
+    public void triggerSkills(@NotNull TriggerType triggerType, @NotNull PlayerMetadata caster, @Nullable Entity target) {
+        final Iterable<PassiveSkill> cast = triggerType.isActionHandSpecific() ? passiveSkillMap.isolateModifiers(caster.getActionHand()) : passiveSkillMap.getModifiers();
+        triggerSkills(triggerType, caster, target, cast);
+    }
+
+    /**
+     * @deprecated It is now useless to store AttackMetadatas in SkillMetadatas
+     */
+    @Deprecated
+    public void triggerSkills(@NotNull TriggerType triggerType, @NotNull PlayerMetadata caster, @Nullable AttackMetadata attackMetadata, @Nullable Entity target, @NotNull Iterable<PassiveSkill> skills) {
+        triggerSkills(triggerType, caster, target, skills);
     }
 
     /**
@@ -159,20 +164,19 @@ public class MMOPlayerData {
      * You can also provide the player statistics used to cast the skills
      * which is for instance used for projectile trigger types.
      *
-     * @param triggerType    Action performed to trigger the skills
-     * @param caster         The player cached statistics
-     * @param target         The potential target to cast the skill onto
-     * @param attackMetadata The attack being performed
-     * @param skills         The list of skills currently active for the player
+     * @param triggerType Action performed to trigger the skills
+     * @param caster      The player cached statistics
+     * @param target      The potential target to cast the skill onto
+     * @param skills      The list of skills currently active for the player
      */
-    public void triggerSkills(@NotNull TriggerType triggerType, @NotNull PlayerMetadata caster, @Nullable AttackMetadata attackMetadata, @Nullable Entity target, @NotNull Iterable<PassiveSkill> skills) {
+    public void triggerSkills(@NotNull TriggerType triggerType, @NotNull PlayerMetadata caster, @Nullable Entity target, @NotNull Iterable<PassiveSkill> skills) {
         if (!MythicLib.plugin.getFlags().isFlagAllowed(getPlayer(), CustomFlag.MMO_ABILITIES))
             return;
 
-        TriggerMetadata triggerMeta = new TriggerMetadata(caster, attackMetadata, target);
+        final TriggerMetadata triggerMeta = new TriggerMetadata(caster, target);
 
         for (PassiveSkill skill : skills) {
-            SkillHandler handler = skill.getTriggeredSkill().getHandler();
+            final SkillHandler handler = skill.getTriggeredSkill().getHandler();
             if (skill.getType().equals(triggerType) && handler.isTriggerable())
                 skill.getTriggeredSkill().cast(triggerMeta);
         }
@@ -198,9 +202,20 @@ public class MMOPlayerData {
         return lastLogActivity;
     }
 
+    /**
+     * When a player logs off, the MythicLib player data is cached for
+     * an extra delay which is set to 24 hours before it is finally removed
+     * from the memory.
+     * <p>
+     * Cache time out is set to one full day. If the player does NOT reconnect
+     * after one day, the temporary player data will be completely lost.
+     */
+    private static final long CACHE_TIME_OUT = 1000 * 60 * 60 * 24;
+
     public boolean isTimedOut() {
         return !isOnline() && lastLogActivity + CACHE_TIME_OUT < System.currentTimeMillis();
     }
+
 
     /**
      * This method simply checks if the cached Player instance is null
@@ -279,6 +294,22 @@ public class MMOPlayerData {
     public boolean hasExternalData(String key) {
         return externalData.containsKey(key);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MMOPlayerData)) return false;
+
+        MMOPlayerData that = (MMOPlayerData) o;
+        return uuid.equals(that.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return uuid.hashCode();
+    }
+
+    private static final Map<UUID, MMOPlayerData> data = new HashMap<>();
 
     /**
      * Called everytime a player enters the server. If the
@@ -392,20 +423,6 @@ public class MMOPlayerData {
             if (tempData.isTimedOut())
                 iterator.remove();
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MMOPlayerData)) return false;
-
-        MMOPlayerData that = (MMOPlayerData) o;
-        return uuid.equals(that.uuid);
-    }
-
-    @Override
-    public int hashCode() {
-        return uuid.hashCode();
     }
 }
 

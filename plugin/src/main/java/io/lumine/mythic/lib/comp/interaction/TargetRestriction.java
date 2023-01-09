@@ -1,4 +1,4 @@
-package io.lumine.mythic.lib.comp.target;
+package io.lumine.mythic.lib.comp.interaction;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

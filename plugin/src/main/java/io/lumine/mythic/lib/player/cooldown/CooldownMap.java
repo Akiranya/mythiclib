@@ -9,7 +9,8 @@ public class CooldownMap {
     private final Map<String, CooldownInfo> map = new HashMap<>();
 
     /**
-     * Applies a cooldown
+     * Sets current cooldown to the maximum value
+     * of the current and input cooldown values.
      *
      * @param obj      The skill or action
      * @param cooldown Initial skill or action cooldown
@@ -20,16 +21,21 @@ public class CooldownMap {
     }
 
     /**
-     * Applies a cooldown
+     * Sets current cooldown to the maximum value o
+     * of the current and input cooldown values.
      *
      * @param path     The skill or action path, must be completely unique
      * @param cooldown Initial skill or action cooldown
      * @return The newly registered cooldown info
      */
     public CooldownInfo applyCooldown(String path, double cooldown) {
-        CooldownInfo newest = new CooldownInfo(cooldown);
-        map.put(path, newest);
-        return newest;
+        @Nullable CooldownInfo current = map.get(path);
+        if (current != null && current.getRemaining() >= cooldown * 1000)
+            return current;
+
+        current = new CooldownInfo(cooldown);
+        map.put(path, current);
+        return current;
     }
 
     /**
@@ -61,7 +67,7 @@ public class CooldownMap {
      * @return Retrieves the remaining cooldown in seconds
      */
     public double getCooldown(String path) {
-        CooldownInfo info = map.get(path);
+        final @Nullable CooldownInfo info = map.get(path);
         return info == null ? 0 : (double) info.getRemaining() / 1000;
     }
 
@@ -78,7 +84,7 @@ public class CooldownMap {
      * @return If the mechanic can be used by the player
      */
     public boolean isOnCooldown(String path) {
-        CooldownInfo found = map.get(path);
+        final @Nullable CooldownInfo found = map.get(path);
         return found != null && !found.hasEnded();
     }
 }

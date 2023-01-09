@@ -13,6 +13,10 @@ public class AdditiveDamageBuffMechanic extends TargetMechanic {
     private final DoubleFormula amount;
     private final DamageType damageType;
 
+    /**
+     * @deprecated Use {@link MultiplyDamageMechanic} instead
+     */
+    @Deprecated
     public AdditiveDamageBuffMechanic(ConfigObject config) {
         super(config);
 

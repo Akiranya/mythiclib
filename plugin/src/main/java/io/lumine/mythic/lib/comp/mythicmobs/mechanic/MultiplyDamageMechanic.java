@@ -1,14 +1,17 @@
 package io.lumine.mythic.lib.comp.mythicmobs.mechanic;
 
+import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.skills.INoTargetSkill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
 import io.lumine.mythic.api.skills.placeholders.PlaceholderDouble;
+import io.lumine.mythic.core.utils.annotations.MythicMechanic;
+import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.damage.AttackMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
-import io.lumine.mythic.lib.skill.result.MythicMobsSkillResult;
-import org.apache.commons.lang.Validate;
+
+import java.util.Objects;
 
 /**
  * Mechanic used to increase the damage for a specific
@@ -25,6 +28,12 @@ import org.apache.commons.lang.Validate;
  *
  * @author indyuce
  */
+@MythicMechanic(
+        author = "Indyuce",
+        name = "multiplydamage",
+        aliases = {"multdamage", "multdmg"},
+        description = "Increases damage of current attack by a certain factor"
+)
 public class MultiplyDamageMechanic implements INoTargetSkill {
     protected final PlaceholderDouble amount;
     protected final DamageType type;
@@ -39,21 +48,24 @@ public class MultiplyDamageMechanic implements INoTargetSkill {
 
     @Override
     public SkillResult cast(SkillMetadata skillMetadata) {
-        Validate.isTrue(skillMetadata.getVariables().has(MythicMobsSkillResult.MMOSKILL_VAR_ATTACK), "No attack meta is provided");
-        AttackMetadata attackMeta = (AttackMetadata) skillMetadata.getVariables().get(MythicMobsSkillResult.MMOSKILL_VAR_ATTACK).get();
-        Validate.isTrue(!attackMeta.hasExpired(), "Attack meta has expired");
 
-        double a = this.amount.get(skillMetadata);
-        if (additive) {
-            if (type == null)
-                attackMeta.getDamage().additiveModifier(a);
-            else
-                attackMeta.getDamage().additiveModifier(a, type);
-        } else {
-            if (type == null)
-                attackMeta.getDamage().multiplicativeModifier(a);
-            else
-                attackMeta.getDamage().multiplicativeModifier(a, type);
+        for (AbstractEntity target : skillMetadata.getEntityTargets()) {
+            AttackMetadata attackMeta = Objects.requireNonNull(MythicLib.plugin.getDamage().getRegisteredAttackMetadata(target.getBukkitEntity()));
+            if (attackMeta == null)
+                continue;
+
+            final double a = this.amount.get(skillMetadata);
+            if (additive) {
+                if (type == null)
+                    attackMeta.getDamage().additiveModifier(a);
+                else
+                    attackMeta.getDamage().additiveModifier(a, type);
+            } else {
+                if (type == null)
+                    attackMeta.getDamage().multiplicativeModifier(a);
+                else
+                    attackMeta.getDamage().multiplicativeModifier(a, type);
+            }
         }
 
         return SkillResult.SUCCESS;

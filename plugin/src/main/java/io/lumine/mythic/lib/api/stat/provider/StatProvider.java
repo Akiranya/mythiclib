@@ -1,9 +1,11 @@
 package io.lumine.mythic.lib.api.stat.provider;
 
+import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
+import io.lumine.mythic.lib.api.stat.StatMap;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This class is used to generalize stat maps to both players and non-player
@@ -12,21 +14,38 @@ import org.bukkit.entity.Player;
  * the stat map).
  * <p>
  * See {@link EntityStatProvider} for more info
+ * <p>
+ * TODO Transform this into EntityMetadata and merge it with PlayerMetadata
+ * TODO Good for GUI script centralization
  *
  * @author indyuce
  */
 public interface StatProvider {
     double getStat(String stat);
 
+    @Deprecated
     static StatProvider get(LivingEntity living) {
-        return isRealPlayer(living) ? MMOPlayerData.get(living.getUniqueId()).getStatMap() : new EntityStatProvider(living);
+        return get(living, EquipmentSlot.MAIN_HAND, true);
     }
 
+    @Deprecated
     static StatProvider generate(LivingEntity living, EquipmentSlot actionHand) {
-        return isRealPlayer(living) ? MMOPlayerData.get(living.getUniqueId()).getStatMap().cache(actionHand) : new EntityStatProvider(living);
+        return get(living, actionHand, true);
     }
 
-    private static boolean isRealPlayer(Object entity) {
-        return entity instanceof Player && !((Player) entity).hasMetadata("NPC");
+    /**
+     * @param living     Living entity
+     * @param actionHand Hand used to perform the action
+     * @param cache      If the entity is a player, their stats should be cached.
+     *                   It can be useless to do that because
+     * @return The stat provider of the corresponding entity
+     */
+    @NotNull
+    static StatProvider get(LivingEntity living, EquipmentSlot actionHand, boolean cache) {
+        if (!UtilityMethods.isRealPlayer(living))
+            return new EntityStatProvider(living);
+
+        final StatMap statMap = MMOPlayerData.get(living.getUniqueId()).getStatMap();
+        return cache ? statMap.cache(actionHand) : statMap;
     }
 }

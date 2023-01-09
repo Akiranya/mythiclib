@@ -127,7 +127,7 @@ public class SkillManager {
         registerMechanic("dispatch_command", DispatchCommandMechanic::new);
         registerMechanic("entity_effect", EntityEffectMechanic::new);
         registerMechanic("lightning", config -> new LightningStrikeMechanic(config));
-        registerMechanic("script", config -> new ScriptMechanic(config));
+        registerMechanic("script", config -> new ScriptMechanic(config), "skill");
 
         registerMechanic("teleport", config -> new TeleportMechanic(config));
         registerMechanic("set_velocity", config -> new VelocityMechanic(config));
@@ -317,12 +317,15 @@ public class SkillManager {
         throw new IllegalArgumentException("Could not match condition to '" + key + "'");
     }
 
-    public void registerMechanic(String name, Function<ConfigObject, Mechanic> mechanic) {
+    public void registerMechanic(String name, Function<ConfigObject, Mechanic> mechanic, String... aliases) {
         Validate.isTrue(registration, "Mechanic registration is disabled");
         Validate.isTrue(!mechanics.containsKey(name), "A mechanic with the same name already exists");
         Validate.notNull(mechanic, "Function cannot be null");
 
         mechanics.put(name, mechanic);
+
+        for (String alias : aliases)
+            mechanics.put(alias, mechanic);
     }
 
     @NotNull

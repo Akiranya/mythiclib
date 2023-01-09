@@ -8,6 +8,7 @@ import io.lumine.mythic.lib.player.PlayerMetadata;
 import io.lumine.mythic.lib.player.skill.PassiveSkill;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
+import io.lumine.mythic.lib.skill.result.def.AttackSkillResult;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import io.lumine.mythic.lib.skill.trigger.TriggerMetadata;
 import io.lumine.mythic.lib.util.ParabolicProjectile;
@@ -23,7 +24,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class Power_Mark extends SkillHandler<SimpleSkillResult> implements Listener {
+public class Power_Mark extends SkillHandler<AttackSkillResult> implements Listener {
     public Power_Mark() {
         super(false);
 
@@ -31,12 +32,12 @@ public class Power_Mark extends SkillHandler<SimpleSkillResult> implements Liste
     }
 
     @Override
-    public SimpleSkillResult getResult(SkillMetadata meta) {
-        return new SimpleSkillResult(meta.hasAttackBound() && meta.hasTargetEntity() && meta.getTargetEntityOrNull() instanceof LivingEntity);
+    public AttackSkillResult getResult(SkillMetadata meta) {
+        return new AttackSkillResult(meta);
     }
 
     @Override
-    public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
+    public void whenCast(AttackSkillResult result, SkillMetadata skillMeta) {
         new PowerMark(skillMeta.getCaster(), skillMeta, skillMeta.getTargetEntity().getLocation());
     }
 
@@ -49,7 +50,7 @@ public class Power_Mark extends SkillHandler<SimpleSkillResult> implements Liste
         if (skill == null)
             return;
 
-        skill.getTriggeredSkill().cast(new TriggerMetadata(event.getAttacker(), event.getAttack(), event.getEntity()));
+        skill.getTriggeredSkill().cast(new TriggerMetadata(event.getAttacker(), event.getEntity()));
     }
 
     public class PowerMark extends BukkitRunnable implements Listener {

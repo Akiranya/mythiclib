@@ -5,7 +5,7 @@
     <parent>
         <artifactId>MythicLib</artifactId>
         <groupId>io.lumine</groupId>
-        <version>${revision}</version>
+        <version>1.5.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,7 +20,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <finalName>MythicLib-${revision}</finalName>
+                    <finalName>MythicLib-${project.version}</finalName>
                     <outputDirectory>../target/</outputDirectory>
                 </configuration>
             </plugin>
@@ -54,10 +54,6 @@
 
                             <relocations>
                                 <relocation>
-                                    <pattern>net.kyori</pattern>
-                                    <shadedPattern>io.lumine.mythic.lib</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.matheclipse.commons.parser</pattern>
                                     <shadedPattern>io.lumine.mythic.lib.parser</shadedPattern>
                                 </relocation>
@@ -83,40 +79,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- This plugin makes sure that there are no placeholders in the final
-            pom.xml version string because having ${revision} would cause issues when
-            using MythicLib-dist as a dependency
-
-            The flatten plugin must run AFTER the shade plugin, otherwise an issue pops up.
-            To do that, run the flatten plugin on the 'package' phase
-
-            https://stackoverflow.com/questions/52552329/use-maven-flatten-plugin-and-maven-shade-plugin-at-the-same-time
-            -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.2.2</version>
-                <configuration>
-                    <updatePomFile>true</updatePomFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>flatten</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -124,42 +86,42 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-plugin</artifactId>
-            <version>${revision}</version>
+            <version>1.5.1-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_17</artifactId>
-            <version>${revision}</version>
+            <version>1.5.1-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_18</artifactId>
-            <version>${revision}</version>
+            <version>1.5.1-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_18_r2</artifactId>
-            <version>${revision}</version>
+            <version>1.5.1-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_19</artifactId>
-            <version>${revision}</version>
+            <version>1.5.1-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_19_r2</artifactId>
-            <version>${revision}</version>
+            <version>1.5.1-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

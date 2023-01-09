@@ -14,9 +14,14 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+@Deprecated
 public class MMOTempStatCommand implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        sender.sendMessage("/mmotempstat is deprecated. Use instead /ml statmod ...");
+
+
         if (args.length < 4) {
             sender.sendMessage(ChatColor.RED + "Not enough args.");
             sender.sendMessage(ChatColor.YELLOW + "Usage: /mmotempstat <player> <stat name> <value> <tick duration>");

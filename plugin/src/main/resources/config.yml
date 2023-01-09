@@ -1,5 +1,5 @@
 # DO NOT TOUCH
-config-version: 4
+config-version: 5
 
 # Edit general plugin number formatting here.
 # Restart your server when changing this so that MMOItems and MMOCore update as well
@@ -29,11 +29,6 @@ health-scale:
   enabled: false
   scale: 20
   delay: 0
-
-# Set to false to prevent players from dealing damage to other
-# players using abilities OR custom weapons like staffs or muskets.
-# This is an useful option for PvE servers.
-player-ability-damage: true
 
 critical-strikes:
   weapon:
@@ -209,3 +204,39 @@ damage-particles-cap:
 # handle them.
 # If you change this option value, you must restart your server.
 fix-too-large-packets: false
+
+# Whether or not a player performing an offensive/support action
+# can interact with another player. This accounts for skills,
+# MI staff attacks and a few other things.
+#
+# More info available on the wiki
+# https://gitlab.com/phoenix-dvpmt/mmocore/-/wikis/Combat
+pvp_interaction_rules:
+
+  # When PVP is turned on
+  pvp_off:
+
+    # Ability to heal when PVP is off
+    support:
+      party_member: true
+      party_other: true
+      guild_ally: true
+      guild_neutral: true
+      guild_enemy: true
+
+  ## When PVP is turned on
+  pvp_on:
+
+    # Ability to heal when PVP is on
+    support:
+      party_member: true
+      party_other: false
+      guild_ally: true
+      guild_neutral: true
+      guild_enemy: false
+
+    # Friendly fire for guilds/parties
+    offense:
+      party_member: false
+      guild_ally: false
+      guild_neutral: true

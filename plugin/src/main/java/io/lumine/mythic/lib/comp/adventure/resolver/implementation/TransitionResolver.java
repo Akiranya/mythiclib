@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class TransitionResolver implements ContextTagResolver {
     @Override
-    public @Nullable String resolve(@NotNull String src, @NotNull AdventureArgumentQueue argumentQueue, @NotNull String context) {
+    public @Nullable String resolve(@NotNull String src, @NotNull AdventureArgumentQueue argumentQueue, @NotNull String context, @NotNull List<String> decorations) {
         List<String> args = new ArrayList<>();
         while (argumentQueue.hasNext())
             args.add(argumentQueue.pop().value());
@@ -34,7 +34,7 @@ public class TransitionResolver implements ContextTagResolver {
                 .collect(Collectors.toList());
         if (colors.size() < 2)
             return null;
-        return ChatColor.of(transition(phase, colors)) + context;
+        return ChatColor.of(transition(phase, colors)) + String.join("", decorations) + context;
     }
 
     private Color transition(double phase, List<Color> colors) {

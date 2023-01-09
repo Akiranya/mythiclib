@@ -6,6 +6,7 @@ import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.event.AttackEvent;
 import io.lumine.mythic.lib.api.event.IndicatorDisplayEvent;
 import io.lumine.mythic.lib.damage.DamageMetadata;
+import io.lumine.mythic.lib.damage.DamagePacket;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.element.Element;
 import io.lumine.mythic.lib.util.CustomFont;
@@ -22,9 +23,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Since 1.3.4 damage holograms are split into multiple damage types which
@@ -72,24 +71,11 @@ public class DamageIndicators extends GameIndicators {
         if (entity instanceof Player && UtilityMethods.isVanished((Player) entity))
             return;
 
-        final @NotNull DamageMetadata damage = event.getDamage();
-
-        // Calculate holograms
+        // Calculate holograms, take into account DAMAGE MODIFIERS (bug fix)
         final List<String> holos = new ArrayList<>();
-
-        // Physical/Unarmed damage
-        final double weapon = damage.getDamage(DamageType.WEAPON) + damage.getDamage(DamageType.UNARMED);
-        if (weapon > 0)
-            holos.add(computeFormat(damage.isWeaponCriticalStrike() ? weaponIconCrit : weaponIcon, weapon, damage.isWeaponCriticalStrike()));
-
-        // Magic damage
-        final double skill = damage.getDamage(DamageType.SKILL);
-        if (skill > 0)
-            holos.add(computeFormat(damage.isSkillCriticalStrike() ? skillIconCrit : skillIcon, skill, damage.isSkillCriticalStrike()));
-
-        // Elemental damage
-        final Map<Element, Double> elementalDamage = damage.mapElementalDamage();
-        elementalDamage.forEach((el, dmg) -> holos.add(computeFormat(el.getColor() + el.getLoreIcon(), dmg, damage.isElementalCriticalStrike(el))));
+        final Map<IndicatorType, Double> mappedDamage = mapDamage(event.getDamage());
+        final double modifierDue = (event.toBukkit().getFinalDamage() - event.toBukkit().getDamage()) / Math.max(1, mappedDamage.size());
+        mappedDamage.forEach((type, val) -> holos.add(type.computeFormat(val + modifierDue)));
 
         // Display multiple indicators
         if (splitHolograms)
@@ -103,15 +89,6 @@ public class DamageIndicators extends GameIndicators {
         }
     }
 
-    private String computeFormat(String icon, double damage, boolean crit) {
-        @Nullable final CustomFont font = crit && fontCrit != null ? fontCrit : this.font;
-        final String formattedDamage = font == null ? formatNumber(damage) : font.format(formatNumber(damage));
-
-        return MythicLib.plugin.getPlaceholderParser().parse(null, getRaw()
-                .replace("{icon}", icon)
-                .replace("{value}", formattedDamage));
-    }
-
     /**
      * If MythicLib can find a damager, display the hologram
      * in a cone which direction is the damager-target line.
@@ -119,6 +96,7 @@ public class DamageIndicators extends GameIndicators {
      * @param event Damage event
      * @return Direction of the hologram
      */
+    @NotNull
     private Vector getDirection(EntityDamageEvent event) {
 
         if (event instanceof EntityDamageByEntityEvent) {
@@ -137,5 +115,80 @@ public class DamageIndicators extends GameIndicators {
 
         double a = random.nextDouble() * Math.PI * 2;
         return new Vector(Math.cos(a), 0, Math.sin(a));
+    }
+
+    @NotNull
+    private Map<IndicatorType, Double> mapDamage(DamageMetadata damageMetadata) {
+        final Map<IndicatorType, Double> mapped = new HashMap<>();
+
+        for (DamagePacket packet : damageMetadata.getPackets()) {
+            final IndicatorType type = new IndicatorType(damageMetadata, packet);
+            mapped.put(type, mapped.getOrDefault(type, 0d) + packet.getFinalValue());
+        }
+
+        return mapped;
+    }
+
+    private class IndicatorType {
+
+        /**
+         * If it's not MAGICAL damage, then it's
+         * either PHYSICAL or ELEMENTAL.
+         */
+        final boolean physical;
+
+        final @Nullable Element element;
+
+        /**
+         * Rule for being a critical strike: it's either a crit for
+         * the primary damage type, or the element.
+         */
+        final boolean crit;
+
+        IndicatorType(DamageMetadata damageMetadata, DamagePacket packet) {
+            physical = packet.hasType(DamageType.PHYSICAL);
+            element = packet.getElement();
+            crit = (physical ? damageMetadata.isWeaponCriticalStrike() : damageMetadata.isSkillCriticalStrike()) || (element != null && damageMetadata.isElementalCriticalStrike(element));
+        }
+
+        @NotNull
+        private String computeIcon() {
+            final StringBuilder build = new StringBuilder();
+
+            // Append damage type
+            if (physical)
+                build.append(crit ? weaponIconCrit : weaponIcon);
+            else
+                build.append(crit ? skillIconCrit : skillIcon);
+
+            // Append element
+            if (element != null)
+                build.append(element.getColor() + element.getLoreIcon());
+
+            return build.toString();
+        }
+
+        @NotNull
+        private String computeFormat(double damage) {
+            @Nullable final CustomFont indicatorFont = crit && fontCrit != null ? fontCrit : font;
+            @NotNull final String formattedDamage = indicatorFont == null ? formatNumber(damage) : indicatorFont.format(formatNumber(damage));
+
+            return MythicLib.plugin.getPlaceholderParser().parse(null, getRaw()
+                    .replace("{icon}", computeIcon())
+                    .replace("{value}", formattedDamage));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            IndicatorType that = (IndicatorType) o;
+            return physical == that.physical && Objects.equals(element, that.element);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(physical, element);
+        }
     }
 }

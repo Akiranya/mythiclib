@@ -1,5 +1,6 @@
 package io.lumine.mythic.lib.gui;
 
+import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.explorer.ChatInput;
 import io.lumine.mythic.lib.api.explorer.ItemBuilder;
 import io.lumine.mythic.lib.api.util.AltChar;
@@ -54,7 +55,7 @@ public class AttributeCreator extends PluginInventory {
             return;
 
         ItemStack item = event.getCurrentItem();
-        if (!ExploreAttributesCommand.isMetaItem(item))
+        if (!UtilityMethods.isMetaItem(item))
             return;
 
         if (item.getItemMeta().getDisplayName().equals(ChatColor.GOLD + AltChar.rightArrow + " Back"))
@@ -183,7 +184,7 @@ public class AttributeCreator extends PluginInventory {
                 try {
                     d = Double.parseDouble(output);
                     amount = d;
-                    getPlayer().sendMessage(ChatColor.YELLOW + "> Value set to " + ChatColor.GOLD + ExploreAttributesCommand.format.format(d) + ChatColor.YELLOW + ".");
+                    getPlayer().sendMessage(ChatColor.YELLOW + "> Value set to " + ChatColor.GOLD + AttributeExplorer.FORMAT.format(d) + ChatColor.YELLOW + ".");
                     open();
                     return true;
 

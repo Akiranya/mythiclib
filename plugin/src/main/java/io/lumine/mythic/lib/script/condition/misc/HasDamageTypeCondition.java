@@ -1,9 +1,10 @@
 package io.lumine.mythic.lib.script.condition.misc;
 
 import io.lumine.mythic.lib.UtilityMethods;
+import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
-import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.script.condition.Condition;
+import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.util.configobject.ConfigObject;
 
 import java.util.ArrayList;
@@ -29,8 +30,9 @@ public class HasDamageTypeCondition extends Condition {
 
     @Override
     public boolean isMet(SkillMetadata meta) {
+        final DamageMetadata damage = meta.getAttack().getDamage();
         for (DamageType checked : types)
-            if (meta.getAttack().getDamage().hasType(checked))
+            if (damage.hasType(checked))
                 return true;
 
         return false;

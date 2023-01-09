@@ -4,6 +4,8 @@ import io.lumine.mythic.lib.comp.adventure.argument.AdventureArgumentQueue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * mythiclib
  * 30/11/2022
@@ -23,9 +25,10 @@ public interface ContextTagResolver extends AdventureTagResolver {
      * @param src           the source of the tag.
      * @param argumentQueue the argument queue.
      * @param context       the context of the tag.
+     * @param decorations   the decorations of the tag.
      * @return the resolved tag
      */
-    @Nullable String resolve(@NotNull String src, @NotNull AdventureArgumentQueue argumentQueue, @NotNull String context);
+    @Nullable String resolve(@NotNull String src, @NotNull AdventureArgumentQueue argumentQueue, @NotNull String context, @NotNull List<String> decorations);
 
     @Override
     default @Nullable String resolve(@NotNull String src, @NotNull AdventureArgumentQueue argumentQueue) {

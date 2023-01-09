@@ -4,7 +4,7 @@ Register the PhoenixDev repo
 ```
 <repository>
     <id>phoenix</id>
-    <url>https://nexus.phoenixdvpt.fr/repository/maven-public/</url>
+    <url>https://nexus.phoenixdevt.fr/repository/maven-public/</url>
 </repository>
 ```
 Then add MythicLib-dist as dependency
@@ -14,6 +14,7 @@ Then add MythicLib-dist as dependency
     <artifactId>MythicLib-dist</artifactId>
     <version>1.3.4-SNAPSHOT</version>
     <scope>provided</scope>
+    <optional>true</optional>
 </dependency>
 ```
 

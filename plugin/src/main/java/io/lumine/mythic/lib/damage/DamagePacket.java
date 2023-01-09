@@ -1,6 +1,8 @@
 package io.lumine.mythic.lib.damage;
 
+import io.lumine.mythic.lib.element.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -14,19 +16,26 @@ import java.util.Objects;
  * to then apply the 'Melee Damage' stat, it would only apply to the first packet.
  * <p>
  * Since 1.3.1 it is now possible to create implementations of the DamagePacket
- * class which can be used by other plugins to
+ * class which can be used by other plugins to implement other mechanics.
  *
  * @author jules
  */
 public class DamagePacket implements Cloneable {
     @NotNull
     private DamageType[] types;
-    private double value;
-    private double additiveModifiers, multiplicativeModifiers = 1;
+    private double value, additiveModifiers, multiplicativeModifiers = 1;
+
+    @Nullable
+    private Element element;
 
     public DamagePacket(double value, @NotNull DamageType... types) {
+        this(value, null, types);
+    }
+
+    public DamagePacket(double value, @Nullable Element element, @NotNull DamageType... types) {
         this.value = value;
         this.types = types;
+        this.element = element;
     }
 
     public double getValue() {
@@ -41,6 +50,11 @@ public class DamagePacket implements Cloneable {
         return types;
     }
 
+    @Nullable
+    public Element getElement() {
+        return element;
+    }
+
     public void setTypes(@NotNull DamageType[] types) {
         this.types = Objects.requireNonNull(types, "Damage type array cannot be null");
     }
@@ -52,6 +66,10 @@ public class DamagePacket implements Cloneable {
      */
     public void setValue(double value) {
         this.value = value;
+    }
+
+    public void setElement(@Nullable Element element) {
+        this.element = element;
     }
 
     /**
@@ -132,6 +150,9 @@ public class DamagePacket implements Cloneable {
 
             // Damage Type
             damageTypes.append(type);
+
+            if (element != null)
+                damageTypes.append(",El=").append(element.getId());
         }
 
         // Yeah

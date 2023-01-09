@@ -1,7 +1,7 @@
 package io.lumine.mythic.lib.script.mechanic.shaped;
 
 import io.lumine.mythic.lib.MythicLib;
-import io.lumine.mythic.lib.comp.target.InteractionType;
+import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import io.lumine.mythic.lib.script.Script;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.script.mechanic.type.DirectionMechanic;

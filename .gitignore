@@ -236,8 +236,4 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 # End of https://www.gitignore.io/api/java,code-java,intellij,eclipse,netbeans,gradle,git,maven,windows,linux,macos
-/.m2/
-/plugin/.flattened-pom.xml
-/v1_17/.flattened-pom.xml
-/v1_18/.flattened-pom.xml
-/.flattened-pom.xml
+.flattened-pom.xml

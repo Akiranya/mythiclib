@@ -7,8 +7,6 @@ import io.lumine.mythic.lib.api.item.ItemTag;
 import io.lumine.mythic.lib.api.item.NBTCompound;
 import io.lumine.mythic.lib.api.item.NBTItem;
 import io.lumine.mythic.lib.api.util.NBTTypeHelper;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.server.v1_15_R1.*;
 import net.minecraft.server.v1_15_R1.IChatBaseComponent.ChatSerializer;
 import org.bukkit.Material;
@@ -251,50 +249,6 @@ public class VersionWrapper_1_15_R1 implements VersionWrapper {
         @Override
         public int getTypeId(String path) {
             return compound.get(path).getTypeId();
-        }
-
-        @Override
-        public Component getDisplayNameComponent() {
-            if (compound.getCompound("display").hasKey("Name")) {
-                return GsonComponentSerializer.gson().deserialize(compound.getCompound("display").getString("Name"));
-            }
-            return Component.empty();
-        }
-
-        @Override
-        // Replaces the current name component with the passed parameter.
-        public void setDisplayNameComponent(Component component) {
-            if (component != null)
-                compound.getCompound("display").setString("Name", GsonComponentSerializer.gson().serialize(component));
-            else
-                compound.getCompound("display").remove("Name");
-        }
-
-        @Override
-        public List<Component> getLoreComponents() {
-            List<Component> lore = new ArrayList<>();
-
-            if (compound.getCompound("display").hasKey("Lore")) {
-                NBTTagList strings = compound.getCompound("display").getList("Lore", NBT.TAG_STRING);
-                for (int i = 0; i < strings.size(); i++)
-                    lore.add(GsonComponentSerializer.gson().deserialize(strings.getString(i)));
-            }
-
-            return lore;
-        }
-
-        @Override
-        // Replaces the current lore component with the passed parameter.
-        public void setLoreComponents(List<Component> components) {
-            NBTTagList lore = new NBTTagList();
-            if (components != null && !components.isEmpty()) {
-                for (Component component : components)
-                    lore.add(NBTTagString.a(GsonComponentSerializer.gson().serialize(component)));
-
-                compound.getCompound("display").set("Lore", lore);
-            } else {
-                compound.getCompound("display").remove("Lore");
-            }
         }
     }
 
