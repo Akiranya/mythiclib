@@ -18,7 +18,10 @@ import io.lumine.mythic.lib.comp.anticheat.AntiCheatSupport;
 import io.lumine.mythic.lib.comp.anticheat.SpartanPlugin;
 import io.lumine.mythic.lib.comp.dualwield.DualWieldHook;
 import io.lumine.mythic.lib.comp.dualwield.RealDualWieldHook;
-import io.lumine.mythic.lib.comp.flags.*;
+import io.lumine.mythic.lib.comp.flags.FlagHandler;
+import io.lumine.mythic.lib.comp.flags.FlagPlugin;
+import io.lumine.mythic.lib.comp.flags.ResidenceFlags;
+import io.lumine.mythic.lib.comp.flags.WorldGuardFlags;
 import io.lumine.mythic.lib.comp.mythicmobs.MythicMobsAttackHandler;
 import io.lumine.mythic.lib.comp.mythicmobs.MythicMobsHook;
 import io.lumine.mythic.lib.comp.placeholder.*;
@@ -42,6 +45,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -125,6 +129,7 @@ public class MythicLib extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MythicCraftingManager(), this);
         Bukkit.getPluginManager().registerEvents(new SkillTriggers(), this);
         Bukkit.getPluginManager().registerEvents(new ElementalDamage(), this);
+        Bukkit.getPluginManager().registerEvents(new PvpListener(), this);
         ArmorEquipEvent.registerListener(this);
 
         if (getConfig().getBoolean("health-scale.enabled"))
@@ -348,5 +353,14 @@ public class MythicLib extends JavaPlugin {
 
     public File getJarFile() {
         return plugin.getFile();
+    }
+
+    public static void debug(@NotNull String message) {
+        debug(null, message);
+    }
+
+    public static void debug(@Nullable String prefix, @NotNull String message) {
+        if (plugin.configManager.debugMode)
+            plugin.getLogger().log(Level.INFO, "[Debug" + (prefix == null ? "" : ": " + prefix) + "] " + message);
     }
 }

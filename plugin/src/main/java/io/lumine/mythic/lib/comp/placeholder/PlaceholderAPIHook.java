@@ -46,7 +46,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
         if (params.startsWith("stat_")) {
             final String stat = UtilityMethods.enumName(params.substring(5));
-            return MythicLib.plugin.getStats().format(stat, MMOPlayerData.get(player).getStatMap().getStat(stat));
+            return MythicLib.plugin.getStats().format(stat, MMOPlayerData.get(player));
         }
 
         if (params.startsWith("cooldown_")) {

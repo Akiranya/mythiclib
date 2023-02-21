@@ -59,7 +59,7 @@ public class Burning_Hands extends SkillHandler<SimpleSkillResult> {
                         if (entity.getLocation().distanceSquared(loc) < 60
                                 && caster.getEyeLocation().getDirection()
                                 .angle(entity.getLocation().toVector().subtract(caster.getLocation().toVector())) < Math.PI / 6
-                                && MythicLib.plugin.getEntities().canTarget(caster, entity, InteractionType.OFFENSE_SKILL))
+                                && MythicLib.plugin.getEntities().canInteract(caster, entity, InteractionType.OFFENSE_SKILL))
                             skillMeta.getCaster().attack((LivingEntity) entity, damage, DamageType.SKILL, DamageType.MAGIC);
 
             }

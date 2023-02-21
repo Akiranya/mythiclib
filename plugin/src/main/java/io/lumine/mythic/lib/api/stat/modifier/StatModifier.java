@@ -92,6 +92,18 @@ public class StatModifier extends PlayerModifier {
         return value;
     }
 
+
+    /**
+     * Used to add a constant to some existing stat modifier, usually an
+     * integer, for instance it is used when a stat trigger is triggered multiple times.
+     *
+     * @param offset The offset added.
+     * @return A new instance of StatModifier with modified value
+     */
+    public StatModifier add(double offset) {
+        return new StatModifier(getKey(), stat, value + offset, type, getSlot(), getSource());
+    }
+
     /**
      * Used to multiply some existing stat modifier by a constant, usually an
      * integer, for instance when MMOCore party modifiers scale with the

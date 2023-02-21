@@ -22,8 +22,8 @@ public class TargetSkillResult implements SkillResult {
 
     public TargetSkillResult(SkillMetadata skillMeta, double range, InteractionType interactType) {
         Player caster = skillMeta.getCaster().getPlayer();
-        this.target = skillMeta.hasTargetEntity() && MythicLib.plugin.getEntities().canTarget(caster, skillMeta.getTargetEntityOrNull(), interactType) ? (LivingEntity) skillMeta.getTargetEntityOrNull() :
-                new RayTrace(caster, range, entity -> MythicLib.plugin.getEntities().canTarget(caster, entity, interactType)).getHit();
+        this.target = skillMeta.hasTargetEntity() && MythicLib.plugin.getEntities().canInteract(caster, skillMeta.getTargetEntityOrNull(), interactType) ? (LivingEntity) skillMeta.getTargetEntityOrNull() :
+                new RayTrace(caster, range, entity -> MythicLib.plugin.getEntities().canInteract(caster, entity, interactType)).getHit();
     }
 
     public TargetSkillResult(@Nullable LivingEntity target) {

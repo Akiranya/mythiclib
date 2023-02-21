@@ -10,8 +10,11 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,7 +121,7 @@ public class UtilityMethods {
             return false;
 
         // Interaction type check
-        if (!MythicLib.plugin.getEntities().canTarget(source, target, interaction))
+        if (!MythicLib.plugin.getEntities().canInteract(source, target, interaction))
             return false;
 
         return true;
@@ -255,6 +258,28 @@ public class UtilityMethods {
             double pitch = (float) Math.toDegrees(Math.atan(-axis.getY() / xz));
             return new double[]{yaw, pitch};
         }
+    }
+
+    /**
+     * Useful when dealing with Pvp stuff. If a VANILLA attack is due to
+     * a player, this method will return the damage source ie the player.
+     *
+     * @param event Some damage event
+     * @return The player, if this event is due to him. It is the player which
+     *         is taken into account when PvP is toggled on.
+     */
+    @Nullable
+    public static Player getPlayerDamager(EntityDamageByEntityEvent event) {
+        if (isRealPlayer(event.getDamager()))
+            return (Player) event.getDamager();
+
+        if (event.getDamager() instanceof Projectile) {
+            final ProjectileSource shooter = ((Projectile) event.getDamager()).getShooter();
+            if (shooter instanceof Entity && isRealPlayer((Entity) shooter))
+                return (Player) shooter;
+        }
+
+        return null;
     }
 
     public static Vector rotate(Vector rotated, Vector axis) {

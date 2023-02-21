@@ -84,7 +84,7 @@ public class ProjectileMechanic extends DirectionMechanic {
 
                 current.add(dr);
 
-                Predicate<Entity> filter = entity -> MythicLib.plugin.getEntities().canTarget(meta.getCaster().getPlayer(), entity, offense ? InteractionType.OFFENSE_SKILL : InteractionType.SUPPORT_SKILL);
+                Predicate<Entity> filter = entity -> MythicLib.plugin.getEntities().canInteract(meta.getCaster().getPlayer(), entity, offense ? InteractionType.OFFENSE_SKILL : InteractionType.SUPPORT_SKILL);
                 RayTraceResult result = onHitBlock != null ?
                         current.getWorld().rayTrace(current, dir, dl, FluidCollisionMode.NEVER, ignorePassable, projectileSize, filter)
                         : current.getWorld().rayTraceEntities(current, dir, dl, projectileSize, filter);

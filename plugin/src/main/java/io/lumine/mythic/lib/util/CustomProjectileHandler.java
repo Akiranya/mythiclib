@@ -73,7 +73,7 @@ public class CustomProjectileHandler {
             return false;
 
         // Interaction type check
-        if (!MythicLib.plugin.getEntities().canTarget(caster.getPlayer(), target, interactionType)) {
+        if (!MythicLib.plugin.getEntities().canInteract(caster.getPlayer(), target, interactionType)) {
             untargetable.add(target.getEntityId());
             return false;
         }

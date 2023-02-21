@@ -19,21 +19,21 @@ import java.util.Map;
 
 /**
  * Used for the MythicRecipes system.
- * <p></p>
+ * <p>
  * Since this system is completely customizable, the information we
  * need is just a {@link ProvidedUIFilter}.
- * <p></p>
+ * <p>
  * There may be 'replacements' as well (say oak/spruce planks)
  * so that it is a list of {@link ProvidedUIFilter} instead.
- * <p></p>
+ * <p>
  * MythicIngredients may be written in YML format and loaded through
  * {@link #deserializeFrom(ArrayList, FriendlyFeedbackProvider)}.
- * <p></p>
+ * <p>
  * Finally, MythicIngredients may be <b>enabled</b> so that they can
  * be targeted by the {@link IngredientUIFilter}, or just obtained from
  * anywhere by their {@link #getName()} using {@link #get(String)}.
  *
- * @see #enable(MythicIngredient) 
+ * @see #enable(MythicIngredient)
  *
  * @author Gunging
  */
@@ -503,7 +503,7 @@ public class MythicIngredient implements Cloneable {
         // Clone
         return new MythicIngredient(getName(), getSubstitutes());
     }
-    
+
     /**
      * Does at least one of the substitutes fully defines an item?
      */

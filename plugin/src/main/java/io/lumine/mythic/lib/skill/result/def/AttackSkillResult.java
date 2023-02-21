@@ -20,7 +20,7 @@ public class AttackSkillResult implements SkillResult {
     private final AttackMetadata attackMeta;
 
     public AttackSkillResult(SkillMetadata skillMeta) {
-        this.target = skillMeta.hasTargetEntity() && MythicLib.plugin.getEntities().canTarget(skillMeta.getCaster().getPlayer(), skillMeta.getTargetEntity(), InteractionType.OFFENSE_SKILL) ? (LivingEntity) skillMeta.getTargetEntity() : null;
+        this.target = skillMeta.hasTargetEntity() && MythicLib.plugin.getEntities().canInteract(skillMeta.getCaster().getPlayer(), skillMeta.getTargetEntity(), InteractionType.OFFENSE_SKILL) ? (LivingEntity) skillMeta.getTargetEntity() : null;
         this.attackMeta = target == null ? null : MythicLib.plugin.getDamage().getRegisteredAttackMetadata(target);
     }
 

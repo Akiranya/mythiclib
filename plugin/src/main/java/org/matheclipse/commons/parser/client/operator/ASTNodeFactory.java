@@ -261,9 +261,6 @@ public class ASTNodeFactory implements IParserFactory {
 		return fOperatorMap.get(identifier);
 	}
 
-	/**
-	 * public Map<String, Operator> getIdentifier2OperatorMap()
-	 */
 	@Override
 	public Map<String, Operator> getIdentifier2OperatorMap() {
 		return fOperatorMap;

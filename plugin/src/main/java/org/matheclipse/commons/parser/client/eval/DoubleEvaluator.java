@@ -824,7 +824,6 @@ public class DoubleEvaluator {
 	 * Define a value for a given variable name.
 	 * 
 	 * @param variableName
-	 * @param value
 	 */
 	public void defineVariable(String variableName) {
 		if (fRelaxedSyntax) {

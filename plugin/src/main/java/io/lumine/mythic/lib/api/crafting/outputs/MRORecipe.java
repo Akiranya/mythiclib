@@ -31,13 +31,13 @@ import java.util.HashMap;
 /**
  * When the player crafts something, getting another item
  * in return.
- * <p></p>
+ * <p>
  * Except this is not necessarily one item in one slot,
  * but a set of items occupying a grid in a specific inventory.
- * <p></p>
+ * <p>
  * Of course, usually simplified into one item on the
  * single slot of a 1-slot inventory.
- * <p></p>
+ * <p>
  * This result creates items, it does not edit existing ones.
  * All UIFilters which don't fully define an item are ignored.
  *

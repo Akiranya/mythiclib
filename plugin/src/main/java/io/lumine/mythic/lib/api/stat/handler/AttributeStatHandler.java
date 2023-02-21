@@ -35,9 +35,8 @@ public class AttributeStatHandler implements StatHandler {
 
     @Override
     public void runUpdate(StatMap stats) {
-        AttributeInstance ins = stats.getPlayerData().getPlayer().getAttribute(attribute);
-        StatInstance statIns = stats.getInstance(stat);
-        removeModifiers(ins);
+        final AttributeInstance attrIns = stats.getPlayerData().getPlayer().getAttribute(attribute);
+        removeModifiers(attrIns);
 
         /*
          * The first two boolean checks make sure that ranged
@@ -46,21 +45,22 @@ public class AttributeStatHandler implements StatHandler {
          * The last two checks guarantee that weapons
          * held in off hand don't register any of their stats.
          */
-        double d = statIns.getFilteredTotal(mod -> (!meleeWeaponStat || mod.getSource() != ModifierSource.RANGED_WEAPON) &&
+        final StatInstance statIns = stats.getInstance(stat);
+        final double mmo = statIns.getFilteredTotal(mod -> (!meleeWeaponStat || mod.getSource() != ModifierSource.RANGED_WEAPON) &&
                 (!mod.getSource().isWeapon() || mod.getSlot() != EquipmentSlot.OFF_HAND));
 
         /*
          * Calculate the stat base value. Since it can be changed by
          * external plugins, it's better to calculate it once and cache the result.
          */
-        double base = statIns.getBase();
+        final double base = getBaseValue(stats);
 
         /*
          * Only add an attribute modifier if the very final stat
          * value is different from the main one to save calculations.
          */
-        if (d != base)
-            ins.addModifier(new AttributeModifier("mythiclib.main", d - base, AttributeModifier.Operation.ADD_NUMBER));
+        if (mmo != base)
+            attrIns.addModifier(new AttributeModifier("mythiclib.main", mmo - base, AttributeModifier.Operation.ADD_NUMBER));
     }
 
     @Override

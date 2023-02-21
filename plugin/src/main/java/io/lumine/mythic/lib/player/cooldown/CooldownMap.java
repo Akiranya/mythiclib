@@ -87,4 +87,22 @@ public class CooldownMap {
         final @Nullable CooldownInfo found = map.get(path);
         return found != null && !found.hasEnded();
     }
+
+    /**
+     * Entirely resets a cooldown for given action.
+     *
+     * @param obj The skill or action
+     */
+    public void resetCooldown(CooldownObject obj) {
+        resetCooldown(obj.getCooldownPath());
+    }
+
+    /**
+     * Entirely resets a cooldown for given path.
+     *
+     * @param path The skill or action path, must be completely unique
+     */
+    public void resetCooldown(String path) {
+        map.remove(path);
+    }
 }

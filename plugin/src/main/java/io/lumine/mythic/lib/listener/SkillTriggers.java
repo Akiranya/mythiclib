@@ -41,9 +41,14 @@ public class SkillTriggers implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void damagedByEntity(EntityDamageByEntityEvent event) {
+
+        // Ignore fake events
+        if (event.getDamage() == 0)
+            return;
+
         final MMOPlayerData caster;
         if (event.getEntity() instanceof Player && (caster = MMOPlayerData.getOrNull(event.getEntity().getUniqueId())) != null
-                && MythicLib.plugin.getEntities().canTarget((Player) event.getEntity(), event.getDamager(), InteractionType.OFFENSE_SKILL))
+                && MythicLib.plugin.getEntities().canInteract((Player) event.getEntity(), event.getDamager(), InteractionType.OFFENSE_SKILL))
             caster.triggerSkills(TriggerType.DAMAGED_BY_ENTITY, event.getDamager());
     }
 

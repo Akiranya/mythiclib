@@ -17,33 +17,33 @@ public class MovementSpeedStatHandler implements StatHandler {
     @SuppressWarnings("deprecation")
     @Override
     public void runUpdate(StatMap stats) {
-        AttributeInstance ins = stats.getPlayerData().getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-        StatInstance statIns = stats.getInstance("MOVEMENT_SPEED");
-        removeModifiers(ins);
+        final AttributeInstance attrIns = stats.getPlayerData().getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+        removeModifiers(attrIns);
 
         /*
          * Calculate speed malus reduction (capped at 80%)
          */
-        double coef = 1 - Math.min(.8, Math.max(0, stats.getInstance("SPEED_MALUS_REDUCTION").getTotal() / 100));
+        final double coef = 1 - Math.min(.8, Math.max(0, stats.getInstance("SPEED_MALUS_REDUCTION").getTotal() / 100));
 
         /*
          * This guarantees that weapons held in off
          * hand don't register any of their stats.
          */
-        double d = statIns.getFilteredTotal(mod -> !mod.getSource().isWeapon() || mod.getSlot() != EquipmentSlot.OFF_HAND, mod -> mod.getValue() < 0 ? mod.multiply(coef) : mod);
+        final StatInstance statIns = stats.getInstance("MOVEMENT_SPEED");
+        final double mmo = statIns.getFilteredTotal(mod -> !mod.getSource().isWeapon() || mod.getSlot() != EquipmentSlot.OFF_HAND, mod -> mod.getValue() < 0 ? mod.multiply(coef) : mod);
 
         /*
          * Calculate the stat base value. Since it can be changed by
          * external plugins, it's better to calculate it once and cache the result.
          */
-        double base = statIns.getBase();
+        final double base = stats.getPlayerData().getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
 
         /*
          * Only add an attribute modifier if the very final stat
          * value is different from the main one to save calculations.
          */
-        if (d != base)
-            ins.addModifier(new AttributeModifier("mythiclib.main", d - base, AttributeModifier.Operation.ADD_NUMBER));
+        if (mmo != base)
+            attrIns.addModifier(new AttributeModifier("mythiclib.main", mmo - base, AttributeModifier.Operation.ADD_NUMBER));
     }
 
     @Override

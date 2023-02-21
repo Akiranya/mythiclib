@@ -16,7 +16,7 @@ public class ConfigManager {
     public final DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
 
     public DecimalFormat decimal, decimals;
-    public boolean playerAbilityDamage, castingDelayCancelOnMove, enableCastingDelayBossbar, fixTooLargePackets;
+    public boolean playerAbilityDamage, castingDelayCancelOnMove, enableCastingDelayBossbar, fixTooLargePackets, debugMode;
     public String naturalDefenseFormula, elementalDefenseFormula, castingDelayBossbarFormat;
     public double castingDelaySlowness;
     public PvPInteractionRules pvpInteractionRules;
@@ -40,6 +40,7 @@ public class ConfigManager {
         naturalDefenseFormula = config.getString("defense-application.natural");
         elementalDefenseFormula = config.getString("defense-application.elemental");
         fixTooLargePackets = config.getBoolean("fix-too-large-packets");
+        debugMode = config.getBoolean("debug");
 
         // Casting delay
         castingDelaySlowness = config.getDouble("casting-delay.slowness");

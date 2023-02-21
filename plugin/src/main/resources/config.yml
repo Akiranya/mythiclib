@@ -1,6 +1,19 @@
 # DO NOT TOUCH
 config-version: 5
 
+# This will verbose debug messages to the console
+# when toggled on.
+debug: false
+
+# This option is used by MMOInventory and MMOCore to synchronize
+# player data between proxy-connected servers. When a player changes
+# server, the plugin tries to fetch new data X times every 1s, up
+# to a maximum of 5 times by default.
+#
+# Use a higher value if your SQL connection is weak to avoid
+# player data loss.
+max-sync-tries: 5
+
 # Edit general plugin number formatting here.
 # Restart your server when changing this so that MMOItems and MMOCore update as well
 number-format:
@@ -213,10 +226,14 @@ fix-too-large-packets: false
 # https://gitlab.com/phoenix-dvpmt/mmocore/-/wikis/Combat
 pvp_interaction_rules:
 
-  # When PVP is turned on
+  # When enabled, apply PvP interaction rules for skills, melee and projectile hits.
+  # This option is toggled off by default to reduce confusion for new users.
+  enabled: false
+
+  # When PvP is turned off
   pvp_off:
 
-    # Ability to heal when PVP is off
+    # Ability to heal other players when PvP is off
     support:
       party_member: true
       party_other: true
@@ -224,10 +241,10 @@ pvp_interaction_rules:
       guild_neutral: true
       guild_enemy: true
 
-  ## When PVP is turned on
+  ## When PvP is turned on
   pvp_on:
 
-    # Ability to heal when PVP is on
+    # Ability to heal other players when PvP is on
     support:
       party_member: true
       party_other: false

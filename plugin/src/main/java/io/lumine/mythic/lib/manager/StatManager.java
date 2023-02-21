@@ -2,6 +2,7 @@ package io.lumine.mythic.lib.manager;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
+import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.lumine.mythic.lib.api.stat.SharedStat;
 import io.lumine.mythic.lib.api.stat.StatMap;
 import io.lumine.mythic.lib.api.stat.handler.AttributeStatHandler;
@@ -59,6 +60,13 @@ public class StatManager {
     }
 
     @NotNull
+    public static String format(String stat, MMOPlayerData player) {
+        final StatManager manager = MythicLib.plugin.getStats();
+        final double value = MythicLib.plugin.getStats().getTotalValue(stat, player.getStatMap());
+        return Objects.requireNonNullElse(manager.decimalFormats.get(stat), manager.defaultDecimalFormat).format(value);
+    }
+
+    @NotNull
     public static String format(String stat, double value) {
         final StatManager manager = MythicLib.plugin.getStats();
         return Objects.requireNonNullElse(manager.decimalFormats.get(stat), manager.defaultDecimalFormat).format(value);
@@ -94,7 +102,7 @@ public class StatManager {
      * @return The base value of this stat, or 0 if it does not have any
      */
     public double getBaseValue(String stat, StatMap map) {
-        StatHandler handler = handlers.get(stat);
+        final @Nullable StatHandler handler = handlers.get(stat);
         return handler == null ? 0 : handler.getBaseValue(map);
     }
 
@@ -103,7 +111,7 @@ public class StatManager {
      * @return The total value of this stat
      */
     public double getTotalValue(String stat, StatMap map) {
-        StatHandler handler = handlers.get(stat);
+        final @Nullable StatHandler handler = handlers.get(stat);
         return handler == null ? map.getStat(stat) : handler.getTotalValue(map);
     }
 

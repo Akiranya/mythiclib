@@ -21,17 +21,16 @@ import java.util.HashMap;
 
 /**
  * In the most general sense of crafting, what makes a recipe a recipe?
- * <p></p>
+ * <p>
  * When a player puts ingredients in specific slots, requiring order sometimes,
  * the result is given as output 'ingredients' in specific slots.
- * <p></p>
+ * <p>
  * In the most intuitive senses, the output and input 'ingredients' (where, clearly,
  * ingredients mean any item at all) have different spaces dedicated:
  * <p>In furnaces, workbench, anvil, and so on, the result slot is separate.
  * </p>However, this is not true for the enchantment table and brewing stand, where
  * the result slot is in the same place as the input.
- *
- * <p></p>
+ * <p>
  * In other intuitive senses, input is not all the same. Notice how basically
  * every crafting station has a secondary input space:
  * <p>Furnace has the fuel slot,

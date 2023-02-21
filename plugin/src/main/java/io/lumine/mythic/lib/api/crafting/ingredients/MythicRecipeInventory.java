@@ -18,13 +18,13 @@ import java.util.logging.Level;
  * to translate normal inventories into this format that can be unambiguously
  * checked by {@link io.lumine.mythic.lib.api.crafting.recipes.MythicRecipe}s.
  *
- * <p></p>
+ * <p>
  * <b>Note that <code>null</code> and <code>Material.AIR</code> ItemStacks
  * mean two very different things for this class:</b>
  * <p><code>null</code> Means that the inventory does not have a slot there.
  * </p><code>AIR</code> Means that there is no item in that slot.
  *
- * <p></p>
+ * <p>
  * This is because crafting grids that are not rectangles are supported by this
  * system (vanilla grids, say the workbench -- a 3x3 square -- wont ever have
  * <code>null</code> ItemStacks, this is meant for custom crafting GUIs idk).

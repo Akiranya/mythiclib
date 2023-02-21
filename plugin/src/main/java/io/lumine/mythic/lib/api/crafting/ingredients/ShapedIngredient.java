@@ -14,7 +14,7 @@ import java.util.Collections;
 
 /**
  * For recipes that require a pattern of stuff to craft.
- * <p></p>
+ * <p>
  * (Basically the most popular: Workbench)
  *
  * @author Gunging

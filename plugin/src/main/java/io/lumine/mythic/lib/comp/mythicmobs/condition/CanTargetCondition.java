@@ -26,6 +26,6 @@ public class CanTargetCondition extends SkillCondition implements IEntityCompari
     @Override
     public boolean check(AbstractEntity entity, AbstractEntity target) {
         Validate.isTrue(entity instanceof AbstractPlayer, "First entity must be a player");
-        return MythicLib.inst().getEntities().canTarget((Player) entity.getBukkitEntity(), target.getBukkitEntity(), interaction);
+        return MythicLib.inst().getEntities().canInteract((Player) entity.getBukkitEntity(), target.getBukkitEntity(), interaction);
     }
 }

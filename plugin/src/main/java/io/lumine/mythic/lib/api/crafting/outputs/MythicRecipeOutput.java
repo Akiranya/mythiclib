@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * When talking about custom crafting, the intuitive output
  * is another item, made from items made past.
- * <p></p>
+ * <p>
  * But I cannot help but think, could there be more kinds of
  * results to crafting than just an item in a slot?
  *

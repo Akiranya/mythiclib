@@ -79,7 +79,6 @@ public interface IEvaluator<T extends FieldElement<T>> {
 	/**
 	 * Returns a new data variable instance.
 	 * 
-	 * @param variableName
 	 * @return
 	 */
 	public FieldElementVariable<T> createVariable(T value);

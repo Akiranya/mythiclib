@@ -315,7 +315,6 @@ public class BigFractionEvaluator extends FieldElementEvaluator<BigFraction> {
 	 * Define a value for a given variable name.
 	 * 
 	 * @param variableName
-	 * @param value
 	 */
 	public void defineVariable(String variableName) {
 		if (fRelaxedSyntax) {
@@ -509,7 +508,6 @@ public class BigFractionEvaluator extends FieldElementEvaluator<BigFraction> {
 	 * Reevaluate the <code>expression</code> (possibly after a new Variable
 	 * assignment)
 	 * 
-	 * @param Expression
 	 * @return
 	 * @throws SyntaxError
 	 */

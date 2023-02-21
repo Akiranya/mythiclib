@@ -15,7 +15,6 @@
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>clean package install</defaultGoal>
 
-
         <resources>
             <resource>
                 <targetPath>.</targetPath>

@@ -2,16 +2,22 @@ package io.lumine.mythic.lib.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.lumine.mythic.lib.MythicLib;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public abstract class MMODataSource {
     protected final HikariConfig config = new HikariConfig();
     private HikariDataSource dataSource;
+
     /**
      * Used to know if SQL is enabled in the config. But connections can be made even
      * if it not enabled. (e.g /mmocore transferdata).
@@ -45,20 +51,21 @@ public abstract class MMODataSource {
         }
     }
 
-
-
     protected abstract void load();
 
     public void getResult(String sql, Consumer<ResultSet> supplier) {
         execute(connection -> {
             try {
-                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                    try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                        supplier.accept(resultSet);
-                    }
+                final PreparedStatement statement = connection.prepareStatement(sql);
+                try {
+                    supplier.accept(statement.executeQuery());
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
                 }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+                statement.close();
+            } catch (SQLException exception) {
+                MythicLib.plugin.getLogger().log(Level.WARNING, "Could not open SQL result statement:");
+                exception.printStackTrace();
             }
         });
     }
@@ -70,11 +77,16 @@ public abstract class MMODataSource {
     public void executeUpdate(String sql) {
         execute(connection -> {
             try {
-                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                    preparedStatement.executeUpdate();
+                final PreparedStatement statement = connection.prepareStatement(sql);
+                try {
+                    statement.executeUpdate();
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
                 }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+                statement.close();
+            } catch (SQLException exception) {
+                MythicLib.plugin.getLogger().log(Level.WARNING, "Could not open SQL statement:");
+                exception.printStackTrace();
             }
         });
     }
@@ -84,22 +96,40 @@ public abstract class MMODataSource {
     }
 
     /**
-     * Retrieve a connection from pool and prepare it for use and even closes it when it's finished using it.
+     * Retrieve a connection from pool and prepare it for
+     * use. Connection is closed when consumer is called.
      *
-     * @param execute Consumer.
+     * @param execute Action to be done with connection
      */
     public void execute(Consumer<Connection> execute) {
-
-        try (Connection connection = dataSource.getConnection()) {
-            execute.accept(connection);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        try {
+            final Connection connection = dataSource.getConnection();
+            try {
+                execute.accept(connection);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+            connection.close();
+        } catch (SQLException exception) {
+            MythicLib.plugin.getLogger().log(Level.WARNING, "Could not open SQL connection:");
+            exception.printStackTrace();
         }
     }
 
+    /**
+     * Retrieve a connection from pool and prepare it for
+     * use. Connection is closed when consumer is called.
+     * <p>
+     * Called asynchronously.
+     *
+     * @param execute Action to be done with connection
+     */
+    public CompletableFuture<Void> executeAsync(Consumer<Connection> execute) {
+        return CompletableFuture.runAsync(() -> execute(execute));
+    }
 
+    @Deprecated
     public Connection getConnection() throws SQLException {
-
         return dataSource.getConnection();
     }
 

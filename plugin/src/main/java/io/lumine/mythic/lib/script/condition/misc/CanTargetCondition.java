@@ -21,6 +21,6 @@ public class CanTargetCondition extends Condition {
 
     @Override
     public boolean isMet(SkillMetadata meta) {
-        return MythicLib.plugin.getEntities().canTarget(meta.getCaster().getPlayer(), meta.getTargetEntity(), interactionType);
+        return MythicLib.plugin.getEntities().canInteract(meta.getCaster().getPlayer(), meta.getTargetEntity(), interactionType);
     }
 }
