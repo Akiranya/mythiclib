@@ -5,7 +5,7 @@ api-version: 1.13
 version: ${project.version}
 loadbefore: [ MMOCore,MMOItems ]
 softdepend: [ WorldGuard,Residence,Factions,MythicMobs ]
-description: 'A hard dependency for MMOItems and MMOCore'
+description: A hard dependency for MMOItems and MMOCore
 commands:
   mythiclib:
     description: MythicLib main command.
