@@ -61,6 +61,10 @@
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
         <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -169,14 +173,21 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-        <!-- Spigot API -->
+        <!-- Paper API -->
         <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spigot API -->
+        <!--<dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <optional>true</optional>
-        </dependency>
+        </dependency>-->
         <!-- Spigot NMS versions -->
         <dependency>
             <groupId>org.spigotmc</groupId>
