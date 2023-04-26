@@ -8,6 +8,7 @@ import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
 import io.lumine.mythic.lib.comp.mythicmobs.condition.CanTargetCondition;
 import io.lumine.mythic.lib.comp.mythicmobs.condition.HasDamageTypeCondition;
+import io.lumine.mythic.lib.comp.mythicmobs.condition.IsMMODamageCondition;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,6 +41,9 @@ public class MythicMobsHook implements Listener {
         switch (conditionName) {
             case "mmodamagetype":
                 event.register(new HasDamageTypeCondition(event.getConfig()));
+                break;
+            case "ismmodamage":
+                event.register(new IsMMODamageCondition(event.getConfig()));
                 break;
             case "mmocantarget":
                 event.register(new CanTargetCondition(event.getConfig().getLine(), event.getConfig()));

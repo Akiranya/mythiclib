@@ -136,7 +136,7 @@ public class TriggerType {
 
     /**
      * Casts the skill at regular time intervals. Timer period
-     * can be edited using the corresponding skill modifier.
+     * can be edited using the corresponding skill parameter.
      */
     TIMER = new TriggerType("TIMER"),
 

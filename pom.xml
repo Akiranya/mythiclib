@@ -4,7 +4,7 @@
     <groupId>io.lumine</groupId>
     <artifactId>MythicLib</artifactId>
     <packaging>pom</packaging>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <modules>
         <module>plugin</module>
         <module>v1_17</module>
@@ -13,13 +13,14 @@
         <module>dist</module>
         <module>v1_19</module>
         <module>v1_19_r2</module>
+        <module>mythiclib_v1_19_r3</module>
     </modules>
     <name>MythicLib</name>
 
     <properties>
         <downloadSources>false</downloadSources>
         <downloadJavadocs>false</downloadJavadocs>
-        <revision>1.5.1-SNAPSHOT</revision>
+        <revision>1.5.2-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 

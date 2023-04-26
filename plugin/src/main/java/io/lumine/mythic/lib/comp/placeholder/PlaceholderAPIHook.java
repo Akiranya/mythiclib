@@ -50,7 +50,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
         }
 
         if (params.startsWith("cooldown_")) {
-            final String key = UtilityMethods.enumName(params.substring(9));
+            final String key = params.substring(9);
             return MythicLib.plugin.getMMOConfig().decimal.format(MMOPlayerData.get(player).getCooldownMap().getCooldown(key));
         }
 

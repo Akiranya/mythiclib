@@ -34,13 +34,13 @@ public class SimpleSkill extends Skill {
     }
 
     @Override
-    public SkillHandler<?> getHandler() {
-        return handler;
+    public double getParameter(String path) {
+        return modifiers.getOrDefault(path, 0d);
     }
 
     @Override
-    public double getModifier(String path) {
-        return modifiers.getOrDefault(path, 0d);
+    public SkillHandler<?> getHandler() {
+        return handler;
     }
 
     public void registerModifier(String path, double value) {

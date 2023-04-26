@@ -1,25 +1,17 @@
 package io.lumine.mythic.lib.api.stat.modifier;
 
-import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
+import io.lumine.mythic.lib.api.stat.api.InstanceModifier;
 import io.lumine.mythic.lib.player.modifier.ModifierSource;
 import io.lumine.mythic.lib.player.modifier.ModifierType;
-import io.lumine.mythic.lib.player.modifier.PlayerModifier;
 import io.lumine.mythic.lib.util.configobject.ConfigObject;
-import org.apache.commons.lang.Validate;
-
-import java.text.DecimalFormat;
 
 /**
  * Stat modifiers do NOT utilize the player modifier UUID
  */
-public class StatModifier extends PlayerModifier {
+public class StatModifier extends InstanceModifier {
     private final String stat;
-    private final double value;
-    private final ModifierType type;
-
-    private static final DecimalFormat oneDigit = MythicLib.plugin.getMMOConfig().newDecimalFormat("0.#");
 
     /**
      * Flat stat modifier (simplest modifier you can think about)
@@ -47,11 +39,9 @@ public class StatModifier extends PlayerModifier {
      * @param source Type of the item granting the stat modifier
      */
     public StatModifier(String key, String stat, double value, ModifierType type, EquipmentSlot slot, ModifierSource source) {
-        super(key, slot, source);
+        super(key, slot, source, value, type);
 
         this.stat = stat;
-        this.value = value;
-        this.type = type;
     }
 
     /**
@@ -62,36 +52,20 @@ public class StatModifier extends PlayerModifier {
      * @param str The string to be parsed
      */
     public StatModifier(String key, String stat, String str) {
-        super(key, EquipmentSlot.OTHER, ModifierSource.OTHER);
+        super(key, EquipmentSlot.OTHER, ModifierSource.OTHER, str);
 
-        Validate.notNull(str, "String cannot be null");
-        Validate.notEmpty(str, "String cannot be empty");
-
-        type = str.toCharArray()[str.length() - 1] == '%' ? ModifierType.RELATIVE : ModifierType.FLAT;
-        value = Double.parseDouble(type == ModifierType.RELATIVE ? str.substring(0, str.length() - 1) : str);
         this.stat = stat;
     }
 
     public StatModifier(ConfigObject object) {
-        super(object.getString("key"), EquipmentSlot.OTHER, ModifierSource.OTHER);
+        super(object);
 
         this.stat = object.getString("stat");
-        this.value = object.getDouble("value");
-        type = object.getBoolean("multiplicative", false) ? ModifierType.RELATIVE : ModifierType.FLAT;
     }
 
     public String getStat() {
         return stat;
     }
-
-    public ModifierType getType() {
-        return type;
-    }
-
-    public double getValue() {
-        return value;
-    }
-
 
     /**
      * Used to add a constant to some existing stat modifier, usually an
@@ -124,11 +98,6 @@ public class StatModifier extends PlayerModifier {
     @Override
     public void unregister(MMOPlayerData playerData) {
         playerData.getStatMap().getInstance(stat).remove(getKey());
-    }
-
-    @Override
-    public String toString() {
-        return oneDigit.format(value) + (type == ModifierType.RELATIVE ? "%" : "");
     }
 }
 

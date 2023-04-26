@@ -22,7 +22,7 @@ public class Heal extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        Player caster = skillMeta.getCaster().getPlayer();
+        final Player caster = skillMeta.getCaster().getPlayer();
 
         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
         caster.getWorld().spawnParticle(Particle.HEART, caster.getLocation().add(0, .75, 0), 16, 1, 1, 1, 0);

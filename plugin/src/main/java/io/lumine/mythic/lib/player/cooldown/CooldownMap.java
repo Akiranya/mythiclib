@@ -1,5 +1,6 @@
 package io.lumine.mythic.lib.player.cooldown;
 
+import io.lumine.mythic.lib.UtilityMethods;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -29,12 +30,13 @@ public class CooldownMap {
      * @return The newly registered cooldown info
      */
     public CooldownInfo applyCooldown(String path, double cooldown) {
-        @Nullable CooldownInfo current = map.get(path);
+        final String key = UtilityMethods.enumName(path);
+        @Nullable CooldownInfo current = map.get(key);
         if (current != null && current.getRemaining() >= cooldown * 1000)
             return current;
 
         current = new CooldownInfo(cooldown);
-        map.put(path, current);
+        map.put(key, current);
         return current;
     }
 
@@ -51,7 +53,7 @@ public class CooldownMap {
      */
     @Nullable
     public CooldownInfo getInfo(String path) {
-        return map.get(path);
+        return map.get(UtilityMethods.enumName(path));
     }
 
     /**
@@ -67,7 +69,7 @@ public class CooldownMap {
      * @return Retrieves the remaining cooldown in seconds
      */
     public double getCooldown(String path) {
-        final @Nullable CooldownInfo info = map.get(path);
+        final @Nullable CooldownInfo info = map.get(UtilityMethods.enumName(path));
         return info == null ? 0 : (double) info.getRemaining() / 1000;
     }
 
@@ -84,7 +86,7 @@ public class CooldownMap {
      * @return If the mechanic can be used by the player
      */
     public boolean isOnCooldown(String path) {
-        final @Nullable CooldownInfo found = map.get(path);
+        final @Nullable CooldownInfo found = map.get(UtilityMethods.enumName(path));
         return found != null && !found.hasEnded();
     }
 
@@ -103,6 +105,6 @@ public class CooldownMap {
      * @param path The skill or action path, must be completely unique
      */
     public void resetCooldown(String path) {
-        map.remove(path);
+        map.remove(UtilityMethods.enumName(path));
     }
 }

@@ -24,7 +24,7 @@ public class HelixMechanic extends Mechanic {
     private final long points, timeInterval, pointsPerTick, helixes;
     private final LocationTargeter direction, targetLocation;
 
-    private final Script onTick, onEnd;
+    private final Script onStart, onTick, onEnd;
 
     public HelixMechanic(ConfigObject config) {
         targetLocation = config.contains("source") ? MythicLib.plugin.getSkills().loadLocationTargeter(config.getObject("source")) : new DefaultLocationTargeter();
@@ -32,6 +32,7 @@ public class HelixMechanic extends Mechanic {
 
         config.validateKeys("tick");
 
+        onStart = config.contains("start") ? MythicLib.plugin.getSkills().getScriptOrThrow(config.getString("start")) : null;
         onTick = MythicLib.plugin.getSkills().getScriptOrThrow(config.getString("tick"));
         onEnd = config.contains("end") ? MythicLib.plugin.getSkills().getScriptOrThrow(config.getString("end")) : null;
 
@@ -72,20 +73,23 @@ public class HelixMechanic extends Mechanic {
 
             public void run() {
                 for (int i = 0; i < pointsPerTick; i++) {
+
+                    /* Always on start otherwise an error in the
+                     * code will makethe runnable loop forever.
+                     */
                     if (counter++ >= points) {
                         cancel();
-                        if (onEnd != null)
-                            onEnd.cast(meta);
                         return;
                     }
 
                     final double yaw = Math.toRadians(yaw_i + ((double) counter / points) * yawSpread);
                     final double y = ((double) counter / points) * height, r = radius.evaluate(meta);
+                    final Script cast = onEnd != null && counter >= points ? onEnd : (onStart != null && counter == 1 ? onStart : onTick);
 
                     for (int j = 0; j < helixes; j++) {
                         final double angle = yaw + Math.PI * 2 / helixes * j;
                         Location loc = source.clone().add(r * Math.cos(angle), y, r * Math.sin(angle));
-                        onTick.cast(meta.clone(source, loc, null, null));
+                        cast.cast(meta.clone(source, loc, null, null));
                     }
                 }
             }

@@ -10,10 +10,9 @@ import io.lumine.mythic.lib.damage.DamagePacket;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.element.Element;
 import io.lumine.mythic.lib.util.CustomFont;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -63,8 +62,9 @@ public class DamageIndicators extends GameIndicators {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void a(AttackEvent event) {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof LivingEntity) || event.getEntity() instanceof ArmorStand)
+
+        final Entity entity = event.getEntity();
+        if (event.getDamage().getDamage() < 2 * DamageMetadata.MINIMAL_DAMAGE)
             return;
 
         // Display no indicator around vanished player

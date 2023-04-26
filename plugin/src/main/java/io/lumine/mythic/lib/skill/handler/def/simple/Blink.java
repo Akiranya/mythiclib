@@ -25,7 +25,7 @@ public class Blink extends SkillHandler<SimpleSkillResult> {
         return new SimpleSkillResult();
     }
 
-    private static final double MIN_RANGE = 50;
+    private static final double MIN_RANGE = 1;
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {

@@ -23,7 +23,7 @@ public class LookingAtTargeter extends LocationTargeter {
         super(false);
 
         this.rayCastLength = config.getDouble("length", 50);
-        ignorePassable = config.getBoolean("ignore-passable", false);
+        ignorePassable = config.getBoolean("ignore_passable", true);
     }
 
     @Override

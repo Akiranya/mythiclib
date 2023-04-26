@@ -1,5 +1,6 @@
 package io.lumine.mythic.lib.listener;
 
+import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.event.AttackEvent;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.lumine.mythic.lib.api.stat.StatMap;
@@ -31,7 +32,7 @@ public class DamageReduction implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void damageMitigation(AttackEvent event) {
-        if (!(event.getEntity() instanceof Player) || event.getEntity().hasMetadata("NPC"))
+        if (!UtilityMethods.isRealPlayer(event.getEntity()))
             return;
 
         // Applies specific damage reduction
@@ -41,13 +42,13 @@ public class DamageReduction implements Listener {
 
         // Applies damage reduction for existing damage types
         for (DamageType damageType : DamageType.values())
-            event.getDamage().multiplicativeModifier(1 - data.getStatMap().getStat(damageType + "_DAMAGE_REDUCTION") / 100, damageType);
+            event.getDamage().multiplicativeModifier(Math.max(0, 1 - data.getStatMap().getStat(damageType + "_DAMAGE_REDUCTION") / 100), damageType);
 
         // Applies the Defense stat
         final double defense = data.getStatMap().getStat("DEFENSE");
-        if (defense > 0) {
-            final double initialDamage = event.getDamage().getDamage();
-            final double ratio = new DefenseFormula(false).getAppliedDamage(defense, initialDamage) / initialDamage;
+        final double initialDamage = event.getDamage().getDamage();
+        if (defense > 0 && initialDamage > 0) {
+            final double ratio = Math.max(0, new DefenseFormula(false).getAppliedDamage(defense, initialDamage)) / initialDamage;
             event.getDamage().multiplicativeModifier(ratio);
         }
     }

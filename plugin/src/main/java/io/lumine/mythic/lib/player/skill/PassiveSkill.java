@@ -36,12 +36,6 @@ public class PassiveSkill extends PlayerModifier {
      */
     private final Skill triggered;
 
-    /**
-     * Zero when skill does not use a timer. The user inputs
-     * it in ticks but that field is expressed in milliseconds
-     */
-    private final long timerPeriod;
-
     @Deprecated
     public PassiveSkill(String key, TriggerType type, Skill triggered, EquipmentSlot equipmentSlot, ModifierSource modifierSource) {
         this(key, triggered, equipmentSlot, modifierSource);
@@ -60,7 +54,6 @@ public class PassiveSkill extends PlayerModifier {
 
         Validate.isTrue(triggered.getTrigger().isPassive(), "Skill is active");
         this.triggered = Objects.requireNonNull(triggered, "Skill cannot be null");
-        this.timerPeriod = Math.max(1, (long) triggered.getModifier("timer")) * 50;
     }
 
     @Deprecated
@@ -72,7 +65,6 @@ public class PassiveSkill extends PlayerModifier {
         super(obj.getString("key"), EquipmentSlot.OTHER, ModifierSource.OTHER);
 
         triggered = new SimpleSkill(TriggerType.API, MythicLib.plugin.getSkills().getHandlerOrThrow(obj.getString("skill")));
-        timerPeriod = 0;
     }
 
     @NotNull
@@ -80,8 +72,12 @@ public class PassiveSkill extends PlayerModifier {
         return triggered;
     }
 
+    /**
+     * Zero when skill does not use a timer. The user inputs
+     * it in ticks but that field is expressed in milliseconds
+     */
     public long getTimerPeriod() {
-        return timerPeriod;
+        return Math.max(1, (long) triggered.getParameter("timer")) * 50;
     }
 
     @NotNull

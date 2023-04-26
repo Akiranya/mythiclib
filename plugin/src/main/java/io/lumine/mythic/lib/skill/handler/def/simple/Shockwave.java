@@ -51,8 +51,7 @@ public class Shockwave extends SkillHandler<SimpleSkillResult> {
                 loc.getWorld().spawnParticle(Particle.BLOCK_CRACK, loc, 12, .5, 0, .5, 0, Material.DIRT.createBlockData());
 
                 for (Entity ent : UtilityMethods.getNearbyChunkEntities(loc))
-                    if (ent.getLocation().distance(loc) < 1.1 && ent instanceof LivingEntity && !ent.equals(caster)
-                            && !hit.contains(ent.getEntityId())) {
+                    if (ent.getLocation().distanceSquared(loc) < 1.1 * 1.1 && UtilityMethods.canTarget(caster, ent) && !hit.contains(ent.getEntityId())) {
                         hit.add(ent.getEntityId());
                         ent.playEffect(EntityEffect.HURT);
                         ent.setVelocity(ent.getVelocity().setY(.4 * knockUp));

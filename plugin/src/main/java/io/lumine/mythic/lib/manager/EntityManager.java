@@ -99,9 +99,13 @@ public class EntityManager {
         // Pvp Interaction Rules
         if (target instanceof Player) {
 
-            final DamageCheckEvent damageCheckEvent = new DamageCheckEvent(source, target, interactionType);
-            Bukkit.getPluginManager().callEvent(damageCheckEvent);
-            final boolean pvpEnabled = !damageCheckEvent.isCancelled();
+            // PvP value check
+            boolean pvpEnabled = target.getWorld().getPVP();
+            if (pvpEnabled) {
+                final DamageCheckEvent damageCheckEvent = new DamageCheckEvent(source, target, interactionType);
+                Bukkit.getPluginManager().callEvent(damageCheckEvent);
+                pvpEnabled = !damageCheckEvent.isCancelled();
+            }
 
             // If offense, just cancel if PvP is disabled
             if (interactionType.isOffense() && !pvpEnabled)
@@ -111,6 +115,10 @@ public class EntityManager {
             if (!checkPvpInteractionRules(source, (Player) target, interactionType, pvpEnabled))
                 return false;
         }
+
+        // PvE Interaction Rules
+        else if (!interactionType.isOffense() && !MythicLib.plugin.getMMOConfig().interactionRules.supportSkillsOnMobs)
+            return false;
 
         return true;
     }
@@ -126,7 +134,7 @@ public class EntityManager {
      */
     public boolean checkPvpInteractionRules(@NotNull Player source, @NotNull Player target, @NotNull InteractionType interactionType, @NotNull boolean pvpEnabled) {
         for (RelationshipHandler relHandler : relHandlers)
-            if (!MythicLib.plugin.getMMOConfig().pvpInteractionRules.isEnabled(pvpEnabled, interactionType, relHandler.getRelationship(source, target)))
+            if (!MythicLib.plugin.getMMOConfig().interactionRules.isEnabled(pvpEnabled, interactionType, relHandler.getRelationship(source, target)))
                 return false;
         return true;
     }

@@ -1,6 +1,8 @@
 package io.lumine.mythic.lib.script.mechanic.shaped;
 
+import com.sucy.skill.thread.IThreadTask;
 import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.script.targeter.LocationTargeter;
 import io.lumine.mythic.lib.script.targeter.location.SourceLocationTargeter;
 import io.lumine.mythic.lib.script.targeter.location.TargetLocationTargeter;
@@ -9,6 +11,8 @@ import io.lumine.mythic.lib.script.Script;
 import io.lumine.mythic.lib.script.mechanic.Mechanic;
 import io.lumine.mythic.lib.util.configobject.ConfigObject;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -22,7 +26,7 @@ public class ParabolaMechanic extends Mechanic {
 
     private final LocationTargeter sourceLocation, targetLocation;
 
-    private final Script onTick, onEnd;
+    private final Script onStart, onTick, onEnd;
 
     public ParabolaMechanic(ConfigObject config) {
         sourceLocation = config.contains("source") ? MythicLib.plugin.getSkills().loadLocationTargeter(config.getObject("source")) : new SourceLocationTargeter();
@@ -30,6 +34,7 @@ public class ParabolaMechanic extends Mechanic {
 
         config.validateKeys("tick");
 
+        onStart = config.contains("start") ? MythicLib.plugin.getSkills().getScriptOrThrow(config.getString("start")) : null;
         onTick = MythicLib.plugin.getSkills().getScriptOrThrow(config.getString("tick"));
         onEnd = config.contains("end") ? MythicLib.plugin.getSkills().getScriptOrThrow(config.getString("end")) : null;
 
@@ -53,7 +58,7 @@ public class ParabolaMechanic extends Mechanic {
         Validate.isTrue(dir.lengthSquared() > 0, "Direction cannot be zero");
 
         // Distance between the two points protected onto the XZ plane
-        double xzLength = dir.clone().setY(0).length();
+        final double xzLength = dir.clone().setY(0).length();
 
         /*
          * Let y = a.x.(x - b) be the parabola we are looking for
@@ -76,9 +81,9 @@ public class ParabolaMechanic extends Mechanic {
          * coordinate of source and target location. This also
          * looks better in game and makes a little more sense.
          */
-        double height = this.height + Math.max(0, dir.getY());
-        double a = (2 * dir.getY() - 4 * height) / (xzLength * xzLength);
-        double b = xzLength - dir.getY() / (a * xzLength);
+        final double height = this.height + Math.max(0, dir.getY());
+        final double a = (2 * dir.getY() - 4 * height) / (xzLength * xzLength);
+        final double b = xzLength - dir.getY() / (a * xzLength);
 
         new BukkitRunnable() {
             double x = 0;
@@ -94,28 +99,28 @@ public class ParabolaMechanic extends Mechanic {
             public void run() {
 
                 // Distance traveled along the x axis
-                double dx = speed * DT;
+                final double dx = speed * DT;
+                if (x >= xzLength) {
+                    cancel();
+                    return;
+                }
 
                 // Distance traveled along the parabola
-                double dy = getLength(a, b, x, x + dx);
+                final double dy = getLength(a, b, x, x + dx);
+                x += dx;
 
                 // Amount of particles to display this tick
-                int displayed = (int) (dy / STEP);
-                double xStep = dx / (double) displayed;
+                final int displayed = Math.max(1, (int) (dy / STEP));
+                final double xStep = dx / (double) displayed;
 
+                // Script being cast
+                final Script cast = onStart != null && x == dx ? onStart : (onEnd != null && x >= xzLength ? onEnd : onTick);
                 for (int i = 0; i < displayed; i++) {
 
                     // Intermediate x value and corresponding location
                     double x_i = x + i * xStep;
-                    Location loc_i = source.clone().add(axis.multiply(x_i)).add(0, y(a, b, x_i), 0);
-                    onTick.cast(meta.clone(source, loc_i, null, null));
-                }
-
-                // Propagate through x axis
-                x += dx;
-                if (x >= xzLength) {
-                    cancel();
-                    onEnd.cast(meta.clone(source, source.clone().add(dir), null, null));
+                    Location loc_i = source.clone().add(axis.clone().multiply(x_i)).add(0, y(a, b, x_i), 0);
+                    cast.cast(meta.clone(source, loc_i, null, null));
                 }
             }
         }.runTaskTimer(MythicLib.plugin, 0, 1);
@@ -132,16 +137,9 @@ public class ParabolaMechanic extends Mechanic {
      * @return Length of parabola between two x values
      */
     private double getLength(double a, double b, double x1, double x2) {
-        double u1 = u(a, b, x1);
-        double u2 = u(a, b, x2);
+        double u1 = a * (2 * x1 - b);
+        double u2 = a * (2 * x2 - b);
         return (primitive(u2) - primitive(u1)) / (2 * a);
-    }
-
-    /**
-     * u is a second variable
-     */
-    private double u(double a, double b, double x) {
-        return a * (2 * x - b);
     }
 
     /**

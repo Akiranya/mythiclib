@@ -36,6 +36,6 @@ public class Furtive_Strike extends SkillHandler<TargetSkillResult> {
             damage *= 1 + skillMeta.getModifier("extra") / 100;
         }
 
-        skillMeta.attack(target, damage, DamageType.SKILL, DamageType.PHYSICAL);
+        skillMeta.getCaster().attack(target, damage, DamageType.SKILL, DamageType.PHYSICAL);
     }
 }

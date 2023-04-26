@@ -67,10 +67,7 @@ public class DamageMechanic extends TargetMechanic {
         if (meta.hasTargetEntity()) {
             final @Nullable AttackMetadata opt = MythicLib.plugin.getDamage().getRegisteredAttackMetadata(meta.getTargetEntity());
             if (opt != null) {
-                if (element == null)
-                    opt.getDamage().add(amount.evaluate(meta), types);
-                else
-                    opt.getDamage().add(amount.evaluate(meta), element, types);
+                opt.getDamage().add(amount.evaluate(meta), element, types);
                 return;
             }
         }

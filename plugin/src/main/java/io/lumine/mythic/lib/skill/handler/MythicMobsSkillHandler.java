@@ -88,6 +88,6 @@ public class MythicMobsSkillHandler extends SkillHandler<MythicMobsSkillResult> 
         if (MythicLib.plugin.hasAntiCheat())
             MythicLib.plugin.getAntiCheat().disableAntiCheat(skillMeta.getCaster().getPlayer(), antiCheat);
 
-        skill.execute(result.getMythicMobskillMetadata());
+        skill.execute(result.getMythicMobsSkillMetadata());
     }
 }

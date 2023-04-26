@@ -14,6 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -117,6 +118,14 @@ public class PlayerMetadata implements StatProvider {
      * @return The (modified) attack metadata
      */
     public AttackMetadata attack(LivingEntity target, double damage, boolean knockback, DamageType... types) {
+
+        // Check if entity is not already being damaged
+        final @Nullable AttackMetadata opt = MythicLib.plugin.getDamage().getRegisteredAttackMetadata(target);
+        if (opt != null) {
+            opt.getDamage().add(damage, types);
+            return opt;
+        }
+
         final AttackMetadata attackMeta = new AttackMetadata(new DamageMetadata(damage, types), target, this);
         MythicLib.plugin.getDamage().registerAttack(attackMeta, knockback, false);
         return attackMeta;

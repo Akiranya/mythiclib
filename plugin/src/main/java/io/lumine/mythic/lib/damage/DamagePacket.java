@@ -1,6 +1,7 @@
 package io.lumine.mythic.lib.damage;
 
 import io.lumine.mythic.lib.element.Element;
+import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,6 +66,7 @@ public class DamagePacket implements Cloneable {
      * @param value New damage value
      */
     public void setValue(double value) {
+        Validate.isTrue(value >= 0, "Value cannot be negative");
         this.value = value;
     }
 
@@ -82,6 +84,7 @@ public class DamagePacket implements Cloneable {
      *                    increase final damage by 50%
      */
     public void multiplicativeModifier(double coefficient) {
+        Validate.isTrue(coefficient >= 0, "Coefficient cannot be negative");
         this.multiplicativeModifiers *= coefficient;
     }
 
@@ -96,7 +99,7 @@ public class DamagePacket implements Cloneable {
     public double getFinalValue() {
 
         // Make sure the returned value is positive
-        return value * Math.max(0, 1 + additiveModifiers) * Math.max(0, multiplicativeModifiers);
+        return value * Math.max(0, 1 + additiveModifiers) * multiplicativeModifiers;
     }
 
     /**
@@ -116,7 +119,9 @@ public class DamagePacket implements Cloneable {
         StringBuilder damageTypes = new StringBuilder();
 
         // Append value and modifier
-        damageTypes.append("\u00a7e").append("(").append(value).append("*").append(additiveModifiers).append(")").append("x");
+        damageTypes.append("\u00a7e").append("(").append(value)
+                .append("*").append(additiveModifiers)
+                .append("*").append(multiplicativeModifiers).append(")").append("x");
 
         // Append Scaling
         boolean damageAppended = false;
@@ -163,6 +168,8 @@ public class DamagePacket implements Cloneable {
     public DamagePacket clone() {
         DamagePacket clone = new DamagePacket(value, types);
         clone.additiveModifiers = additiveModifiers;
+        clone.multiplicativeModifiers = multiplicativeModifiers;
+        clone.element = element;
         return clone;
     }
 }

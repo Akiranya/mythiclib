@@ -1,9 +1,10 @@
 package io.lumine.mythic.lib.script.condition.generic;
 
+import bsh.EvalError;
+import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.script.condition.Condition;
 import io.lumine.mythic.lib.util.configobject.ConfigObject;
-import io.lumine.mythic.lib.util.parser.boolalg.BooleanExpressionParser;
 
 /**
  * Checks if the specified algebraic expression returns true
@@ -21,6 +22,10 @@ public class BooleanCondition extends Condition {
 
     @Override
     public boolean isMet(SkillMetadata meta) {
-        return new BooleanExpressionParser().evaluate(meta.parseString(formula));
+        try {
+            return (boolean)MythicLib.plugin.getInterpreter().eval(meta.parseString(formula));
+        } catch (EvalError e) {
+            return false;
+        }
     }
 }

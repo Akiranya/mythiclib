@@ -12,7 +12,6 @@ import io.lumine.mythic.lib.skill.handler.MythicMobsSkillHandler;
 import io.lumine.mythic.lib.util.RayTrace;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
@@ -54,21 +53,29 @@ public class MythicMobsSkillResult implements SkillResult {
         mmSkillMeta = new SkillMetadataImpl(SkillTriggers.API, caster, trigger, BukkitAdapter.adapt(skillMeta.getCaster().getPlayer().getEyeLocation()), targetEntities, targetLocations, 1);
 
         // Stats & cast skill are cached inside a variable
-        mmSkillMeta.getVariables().putObject(MMOSKILL_VAR_STATS, skillMeta.getCaster());
-        mmSkillMeta.getVariables().putObject(MMOSKILL_VAR_SKILL, skillMeta.getCast());
+        mmSkillMeta.getVariables().putObject(MMO_STATMAP_TAG, skillMeta.getCaster());
+        mmSkillMeta.getVariables().putObject(MMO_SKILL_TAG, skillMeta.getCast());
+        mmSkillMeta.getVariables().putObject(MMO_SKILLMETADATA_TAG, skillMeta);
     }
 
-    @NotNull
-    public static final String MMOSKILL_VAR_STATS = "MMOStatMap";
-    @NotNull
-    public static final String MMOSKILL_VAR_SKILL = "MMOSkill";
+    @Deprecated
+    public static final String MMO_STATMAP_TAG = "MMOStatMap";
+    @Deprecated
+    public static final String MMO_SKILL_TAG = "MMOSkill";
+
+    public static final String MMO_SKILLMETADATA_TAG = "MMOSkillMetadata";
 
     @Override
     public boolean isSuccessful(SkillMetadata skillMeta) {
         return behaviour.getSkill().isUsable(mmSkillMeta);
     }
 
-    public SkillMetadataImpl getMythicMobskillMetadata() {
+    public SkillMetadataImpl getMythicMobsSkillMetadata() {
         return mmSkillMeta;
+    }
+
+    @Deprecated
+    public SkillMetadataImpl getMythicMobskillMetadata() {
+        return getMythicMobsSkillMetadata();
     }
 }

@@ -22,9 +22,9 @@ public class CustomLocationTargeter extends LocationTargeter {
 
         config.validateKeys("x", "y", "z");
 
-        this.x = new DoubleFormula(config.getString("x"));
-        this.y = new DoubleFormula(config.getString("y"));
-        this.z = new DoubleFormula(config.getString("z"));
+        this.x = config.getDoubleFormula("x");
+        this.y = config.getDoubleFormula("y");
+        this.z = config.getDoubleFormula("z");
 
         relative = config.getBoolean("relative", true);
         source = config.getBoolean("source", false);

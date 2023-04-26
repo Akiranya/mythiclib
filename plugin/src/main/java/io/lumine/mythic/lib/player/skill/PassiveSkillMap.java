@@ -7,6 +7,7 @@ import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.handler.def.passive.Backstab;
 import io.lumine.mythic.lib.skill.trigger.TriggerMetadata;
 import io.lumine.mythic.lib.skill.trigger.TriggerType;
+import org.bukkit.GameMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,16 +61,18 @@ public class PassiveSkillMap extends ModifierMap<PassiveSkill> {
         // Do not initialize triggerMeta unless absolutely necessary
         TriggerMetadata triggerMeta = null;
 
-        for (PassiveSkill passive : getModifiers())
-            if (passive.getType().equals(TriggerType.TIMER)) {
-                String key = passive.getTriggeredSkill().getHandler().getId();
-                final Long mapValue = this.lastCast.get(key);
-                final long lastCast = mapValue == null ? 0 : mapValue; // Avoids one map checkup taking advantage of non null values
-                if (lastCast + passive.getTimerPeriod() > System.currentTimeMillis())
-                    continue;
+        for (PassiveSkill passive : getModifiers()) {
+            if (!passive.getType().equals(TriggerType.TIMER) || getPlayerData().getPlayer().getGameMode() == GameMode.SPECTATOR)
+                continue;
 
-                this.lastCast.put(key, System.currentTimeMillis());
-                passive.getTriggeredSkill().cast(triggerMeta != null ? triggerMeta : (triggerMeta = new TriggerMetadata(getPlayerData().getStatMap().cache(EquipmentSlot.MAIN_HAND), null)));
-            }
+            final String key = passive.getTriggeredSkill().getHandler().getId();
+            final @Nullable Long mapValue = this.lastCast.get(key);
+            final long lastCast = mapValue == null ? 0 : mapValue; // Avoids one map checkup taking advantage of non null values
+            if (lastCast + passive.getTimerPeriod() > System.currentTimeMillis())
+                continue;
+
+            this.lastCast.put(key, System.currentTimeMillis());
+            passive.getTriggeredSkill().cast(triggerMeta != null ? triggerMeta : (triggerMeta = new TriggerMetadata(getPlayerData().getStatMap().cache(EquipmentSlot.MAIN_HAND), null)));
+        }
     }
 }

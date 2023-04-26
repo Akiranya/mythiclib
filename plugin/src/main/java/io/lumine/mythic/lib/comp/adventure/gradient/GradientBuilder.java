@@ -19,19 +19,6 @@ import java.util.List;
 @UtilityClass
 public class GradientBuilder {
 
-    /**
-     * Create a gradient from a string from two colors.
-     *
-     * @param str          The string to parse.
-     * @param from         The first color.
-     * @param to           The second color.
-     * @param interpolator The interpolator to use.
-     * @return The gradient.
-     */
-    public static String rgbGradient(String str, Color from, Color to, Interpolator interpolator) {
-        return rgbGradient(str, from, to, 0d, interpolator);
-    }
-
     public static String rgbGradient(String str, Color from, Color to, double phase, Interpolator interpolator) {
         return rgbGradient(str, from, to, phase, interpolator, new ArrayList<>());
     }
@@ -64,7 +51,6 @@ public class GradientBuilder {
                     .append(decoration)
                     .append(str.charAt(charIndex++));
         }
-
         for (int i = 0; i < start; i++) {
             builder.append(ChatColor.of(new Color(
                             (int) Math.round(red[i]),
@@ -73,31 +59,6 @@ public class GradientBuilder {
                     .append(decoration)
                     .append(str.charAt(charIndex++));
         }
-        return builder.toString();
-    }
-
-    /**
-     * Create a gradient from a string from two colors.
-     *
-     * @param str          The string to parse.
-     * @param from         The first color.
-     * @param to           The second color.
-     * @param interpolator The interpolator to use.
-     * @return The gradient.
-     */
-    public static String hsvGradient(String str, Color from, Color to, Interpolator interpolator) {
-        // returns a float-array where hsv[0] = hue, hsv[1] = saturation, hsv[2] = value/brightness
-        final float[] hsvFrom = Color.RGBtoHSB(from.getRed(), from.getGreen(), from.getBlue(), null);
-        final float[] hsvTo = Color.RGBtoHSB(to.getRed(), to.getGreen(), to.getBlue(), null);
-
-        final double[] h = interpolator.interpolate(hsvFrom[0], hsvTo[0], str.length());
-        final double[] s = interpolator.interpolate(hsvFrom[1], hsvTo[1], str.length());
-        final double[] v = interpolator.interpolate(hsvFrom[2], hsvTo[2], str.length());
-
-        final StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < str.length(); i++)
-            builder.append(ChatColor.of(Color.getHSBColor((float) h[i], (float) s[i], (float) v[i]))).append(str.charAt(i));
         return builder.toString();
     }
 
@@ -132,14 +93,9 @@ public class GradientBuilder {
         }
 
         if (stringIndex < str.length())
-            builder.append(ChatColor.of(colors[colors.length - 1])).append(str.substring(stringIndex));
+            builder.append(ChatColor.of(colors[colors.length - 1])).append(String.join("", decorations)).append(str.substring(stringIndex));
         return builder.toString();
     }
-
-    public static String multiRgbGradient(String str, Color[] colors, double @Nullable [] portions, Interpolator interpolator) {
-        return multiRgbGradient(str, colors, portions, interpolator, new ArrayList<>());
-    }
-
 
     /**
      * Create a gradient from a string from a colors array with a phase.
@@ -156,9 +112,4 @@ public class GradientBuilder {
             c[i] = colors[(i + (int) (colors.length * phase)) % colors.length];
         return multiRgbGradient(str, c, null, interpolator, decorations);
     }
-
-    public static String multiRgbGradient(String str, Color[] colors, double phase, Interpolator interpolator) {
-        return multiRgbGradient(str, colors, phase, interpolator, new ArrayList<>());
-    }
-
 }

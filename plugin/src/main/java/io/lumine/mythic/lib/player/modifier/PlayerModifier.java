@@ -7,16 +7,15 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * A player modifier can be anything that is temporarily assigned
- * to a player including the following
+ * Player modifiers were defined in 1.2 as a generalization of
+ * stat modifiers. These can be any property that may be
+ * temporarily assigned to a player including the following:
  * - stat modifier
  * - potion effect
  * - any triggered skill
- * <p>
- * Since MythicLib 1.2 it is a generalization of stat modifiers.
- * Still under development
+ * - skill modifier
  *
- * @author indyuce
+ * @author Jules
  */
 public abstract class PlayerModifier {
     private final ModifierSource source;
@@ -25,7 +24,10 @@ public abstract class PlayerModifier {
     /**
      * Identifier given to skills to differentiate between them.
      * Every plugin like MMOItems has a key to be able to manipulate
-     * the triggers that were registered on the player at any time
+     * the triggers that were registered on the player at any time.
+     * <p>
+     * Unlike the UUID, this key is NOT ALWAYS unique in the case
+     * of modifier instances.
      */
     private final String key;
 

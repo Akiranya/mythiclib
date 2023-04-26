@@ -2,11 +2,13 @@ package io.lumine.mythic.lib.skill;
 
 import io.lumine.mythic.lib.api.event.skill.PlayerCastSkillEvent;
 import io.lumine.mythic.lib.api.event.skill.SkillCastEvent;
+import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.lumine.mythic.lib.player.cooldown.CooldownObject;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.result.SkillResult;
 import io.lumine.mythic.lib.skill.trigger.TriggerMetadata;
 import io.lumine.mythic.lib.skill.trigger.TriggerType;
+import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -117,7 +119,21 @@ public abstract class Skill implements CooldownObject {
         return trigger;
     }
 
-    public abstract double getModifier(String path);
+    /**
+     * @deprecated Skill modifiers are now called "parameters"
+     */
+    @Deprecated
+    public double getModifier(String path) {
+        return getParameter(path);
+    }
+
+    /**
+     * @param path Modifier name.
+     * @return The skill parameter value UNAFFECTED by skill modifiers.
+     */
+    public double getParameter(String path) {
+        throw new NotImplementedException("#getParameter(String) has not been implemented");
+    }
 
     @Override
     public String getCooldownPath() {

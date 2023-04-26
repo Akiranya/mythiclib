@@ -33,10 +33,14 @@ public class MovementSpeedStatHandler implements StatHandler {
         final double mmo = statIns.getFilteredTotal(mod -> !mod.getSource().isWeapon() || mod.getSlot() != EquipmentSlot.OFF_HAND, mod -> mod.getValue() < 0 ? mod.multiply(coef) : mod);
 
         /*
-         * Calculate the stat base value. Since it can be changed by
-         * external plugins, it's better to calculate it once and cache the result.
+         * Calculate the stat base value. Since it can be changed by external
+         * plugins, it's better to calculate it once and cache the result.
+         *
+         * This cannot use the TOTAL stat value otherwise the output of that
+         * function depends on the date of execution because of attribute
+         * modifiers from other plugins.
          */
-        final double base = stats.getPlayerData().getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
+        final double base = stats.getPlayerData().getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue();
 
         /*
          * Only add an attribute modifier if the very final stat

@@ -162,7 +162,7 @@ public class AdventureParser {
 
             final String rawTag = isHex ? tagIdentifier : plainTag.substring(0, hasArgs ? firstArgIndex : plainTag.length());
             final String rawArgs = isHex ? plainTag.substring(hexPrefix.length()) : (hasArgs ? plainTag.substring(firstArgIndex + 1) : "");
-            final String original = "<%s%s>".formatted(rawTag, hasArgs ? ':' + rawArgs : rawArgs);
+            final String original = String.format("<%s%s>", rawTag, hasArgs ? ':' + rawArgs : rawArgs);
 
             final AdventureArgumentQueue args = parseArguments(rawArgs);
             boolean hasContext = tag.resolver() instanceof ContextTagResolver;
@@ -172,7 +172,7 @@ public class AdventureParser {
             String resolved = hasContext ?
                     ((ContextTagResolver) tag.resolver()).resolve(rawTag, args, contextDecorations.getValue(), contextDecorations.getKey())
                     : tag.resolver().resolve(rawTag, args);
-            cpy = cpy.replace(hasContext ? "%s%s".formatted(original, context) : original, resolved != null ? resolved : "");
+            cpy = cpy.replace(hasContext ? String.format("%s%s", original, context) : original, resolved != null ? resolved : "");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -190,7 +190,7 @@ public class AdventureParser {
      */
     private @NotNull String getTagContent(@NotNull String src, @NotNull String tagName, @NotNull String tagIdentifier) {
         // Match closed tags
-        final String closeTag = "</%s>".formatted(tagName);
+        final String closeTag = String.format("</%s>", tagName);
         String content = StringUtils.substringBetween(src, tagIdentifier, closeTag);
         if (content != null) return content;
 
@@ -205,7 +205,7 @@ public class AdventureParser {
             String[] split = rawTag.split(":");
             Optional<AdventureTag> optTag = findByName(split[0]).filter(AdventureTag::color);
             if (optTag.isPresent()) {
-                colorIndex = cpy.indexOf("<%s>".formatted(rawTag));
+                colorIndex = cpy.indexOf(String.format("<%s>", rawTag));
                 break;
             }
             matcher = TAG_REGEX.matcher(cpy);
@@ -243,7 +243,7 @@ public class AdventureParser {
         int iterations = 0;
         while (matcher.find() && iterations++ < 50) {
             final String matched = matcher.group();
-            final String original = "<%s>".formatted(matched);
+            final String original = String.format("<%s>", matched);
             if (matched.startsWith("/"))
                 src = src.replace(original, "§r");
             matcher = TAG_REGEX.matcher(src);
@@ -272,7 +272,7 @@ public class AdventureParser {
         Matcher matcher = TAG_REGEX.matcher(src);
         while (matcher.find()) {
             final String tag = matcher.group();
-            final String original = "<%s>".formatted(tag);
+            final String original = String.format("<%s>", tag);
             cpy = cpy.replace(original, "");
         }
         return ChatColor.stripColor(cpy);
@@ -290,14 +290,15 @@ public class AdventureParser {
             if (tagName.isEmpty() || tagName.startsWith("/"))
                 continue;
 
-            findByName(tagName)
-                    .ifPresentOrElse(adventureTag -> tags.add(Map.entry(adventureTag, tag)),
-                            () -> {
-                                Matcher matcher1 = HEX_REGEX.matcher(tag);
-                                if (matcher1.find())
-                                    findByName(matcher1.group(1))
-                                            .ifPresent(adventureTag -> tags.add(Map.entry(adventureTag, tag)));
-                            });
+            Optional<AdventureTag> opt = findByName(tagName);
+            if (opt.isPresent()) {
+                tags.add(new AbstractMap.SimpleEntry<>(opt.get(), tag));
+            } else {
+                Matcher matcher1 = HEX_REGEX.matcher(tag);
+                if (matcher1.find())
+                    findByName(matcher1.group(1))
+                            .ifPresent(adventureTag -> tags.add(new AbstractMap.SimpleEntry<>(adventureTag, tag)));
+            }
         }
 
         String vanilla = getLastLegacyColor(cpy, matchDecorations);
@@ -315,7 +316,7 @@ public class AdventureParser {
         for (int i = list.size() - 1; i >= 0; i--) {
             final Map.Entry<AdventureTag, String> entry = list.get(i);
             if (entry.getKey().color())
-                return "<%s>".formatted(entry.getValue());
+                return String.format("<%s>", entry.getValue());
         }
         return null;
     }
@@ -328,7 +329,7 @@ public class AdventureParser {
             for (int i = list.size() - 1; i >= 0; i--) {
                 final Map.Entry<AdventureTag, String> entry = list.get(i);
                 if (!entry.getKey().color())
-                    return "<%s>".formatted(entry.getValue());
+                    return String.format("<%s>", entry.getValue());
             }
             return null;
         }
@@ -395,7 +396,7 @@ public class AdventureParser {
 
         // Replace decorations tags
         for (Map.Entry<String, String> e : decorations.entrySet())
-            context = context.replace("<%s>".formatted(e.getKey()), "");
+            context = context.replace(String.format("<%s>", e.getKey()), "");
 
         return Pair.create(new ArrayList<>(decorations.values()), context);
     }
@@ -430,7 +431,7 @@ public class AdventureParser {
      */
     public void add(AdventureTag tag) {
         if (tag.backwardsCompatible() && MythicLib.plugin.getVersion().isBelowOrEqual(1, 15)) {
-            MythicLib.plugin.getLogger().warning("The tag %s is not compatible with your server version.".formatted(tag.name()));
+            MythicLib.plugin.getLogger().warning(String.format("The tag %s is not compatible with your server version.", tag.name()));
             return;
         }
         tags.add(tag);

@@ -59,6 +59,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -268,6 +269,10 @@ public class SkillManager {
     public Collection<SkillHandler> getHandlers() {
         return handlers.values();
     }
+    @Nullable
+    public SkillHandler getHandler(String handlerId){
+        return handlers.get(handlerId);
+    }
 
     public void registerScript(@NotNull Script script) {
         Validate.isTrue(!scripts.containsKey(script.getId()), "A script with the same name already exists");
@@ -325,7 +330,7 @@ public class SkillManager {
         mechanics.put(name, mechanic);
 
         for (String alias : aliases)
-            mechanics.put(alias, mechanic);
+            registerMechanic(alias, mechanic);
     }
 
     @NotNull

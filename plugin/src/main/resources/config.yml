@@ -30,8 +30,8 @@ number-format:
 # natural   <-> non-elemental damage
 # elemental <-> fire/water/.. damage
 defense-application:
-  natural: '#damage# * (1 - (#defense# / (5 * #damage# + #defense#)))'
-  elemental: '#damage# * (1 - #defense# / 100)'
+  natural: '#damage# - #defense#'
+  elemental: '#damage# * (1 - (#defense# / (5 * #damage# + #defense#)))'
 
 # Allows to scale health up/down to a specific
 # amount so extra health does not fill up the screen.
@@ -54,7 +54,7 @@ critical-strikes:
     max-chance: 80
 
 # What happens when the player is waiting for his skill to cast
-# Does not apply if skill delay (it is a skill modifier) is set to 0
+# Does not apply if skill delay (it is a skill parameter) is set to 0
 casting-delay:
   slowness: 60 # A % based speed reduction when casting
   cancel-on-move: false # If the casting should cancel if the player moves
@@ -224,11 +224,15 @@ fix-too-large-packets: false
 #
 # More info available on the wiki
 # https://gitlab.com/phoenix-dvpmt/mmocore/-/wikis/Combat
-pvp_interaction_rules:
+interaction_rules:
 
   # When enabled, apply PvP interaction rules for skills, melee and projectile hits.
   # This option is toggled off by default to reduce confusion for new users.
-  enabled: false
+  enabled: true
+
+  # When disabled, support-based skills (buffs or heals)
+  # may only be applied onto players.
+  support_skills_on_mobs: true
 
   # When PvP is turned off
   pvp_off:

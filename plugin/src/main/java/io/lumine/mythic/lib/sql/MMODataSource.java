@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.lumine.mythic.lib.MythicLib;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +16,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public abstract class MMODataSource {
+    protected final JavaPlugin plugin;
     protected final HikariConfig config = new HikariConfig();
     private HikariDataSource dataSource;
 
@@ -23,6 +25,10 @@ public abstract class MMODataSource {
      * if it not enabled. (e.g /mmocore transferdata).
      */
     private boolean enabled;
+
+    protected MMODataSource(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     public void setup(FileConfiguration fileConfig) {
         if (fileConfig.isConfigurationSection("mysql")) {
@@ -49,6 +55,10 @@ public abstract class MMODataSource {
             dataSource = new HikariDataSource(config);
             load();
         }
+    }
+
+    public JavaPlugin getPlugin() {
+        return plugin;
     }
 
     protected abstract void load();

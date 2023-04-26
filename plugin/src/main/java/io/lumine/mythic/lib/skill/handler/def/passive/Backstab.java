@@ -7,8 +7,8 @@ import io.lumine.mythic.lib.player.skill.PassiveSkill;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.result.def.AttackSkillResult;
-import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import io.lumine.mythic.lib.skill.trigger.TriggerMetadata;
+import org.bukkit.GameMode;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -41,7 +41,8 @@ public class Backstab extends SkillHandler<AttackSkillResult> implements Listene
         MMOPlayerData data = event.getAttacker().getData();
         LivingEntity target = event.getEntity();
         if (!event.getAttack().getDamage().hasType(DamageType.WEAPON)
-                || event.getAttacker().getPlayer().getEyeLocation().getDirection().angle(target.getEyeLocation().getDirection()) > Math.PI / 6)
+                || event.getAttacker().getPlayer().getEyeLocation().getDirection().angle(target.getEyeLocation().getDirection()) > Math.PI / 6
+                || event.getAttacker().getPlayer().getGameMode() == GameMode.SPECTATOR)
             return;
 
         PassiveSkill skill = data.getPassiveSkillMap().getSkill(this);

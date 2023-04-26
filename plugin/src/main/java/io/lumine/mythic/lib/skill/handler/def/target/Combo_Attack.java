@@ -35,7 +35,7 @@ public class Combo_Attack extends SkillHandler<TargetSkillResult> {
         final LivingEntity target = result.getTarget();
 
         playEffect(target);
-        skillMeta.attack(target, damage, DamageType.SKILL, DamageType.PHYSICAL);
+        skillMeta.getCaster().attack(target, damage, DamageType.SKILL, DamageType.PHYSICAL);
 
         new BukkitRunnable() {
             int counter = 1;

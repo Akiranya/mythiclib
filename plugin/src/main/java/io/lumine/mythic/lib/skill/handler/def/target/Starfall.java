@@ -27,7 +27,7 @@ public class Starfall extends SkillHandler<TargetSkillResult> {
 
     @Override
     public void whenCast(TargetSkillResult result, SkillMetadata skillMeta) {
-        LivingEntity target = result.getTarget();
+        final LivingEntity target = result.getTarget();
 
         new BukkitRunnable() {
             final double ran = random.nextDouble() * Math.PI * 2;
@@ -52,6 +52,6 @@ public class Starfall extends SkillHandler<TargetSkillResult> {
         }.runTaskTimer(MythicLib.plugin, 0, 1);
         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_WITHER_SHOOT, 2, 2);
 
-        skillMeta.attack(target, skillMeta.getModifier("damage"), DamageType.SKILL, DamageType.MAGIC);
+        skillMeta.getCaster().attack(target, skillMeta.getModifier("damage"), DamageType.SKILL, DamageType.MAGIC);
     }
 }

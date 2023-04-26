@@ -7,7 +7,7 @@
     <parent>
         <artifactId>MythicLib</artifactId>
         <groupId>io.lumine</groupId>
-        <version>1.5.1-SNAPSHOT</version>
+        <version>1.6-SNAPSHOT</version>
     </parent>
 
     <build>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-plugin</artifactId>
-            <version>1.5.1-SNAPSHOT</version>
+            <version>1.6-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

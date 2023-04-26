@@ -21,15 +21,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -43,11 +39,18 @@ public class DamageManager implements Listener {
     /**
      * External attack handlers
      */
-    private final Set<AttackHandler> handlers = new HashSet<>();
+    private final List<AttackHandler> handlers = new ArrayList<>();
+
+    /**
+     * There is an issue with metadata not being garbage-collected on mobs.
+     * It looks like persistent data containers do also suffer from that issue.
+     * <p>
+     * I switched back to using a weak hash map to save the current attack
+     * metadata for a mob. Weak hash maps are great for garbage collection.
+     */
+    private final WeakHashMap<UUID, AttackMetadata> attackMetadatas = new WeakHashMap<>();
 
     private static final AttributeModifier NO_KNOCKBACK = new AttributeModifier(UUID.randomUUID(), "noKnockback", 100, AttributeModifier.Operation.ADD_NUMBER);
-
-    private static final String ATTACK_METADATA_TAG = "AttackMetadata";
 
     /**
      * Attack handlers are used by MythicLib to keep track of details of every
@@ -152,6 +155,7 @@ public class DamageManager implements Listener {
 
             // Just damage entity
         } else {
+            Validate.isTrue(damage > 0, "Damage must be strictly positive");
             if (damager == null)
                 target.damage(damage);
             else
@@ -193,13 +197,13 @@ public class DamageManager implements Listener {
         final LivingEntity entity = (LivingEntity) event.getEntity();
 
         // MythicLib attack registry
-        for (MetadataValue value : event.getEntity().getMetadata(ATTACK_METADATA_TAG))
-            if (value.getOwningPlugin().equals(MythicLib.plugin))
-                return (AttackMetadata) value.value();
+        @Nullable AttackMetadata found = getRegisteredAttackMetadata(entity);
+        if (found != null)
+            return found;
 
         // Attack registries from other plugins
         for (AttackHandler handler : handlers) {
-            final AttackMetadata found = handler.getAttack(event);
+            found = handler.getAttack(event);
             if (found != null) {
                 markAsMetadata(found);
                 return found;
@@ -276,7 +280,9 @@ public class DamageManager implements Listener {
      * @param attackMeta Attack metadata being registered
      */
     public void markAsMetadata(AttackMetadata attackMeta) {
-        attackMeta.getTarget().setMetadata(ATTACK_METADATA_TAG, new FixedMetadataValue(MythicLib.plugin, attackMeta));
+        final @Nullable AttackMetadata found = attackMetadatas.put(attackMeta.getTarget().getUniqueId(), attackMeta);
+        if (found != null)
+            MythicLib.plugin.getLogger().log(Level.WARNING, "Please report this issue to the developper: persistent attack metadata was found.");
     }
 
     /**
@@ -286,7 +292,7 @@ public class DamageManager implements Listener {
      * @param attackMeta Attack metadata being registered
      */
     public void unmarkAsMetadata(AttackMetadata attackMeta) {
-        attackMeta.getTarget().removeMetadata(ATTACK_METADATA_TAG, MythicLib.plugin);
+        attackMetadatas.remove(attackMeta.getTarget().getUniqueId());
     }
 
     /**
@@ -372,10 +378,7 @@ public class DamageManager implements Listener {
 
     @Nullable
     public AttackMetadata getRegisteredAttackMetadata(Entity entity) {
-        for (MetadataValue mv : entity.getMetadata(ATTACK_METADATA_TAG))
-            if (mv.getOwningPlugin().equals(MythicLib.plugin))
-                return (AttackMetadata) mv.value();
-        return null;
+        return attackMetadatas.get(entity.getUniqueId());
     }
 
     /**
@@ -390,11 +393,8 @@ public class DamageManager implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void unregisterCustomAttacks(EntityDamageEvent event) {
 
-        // Ignore fake events from RDW/mcMMO/...
-        if (!(event.getEntity() instanceof LivingEntity) || event.getDamage() == 0)
-            return;
-
-        event.getEntity().removeMetadata(ATTACK_METADATA_TAG, MythicLib.plugin);
+        if (event.getEntity() instanceof LivingEntity)
+            attackMetadatas.remove(event.getEntity().getUniqueId());
     }
 
     // Purely arbitrary but works decently

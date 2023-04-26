@@ -39,9 +39,9 @@ public class MythicMobsAttackHandler implements AttackHandler {
         // Retrieve damage info
         final io.lumine.mythic.api.skills.damage.DamageMetadata mythic = (io.lumine.mythic.api.skills.damage.DamageMetadata) opt.get();
 
-        // Find target
+        // Find damager
         final Entity damagerBukkit = mythic.getDamager().getEntity().getBukkitEntity();
-        final @Nullable StatProvider damager = damagerBukkit instanceof LivingEntity ? StatProvider.get((LivingEntity) damagerBukkit, EquipmentSlot.MAIN_HAND, false) : null;
+        final @Nullable StatProvider damager = damagerBukkit instanceof LivingEntity ? StatProvider.get((LivingEntity) damagerBukkit, EquipmentSlot.MAIN_HAND, true) : null;
 
         // Find damage metadata and apply element if found
         final DamageMetadata damageMeta = new DamageMetadata(mythic.getAmount(), MythicLib.plugin.getDamage().getVanillaDamageTypes(mythic.getDamageCause()));

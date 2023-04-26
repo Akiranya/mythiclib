@@ -1,7 +1,7 @@
 package io.lumine.mythic.lib.util;
 
+import bsh.EvalError;
 import io.lumine.mythic.lib.MythicLib;
-import org.matheclipse.commons.parser.client.eval.DoubleEvaluator;
 
 import java.util.logging.Level;
 
@@ -23,8 +23,8 @@ public class DefenseFormula {
         expression = expression.replace("#damage#", String.valueOf(damage));
 
         try {
-            return Math.max(0, new DoubleEvaluator().evaluate(expression));
-        } catch (RuntimeException exception) {
+            return Math.max(0, (double)MythicLib.plugin.getInterpreter().eval(expression));
+        } catch (EvalError exception) {
 
             /**
              * Formula won't evaluate if hanging #'s or unparsed placeholders. Send a

@@ -80,8 +80,10 @@ public class ScriptMechanic extends Mechanic {
     private void castWithNewMeta(SkillMetadata old) {
 
         // Reduces calculations
-        if (sourceLocation == null && targetEntity == null && targetLocation == null)
+        if (sourceLocation == null && targetEntity == null && targetLocation == null) {
             skill.cast(old);
+            return;
+        }
 
         // Find new source location
         final Location sourceLocation = this.sourceLocation == null ? old.getSourceLocation() : this.sourceLocation.findTargets(old).get(0);

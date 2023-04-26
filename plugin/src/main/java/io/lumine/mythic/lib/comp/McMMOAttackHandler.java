@@ -1,28 +1,38 @@
 package io.lumine.mythic.lib.comp;
 
+import com.gmail.nossr50.events.skills.rupture.McMMOEntityDamageByRuptureEvent;
+import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
-import io.lumine.mythic.lib.damage.AttackHandler;
+import io.lumine.mythic.lib.api.stat.provider.StatProvider;
 import io.lumine.mythic.lib.damage.AttackMetadata;
 import io.lumine.mythic.lib.damage.DamageMetadata;
+import io.lumine.mythic.lib.damage.DamageType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
-public class McMMOAttackHandler implements AttackHandler {
-    private static final String METADATA_KEY = "mcMMO: Custom Damage";
+/**
+ * In recent mcMMO builds there is no longer such metadata
+ * with key "mcMMO: Custom Damage" although there is an event
+ * that you can listen to and use it to initialize the attack
+ * metadata.
+ *
+ * @author Jules
+ */
+public class McMMOAttackHandler implements Listener {
 
-    @Override
-    public AttackMetadata getAttack(EntityDamageEvent event) {
-        LivingEntity entity = (LivingEntity) event.getEntity();
-        if (!(event instanceof EntityDamageByEntityEvent) || !entity.hasMetadata(METADATA_KEY))
-            return null;
+    /**
+     * Runs on priority LOW right before MythicLib's HIGHEST
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void registerAttacks(McMMOEntityDamageByRuptureEvent event) {
+        if (!(event.getEntity() instanceof LivingEntity)) return;
 
-        EntityDamageByEntityEvent event1 = (EntityDamageByEntityEvent) event;
-        if (!(event1.getDamager() instanceof Player) || !MMOPlayerData.has(event1.getDamager().getUniqueId()))
-            return null;
-
-        return new AttackMetadata(new DamageMetadata(), (LivingEntity) entity, MMOPlayerData.get(event1.getDamager().getUniqueId()).getStatMap().cache(EquipmentSlot.MAIN_HAND));
+        final StatProvider damager = MMOPlayerData.get(event.getMcMMODamager().getPlayer()).getStatMap().cache(EquipmentSlot.MAIN_HAND);
+        final DamageMetadata damageMeta = new DamageMetadata(event.getDamage(), DamageType.SKILL, DamageType.PHYSICAL, DamageType.DOT);
+        final AttackMetadata attackMeta = new AttackMetadata(damageMeta, (LivingEntity) event.getEntity(), damager);
+        MythicLib.plugin.getDamage().markAsMetadata(attackMeta);
     }
 }

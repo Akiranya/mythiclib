@@ -102,8 +102,8 @@ public class MMODamageMechanic extends DamagingMechanic implements ITargetedEnti
 
         // Find attacker
         final Entity attackerBukkit = data.getCaster().getEntity().getBukkitEntity();
-        final @Nullable StatProvider attacker = data.getVariables().has(MythicMobsSkillResult.MMOSKILL_VAR_STATS) ?
-                (PlayerMetadata) data.getVariables().get(MythicMobsSkillResult.MMOSKILL_VAR_STATS).get()
+        final @Nullable StatProvider attacker = data.getVariables().has(MythicMobsSkillResult.MMO_SKILLMETADATA_TAG) ?
+                ((io.lumine.mythic.lib.skill.SkillMetadata) data.getVariables().get(MythicMobsSkillResult.MMO_SKILLMETADATA_TAG).get()).getCaster()
                 : attackerBukkit instanceof LivingEntity ? StatProvider.get((LivingEntity) attackerBukkit, EquipmentSlot.MAIN_HAND, true) : null;
 
         // Find damage

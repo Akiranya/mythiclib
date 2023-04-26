@@ -35,10 +35,13 @@ import java.util.*;
  */
 public abstract class SkillHandler<T extends SkillResult> {
     private final String id;
-    private final Set<String> modifiers = new HashSet<>();
+    private final Set<String> parameters = new HashSet<>();
     private final boolean triggerable;
 
-    protected static final Random random = new Random();
+    protected static final Random RANDOM = new Random();
+
+    @Deprecated
+    protected static final Random random = RANDOM;
 
     /**
      * Used by default MythicLib skill handlers
@@ -106,7 +109,7 @@ public abstract class SkillHandler<T extends SkillResult> {
     }
 
     public void registerModifiers(Collection<String> mods) {
-        modifiers.addAll(mods);
+        parameters.addAll(mods);
     }
 
     /**
@@ -124,20 +127,28 @@ public abstract class SkillHandler<T extends SkillResult> {
     }
 
     /**
-     * Skill modifiers are specific numeric values that
-     * determine how powerful a skill is. Modifiers can be
+     * @deprecated Skill modifiers are now called "parameters"
+     */
+    @Deprecated
+    public Set<String> getModifiers() {
+        return getParameters();
+    }
+
+    /**
+     * Skill parameters are specific numerical values that
+     * determine how powerful a skill is. Parameters can be
      * the skill damage, cooldown, duration if it applies
      * some potion effect, etc.
      * <p>
-     * MythicLib does NOT store modifier default values/
-     * formulas that scale with the player class level. Rather
-     * it only stores what modifiers the skill has because
-     * it's a necessary information for skill handlers.
+     * MythicLib does NOT store default parameter values/
+     * formulas that scale with the player class level. It
+     * rather only stores what modifiers the skill has, as
+     * it's the only necessary information for skill handlers.
      *
-     * @return The set of all possible modifiers of that skill
+     * @return The set of all possible parameters of that skill
      */
-    public Set<String> getModifiers() {
-        return modifiers;
+    public Set<String> getParameters() {
+        return parameters;
     }
 
     /**

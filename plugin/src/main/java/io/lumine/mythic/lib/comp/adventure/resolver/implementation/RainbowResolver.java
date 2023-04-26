@@ -38,27 +38,20 @@ public class RainbowResolver implements ContextTagResolver {
             return GradientBuilder.multiRgbGradient(context, colors, 0, Interpolator.LINEAR, decorations);
         AdventureArgument argument = argsQueue.pop();
         if (argument.asInt().isPresent())
-            return GradientBuilder.multiRgbGradient(context, reverse(), argument.asInt().getAsInt(), Interpolator.LINEAR, decorations);
+            return GradientBuilder.multiRgbGradient(context, colors, 1 - argument.asInt().getAsInt(), Interpolator.LINEAR, decorations);
         else if (containsNumberAndExclamation(argument.value())) {
             try {
                 int phase = Integer.parseInt(argument.value().substring(1));
-                return GradientBuilder.multiRgbGradient(context, reverse(), phase, Interpolator.LINEAR, decorations);
+                return GradientBuilder.multiRgbGradient(context, colors, 1 - phase, Interpolator.LINEAR, decorations);
             } catch (NumberFormatException e) {
                 return null;
             }
         } else if (argument.value().equals("!"))
-            return GradientBuilder.multiRgbGradient(context, reverse(), null, Interpolator.LINEAR, decorations);
+            return GradientBuilder.multiRgbGradient(context, colors, 1, Interpolator.LINEAR, decorations);
         return null;
     }
 
     private boolean containsNumberAndExclamation(String src) {
         return src.matches("![0-9]+");
-    }
-
-    private Color[] reverse() {
-        Color[] reversed = new Color[RainbowResolver.colors.length];
-        for (int i = 0; i < RainbowResolver.colors.length; i++)
-            reversed[i] = RainbowResolver.colors[RainbowResolver.colors.length - i - 1];
-        return reversed;
     }
 }

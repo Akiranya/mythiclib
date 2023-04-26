@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author indyuce
  */
+@Deprecated
 public interface StatProvider {
     double getStat(String stat);
 

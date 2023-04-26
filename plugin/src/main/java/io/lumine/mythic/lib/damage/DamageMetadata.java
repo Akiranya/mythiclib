@@ -74,13 +74,21 @@ public class DamageMetadata implements Cloneable {
         elementalCrit.add(el);
     }
 
+    /**
+     * You cannot deal less than 0.01 damage. This is an arbitrary
+     * positive constant, as MythicLib and other plugins consider
+     * 0-damage events to be fake damage events used to check for
+     * the PvP/PvE flag.
+     */
+    public static final double MINIMAL_DAMAGE = .01;
+
     public double getDamage() {
         double d = 0;
 
         for (DamagePacket packet : packets)
             d += packet.getFinalValue();
 
-        return d;
+        return Math.max(MINIMAL_DAMAGE, d);
     }
 
     public double getDamage(Element element) {
