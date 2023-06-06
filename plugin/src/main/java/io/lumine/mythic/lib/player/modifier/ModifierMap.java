@@ -2,6 +2,7 @@ package io.lumine.mythic.lib.player.modifier;
 
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
+import io.lumine.mythic.lib.util.Closeable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;

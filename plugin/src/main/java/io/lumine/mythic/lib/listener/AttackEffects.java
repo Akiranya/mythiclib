@@ -51,7 +51,7 @@ public class AttackEffects implements Listener {
      *
      * @see {@link AttackEventListener}
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onHitAttackEffects(PlayerAttackEvent event) {
         PlayerMetadata stats = event.getAttacker();
 

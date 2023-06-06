@@ -19,7 +19,6 @@ import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.trigger.TriggerMetadata;
 import io.lumine.mythic.lib.skill.trigger.TriggerType;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
@@ -33,7 +32,15 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class MMOPlayerData {
-    private final UUID uuid;
+
+    private final UUID playerId;
+
+    /**
+     * MythicLib caches the UUID of the last profile used as
+     * it cannot be accessed by plugins with profile-based data
+     * when saving their data async.
+     */
+    private UUID profileId;
 
     @Nullable
     private Player player;
@@ -59,23 +66,41 @@ public class MMOPlayerData {
      */
     private final Map<String, Object> externalData = new HashMap<>();
 
-    private MMOPlayerData(Player player) {
-        this.uuid = player.getUniqueId();
+    /**
+     * @param player Player logging in. Original UUID is taken from that player
+     */
+    private MMOPlayerData(@NotNull Player player) {
+        this.playerId = player.getUniqueId();
         this.player = player;
     }
 
-    /**
-     * MMOPlayerData for offline players
-     *
-     * @param uuid Player UUID
-     */
-    public MMOPlayerData(UUID uuid) {
-        this.uuid = uuid;
-        this.player = null;
+    public MMOPlayerData(@NotNull UUID playerId) {
+        this.playerId = playerId;
+        setProfileId(playerId);
     }
 
+    @NotNull
     public UUID getUniqueId() {
-        return uuid;
+        return playerId;
+    }
+
+    /**
+     * If support for the Profile API has been enabled, this returns the
+     * current player's profile ID. This method will throw an error if they
+     * have not chosen a profile yet.
+     * <p>
+     * Otherwise, if no profile plugin is installed, this will simply return
+     * the player's UUID.
+     *
+     * @return The UUID used to fetch and store player data.
+     */
+    @NotNull
+    public UUID getProfileId() {
+        return MythicLib.plugin.hasProfiles() ? Objects.requireNonNull(profileId, "No profile has been chosen yet") : playerId;
+    }
+
+    public void setProfileId(@NotNull UUID profileId) {
+        this.profileId = Objects.requireNonNull(profileId, "Profile ID cannot be null");
     }
 
     /**
@@ -312,15 +337,15 @@ public class MMOPlayerData {
         if (!(o instanceof MMOPlayerData)) return false;
 
         MMOPlayerData that = (MMOPlayerData) o;
-        return uuid.equals(that.uuid);
+        return getUniqueId().equals(that.getUniqueId());
     }
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        return getUniqueId().hashCode();
     }
 
-    private static final Map<UUID, MMOPlayerData> data = new HashMap<>();
+    private static final Map<UUID, MMOPlayerData> PLAYER_DATA = new WeakHashMap<>();
 
     /**
      * Called everytime a player enters the server. If the
@@ -332,13 +357,13 @@ public class MMOPlayerData {
      *
      * @param player Player whose data should be initialized
      */
-    public static MMOPlayerData setup(Player player) {
-        final @Nullable MMOPlayerData found = data.get(player.getUniqueId());
+    public static MMOPlayerData setup(@NotNull Player player) {
+        final @Nullable MMOPlayerData found = PLAYER_DATA.get(player.getUniqueId());
 
         // Not loaded yet, checks for temporary data
         if (found == null) {
             final MMOPlayerData playerData = new MMOPlayerData(player);
-            data.put(player.getUniqueId(), playerData);
+            PLAYER_DATA.put(player.getUniqueId(), playerData);
             return playerData;
         }
 
@@ -365,16 +390,24 @@ public class MMOPlayerData {
     }
 
     @NotNull
-    public static MMOPlayerData get(UUID uuid) {
-        return Objects.requireNonNull(data.get(uuid), "Player data not loaded");
+    public static MMOPlayerData get(@NotNull UUID uuid) {
+        return Objects.requireNonNull(PLAYER_DATA.get(uuid), "Player data not loaded");
     }
 
     /**
      * Use it at your own risk! Player data might not be loaded
      */
     @Nullable
-    public static MMOPlayerData getOrNull(UUID uuid) {
-        return data.get(uuid);
+    public static MMOPlayerData getOrNull(@NotNull OfflinePlayer player) {
+        return getOrNull(player.getUniqueId());
+    }
+
+    /**
+     * Use it at your own risk! Player data might not be loaded
+     */
+    @Nullable
+    public static MMOPlayerData getOrNull(@NotNull UUID uuid) {
+        return PLAYER_DATA.get(uuid);
     }
 
     /**
@@ -382,21 +415,21 @@ public class MMOPlayerData {
      * a real player or a Citizens NPC. Citizens NPCs do not have any player
      * data associated to them
      *
-     * @return Checks if plater data is loaded for a specific player UID
+     * @return Checks if player data is loaded for a specific player
      */
-    public static boolean has(Player player) {
+    public static boolean has(@NotNull OfflinePlayer player) {
         return has(player.getUniqueId());
     }
 
     /**
      * This is being used to easily check if an online player corresponds to
-     * a real player or a Citizens NPC. Citizens NPCs do not have any player
+     * a real player/profile or a Citizens NPC. Citizens NPCs do not have any player
      * data associated to them
      *
-     * @return Checks if plater data is loaded for a specific player UID
+     * @return Checks if plater data is loaded for a specific profile UUID
      */
-    public static boolean has(UUID uuid) {
-        return data.containsKey(uuid);
+    public static boolean has(@NotNull UUID uuid) {
+        return PLAYER_DATA.containsKey(uuid);
     }
 
     /**
@@ -406,7 +439,7 @@ public class MMOPlayerData {
      *         resort to a map-lookup-based get(Player) call
      */
     public static Collection<MMOPlayerData> getLoaded() {
-        return data.values();
+        return PLAYER_DATA.values();
     }
 
     /**
@@ -418,9 +451,8 @@ public class MMOPlayerData {
      * <code>Bukkit.getOnlinePlayers().forEach(player -> MMOPlayerData.get(player)......);</code>
      */
     public static void forEachOnline(Consumer<MMOPlayerData> action) {
-        for (MMOPlayerData registered : data.values())
-            if (registered.isOnline())
-                action.accept(registered);
+        for (MMOPlayerData registered : PLAYER_DATA.values())
+            if (registered.isOnline()) action.accept(registered);
     }
 
     /**
@@ -428,11 +460,10 @@ public class MMOPlayerData {
      * checked once an hour to make sure not to cause memory leaks.
      */
     public static void flushOfflinePlayerData() {
-        Iterator<MMOPlayerData> iterator = data.values().iterator();
+        final Iterator<MMOPlayerData> iterator = PLAYER_DATA.values().iterator();
         while (iterator.hasNext()) {
-            MMOPlayerData tempData = iterator.next();
-            if (tempData.isTimedOut())
-                iterator.remove();
+            final MMOPlayerData tempData = iterator.next();
+            if (tempData.isTimedOut()) iterator.remove();
         }
     }
 }

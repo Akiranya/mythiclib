@@ -12,6 +12,7 @@ import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.util.DoubleFormula;
 import io.lumine.mythic.lib.util.configobject.ConfigObject;
 import org.apache.commons.lang.Validate;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -37,7 +38,7 @@ public class AddStatModifierMechanic extends TargetMechanic {
     public void cast(SkillMetadata meta, Entity target) {
         Validate.isTrue(target instanceof Player, "Can only give temporary stats to players");
 
-        MMOPlayerData playerData = MMOPlayerData.get(target.getUniqueId());
+        MMOPlayerData playerData = MMOPlayerData.get((OfflinePlayer) target);
         long lifetime = Math.max(0, (long) this.lifetime.evaluate(meta));
 
         if (lifetime > 0)

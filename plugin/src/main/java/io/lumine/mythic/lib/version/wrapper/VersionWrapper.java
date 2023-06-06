@@ -78,6 +78,8 @@ public interface VersionWrapper {
     // Mostly NMS based methods from here
     NBTItem getNBTItem(ItemStack item);
 
+    boolean isHelmet(Material material);
+
     default void sendActionBar(Player player, String message) {
         sendActionBarRaw(player, "{\"text\": \"" + message + "\"}");
     }

@@ -23,7 +23,7 @@ public class BooleanCondition extends Condition {
     @Override
     public boolean isMet(SkillMetadata meta) {
         try {
-            return (boolean)MythicLib.plugin.getInterpreter().eval(meta.parseString(formula));
+            return (boolean)MythicLib.plugin.getFormulaParser().eval(meta.parseString(formula));
         } catch (EvalError e) {
             return false;
         }

@@ -20,19 +20,12 @@ public class PlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     public void loadData(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        MMOPlayerData data = MMOPlayerData.setup(player);
-
-        // Run stat updates on login
+        MMOPlayerData data = MMOPlayerData.setup(event.getPlayer());
         MythicLib.plugin.getStats().runUpdates(data.getStatMap());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void registerOfflinePlayers(PlayerQuitEvent event) {
-
-        /**
-         * See {@link MMOPlayerData#isOnline()}
-         */
         MMOPlayerData.get(event.getPlayer()).updatePlayer(null);
     }
 

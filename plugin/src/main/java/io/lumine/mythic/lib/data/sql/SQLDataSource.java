@@ -1,11 +1,11 @@
-package io.lumine.mythic.lib.sql;
+package io.lumine.mythic.lib.data.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.lumine.mythic.lib.MythicLib;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,53 +15,36 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-public abstract class MMODataSource {
-    protected final JavaPlugin plugin;
-    protected final HikariConfig config = new HikariConfig();
-    private HikariDataSource dataSource;
+// TODO clear methods and implement CompletableFutures
+public class SQLDataSource {
+    private final JavaPlugin plugin;
+    private final HikariDataSource dataSource;
 
-    /**
-     * Used to know if SQL is enabled in the config. But connections can be made even
-     * if it not enabled. (e.g /mmocore transferdata).
-     */
-    private boolean enabled;
-
-    protected MMODataSource(JavaPlugin plugin) {
+    public SQLDataSource(JavaPlugin plugin) {
         this.plugin = plugin;
+
+        // Prepare Hikari config
+        final ConfigurationSection config = plugin.getConfig().getConfigurationSection("mysql");
+        final HikariConfig hikari = new HikariConfig();
+        hikari.setPoolName("MMO-hikari");
+        hikari.setJdbcUrl("jdbc:mysql://" + config.getString("host", "localhost") + ":" + config.getString("port", "3306") + "/" + config.getString("database", "minecraft"));
+        hikari.setUsername(config.getString("user", "mmolover"));
+        hikari.setPassword(config.getString("pass", "ILoveAria"));
+        hikari.setMaximumPoolSize(config.getInt("maxPoolSize", 10));
+        hikari.setMaxLifetime(config.getLong("maxLifeTime", 300000));
+        hikari.setConnectionTimeout(config.getLong("connectionTimeOut", 10000));
+        hikari.setLeakDetectionThreshold(config.getLong("leakDetectionThreshold", 150000));
+        if (config.isConfigurationSection("properties"))
+            for (String s : config.getConfigurationSection("properties").getKeys(false))
+                hikari.addDataSourceProperty(s, config.getString("properties." + s));
+
+        dataSource = new HikariDataSource(hikari);
     }
 
-    public void setup(FileConfiguration fileConfig) {
-        if (fileConfig.isConfigurationSection("mysql")) {
-            ConfigurationSection cfg = fileConfig.getConfigurationSection("mysql");
-            enabled = cfg.getBoolean("enabled");
-
-            config.setPoolName("MMO-hikari");
-
-            String sb = "jdbc:mysql://" + cfg.getString("host", "localhost") + ":" + cfg.getString("port", "3306") + "/"
-                    + cfg.getString("database", "minecraft");
-
-            config.setJdbcUrl(sb);
-            config.setUsername(cfg.getString("user", "mmolover"));
-            config.setPassword(cfg.getString("pass", "ILoveAria"));
-            config.setMaximumPoolSize(cfg.getInt("maxPoolSize", 10));
-            config.setMaxLifetime(cfg.getLong("maxLifeTime", 300000));
-            config.setConnectionTimeout(cfg.getLong("connectionTimeOut", 10000));
-            config.setLeakDetectionThreshold(cfg.getLong("leakDetectionThreshold", 150000));
-
-            if (cfg.isConfigurationSection("properties"))
-                for (String s : cfg.getConfigurationSection("properties").getKeys(false)) {
-                    config.addDataSourceProperty(s, cfg.getString("properties." + s));
-                }
-            dataSource = new HikariDataSource(config);
-            load();
-        }
-    }
-
+    @NotNull
     public JavaPlugin getPlugin() {
         return plugin;
     }
-
-    protected abstract void load();
 
     public void getResult(String sql, Consumer<ResultSet> supplier) {
         execute(connection -> {
@@ -118,8 +101,9 @@ public abstract class MMODataSource {
                 execute.accept(connection);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
+            } finally {
+                connection.close();
             }
-            connection.close();
         } catch (SQLException exception) {
             MythicLib.plugin.getLogger().log(Level.WARNING, "Could not open SQL connection:");
             exception.printStackTrace();
@@ -146,10 +130,6 @@ public abstract class MMODataSource {
     public void close() {
         if (dataSource != null)
             dataSource.close();
-    }
-
-    public boolean isEnabled() {
-        return enabled;
     }
 }
 

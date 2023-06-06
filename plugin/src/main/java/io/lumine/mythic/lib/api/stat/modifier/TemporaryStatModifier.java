@@ -3,7 +3,7 @@ package io.lumine.mythic.lib.api.stat.modifier;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
-import io.lumine.mythic.lib.player.modifier.Closeable;
+import io.lumine.mythic.lib.util.Closeable;
 import io.lumine.mythic.lib.player.modifier.ModifierSource;
 import io.lumine.mythic.lib.player.modifier.ModifierType;
 import org.apache.commons.lang.Validate;

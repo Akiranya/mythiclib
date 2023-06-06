@@ -1,7 +1,7 @@
 package io.lumine.mythic.lib.api.stat.api;
 
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
-import io.lumine.mythic.lib.player.modifier.Closeable;
+import io.lumine.mythic.lib.util.Closeable;
 import io.lumine.mythic.lib.player.modifier.ModifierType;
 import org.jetbrains.annotations.Nullable;
 

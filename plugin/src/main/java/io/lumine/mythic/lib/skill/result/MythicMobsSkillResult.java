@@ -53,15 +53,8 @@ public class MythicMobsSkillResult implements SkillResult {
         mmSkillMeta = new SkillMetadataImpl(SkillTriggers.API, caster, trigger, BukkitAdapter.adapt(skillMeta.getCaster().getPlayer().getEyeLocation()), targetEntities, targetLocations, 1);
 
         // Stats & cast skill are cached inside a variable
-        mmSkillMeta.getVariables().putObject(MMO_STATMAP_TAG, skillMeta.getCaster());
-        mmSkillMeta.getVariables().putObject(MMO_SKILL_TAG, skillMeta.getCast());
         mmSkillMeta.getVariables().putObject(MMO_SKILLMETADATA_TAG, skillMeta);
     }
-
-    @Deprecated
-    public static final String MMO_STATMAP_TAG = "MMOStatMap";
-    @Deprecated
-    public static final String MMO_SKILL_TAG = "MMOSkill";
 
     public static final String MMO_SKILLMETADATA_TAG = "MMOSkillMetadata";
 

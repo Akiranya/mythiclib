@@ -15,7 +15,9 @@
         <module>v1_19_r2</module>
         <module>mythiclib_v1_19_r3</module>
     </modules>
+
     <name>MythicLib</name>
+    <description>A great item solution for your RPG server!!</description>
 
     <properties>
         <downloadSources>false</downloadSources>

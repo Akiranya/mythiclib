@@ -5,10 +5,7 @@ import io.lumine.mythic.lib.api.condition.RegionCondition;
 import io.lumine.mythic.lib.api.condition.type.MMOCondition;
 import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -44,6 +41,31 @@ public class UtilityMethods {
         }
 
         return null;
+    }
+
+    public static boolean isAir(@Nullable ItemStack item) {
+        return item == null || item.getType() == Material.AIR;
+    }
+
+    private final static char[] DELAY_CHARACTERS = {'m', 'h', 'd', 'm', 'y'};
+    private final static long[] DELAY_AMOUNTS = {60, 60 * 60, 60 * 60 * 24, 60 * 60 * 24 * 30, 60 * 60 * 24 * 30 * 365};
+
+    public static String formatDelay(long millis) {
+
+        if (millis < 1000 * 60)
+            return "1m";
+
+        String format = "";
+        for (int j = DELAY_CHARACTERS.length - 1; j >= 0; j--) {
+            long divisor = DELAY_AMOUNTS[j] * 1000;
+            if (millis < divisor)
+                continue;
+
+            format = (millis / divisor) + DELAY_CHARACTERS[j] + " " + format;
+            millis = millis % divisor;
+        }
+
+        return format;
     }
 
     private static final int PTS_PER_BLOCK = 10;

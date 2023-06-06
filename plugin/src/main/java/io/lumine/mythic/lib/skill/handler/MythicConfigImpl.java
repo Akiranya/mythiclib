@@ -6,21 +6,14 @@ import io.lumine.mythic.api.skills.placeholders.PlaceholderInt;
 import io.lumine.mythic.api.skills.placeholders.PlaceholderString;
 import io.lumine.mythic.bukkit.utils.config.MemorySection;
 import io.lumine.mythic.bukkit.utils.config.file.FileConfiguration;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import io.lumine.mythic.core.config.GenericConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+import java.util.*;
 
 public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig {
     private String configName;
@@ -33,11 +26,6 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         this.fc = fc;
     }
 
-    @Override
-    public FileConfiguration getFileConfiguration() {
-        throw new RuntimeException("Not supported");
-    }
-
     public void setKey(String key) {
         this.configName = key;
     }
@@ -46,12 +34,25 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         return this.configName;
     }
 
+    public String getFileName() {
+        if (this.file != null) {
+            return this.file.getAbsolutePath();
+        } else {
+            return this.configName != null ? "Nested Configuration '" + this.configName + "'" : "API";
+        }
+    }
+
+    @Override
+    public FileConfiguration getFileConfiguration() {
+        throw new RuntimeException("Not supported");
+    }
+
     public String getNode() {
         return this.configName != null && this.configName.length() != 0 ? this.configName + "." : "";
     }
 
     public void deleteNodeAndSave() {
-        this.fc.set(this.getNode(), (Object)null);
+        this.fc.set(this.getNode(), (Object) null);
         this.save();
     }
 
@@ -71,7 +72,7 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
     }
 
     public void unset(String key) {
-        this.fc.set(this.getNode() + key, (Object)null);
+        this.fc.set(this.getNode() + key, (Object) null);
     }
 
     public void unsetSave(String key) {
@@ -80,7 +81,7 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
     }
 
     public void load() {
-        this.fc = YamlConfiguration.loadConfiguration(this.file);
+        throw new RuntimeException("Not supported");
     }
 
     public void save() {
@@ -88,23 +89,11 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
     }
 
     public MythicConfig getNestedConfig(String field) {
-        return new MythicConfigImpl(this.getNode() + field, this.fc);
+        throw new RuntimeException("Not supported");
     }
 
     public Map<String, MythicConfig> getNestedConfigs(String key) {
-        Map<String, MythicConfig> map = new HashMap();
-        if (!this.isSet(key)) {
-            return map;
-        } else {
-            Iterator var3 = this.getKeys(key).iterator();
-
-            while(var3.hasNext()) {
-                String k = (String)var3.next();
-                map.put(k, new MythicConfigImpl(this.getNode() + key + "." + k, this.fc));
-            }
-
-            return map;
-        }
+        throw new RuntimeException("Not supported");
     }
 
     public String getString(String field) {
@@ -114,7 +103,7 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
     }
 
     public String getString(String[] key) {
-        return this.getString(key, (String)null);
+        return this.getString(key, (String) null);
     }
 
     public String getString(String field, String def) {
@@ -130,9 +119,9 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
 
         int var7;
         String a;
-        for(var7 = 0; var7 < var6; ++var7) {
+        for (var7 = 0; var7 < var6; ++var7) {
             a = var5[var7];
-            s = this.getString(a, (String)null);
+            s = this.getString(a, (String) null);
             if (s != null) {
                 return s;
             }
@@ -141,7 +130,7 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         var5 = args;
         var6 = args.length;
 
-        for(var7 = 0; var7 < var6; ++var7) {
+        for (var7 = 0; var7 < var6; ++var7) {
             a = var5[var7];
             if (a != null) {
                 return a;
@@ -215,7 +204,7 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         String[] var3 = keys;
         int var4 = keys.length;
 
-        for(int var5 = 0; var5 < var4; ++var5) {
+        for (int var5 = 0; var5 < var4; ++var5) {
             String key = var3[var5];
             String var10000 = this.getNode();
             key = var10000 + key;
@@ -227,7 +216,9 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         return def;
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     @Deprecated
     public int getInt(String field) {
         String var10000 = this.getNode();
@@ -237,7 +228,9 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         return var3.getInt(var10001 + field);
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     @Deprecated
     public int getInt(String field, int def) {
         String var10000 = this.getNode();
@@ -277,8 +270,8 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         if (list != null) {
             Iterator var5 = list.iterator();
 
-            while(var5.hasNext()) {
-                String str = (String)var5.next();
+            while (var5.hasNext()) {
+                String str = (String) var5.next();
                 parsed.add(ChatColor.translateAlternateColorCodes('&', str));
             }
         }
@@ -296,8 +289,8 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         if (list != null) {
             Iterator var5 = list.iterator();
 
-            while(var5.hasNext()) {
-                String str = (String)var5.next();
+            while (var5.hasNext()) {
+                String str = (String) var5.next();
                 parsed.add(PlaceholderString.of(str));
             }
         }
@@ -378,6 +371,11 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         return s == null ? null : PlaceholderInt.of(s);
     }
 
+    public PlaceholderInt getPlaceholderInt(String[] key, String def) {
+        String s = this.getString(key, def);
+        return s == null ? null : PlaceholderInt.of(s);
+    }
+
     public PlaceholderInt getPlaceholderInt(String[] key, String def, String... args) {
         String s = this.getString(key, def, args);
         return s == null ? null : PlaceholderInt.of(s);
@@ -399,8 +397,8 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
             if (in == null) {
                 return def;
             } else {
-                T value = (T) Enum.valueOf(clazz, in.toUpperCase());
-                return value == null ? def : value;
+                Enum value = Enum.valueOf(clazz, in.toUpperCase());
+                return value == null ? def : (T) value;
             }
         } catch (Error | Exception var6) {
             return def;
@@ -414,28 +412,42 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         String tmplMob = tmplConfig.getKey();
         Iterator var7 = tmplConfig.getKeys("").iterator();
 
-        while(var7.hasNext()) {
-            String k = (String)var7.next();
-            if (!keysToIgnore.contains(k)) {
-                if (this.getStringList(k).size() > 0) {
-                    List<String> currentStringList = this.getStringList(k);
-                    currentStringList.addAll(tmplConfig.getStringList(k));
-                    this.set(k, currentStringList);
-                } else if (!this.isSet(k)) {
-                    this.set(k, tmplFile.get(tmplMob + "." + k));
-                } else if (thisFile.get(thisMob + "." + k) instanceof MemorySection) {
-                    MemorySection memSec = (MemorySection)thisFile.get(thisMob + "." + k);
-                    Set<String> templateMemSec = ((MemorySection)tmplFile.get(tmplMob + "." + k)).getKeys(false);
-                    templateMemSec.forEach((m) -> {
-                        if (!memSec.isSet(m)) {
-                            memSec.set(k, tmplFile.get(tmplMob + "." + k + "." + m));
-                        }
+        while (true) {
+            while (true) {
+                String key;
+                do {
+                    if (!var7.hasNext()) {
+                        return;
+                    }
 
-                    });
+                    key = (String) var7.next();
+                } while (keysToIgnore.contains(key));
+
+                if (this.getStringList(key).size() > 0) {
+                    List<String> templateStringList = tmplConfig.getStringList(key);
+                    List<String> currentStringList = this.getStringList(key);
+                    templateStringList.addAll(currentStringList);
+                    this.set(key, templateStringList);
+                } else if (!this.isSet(key)) {
+                    this.set(key, tmplFile.get(tmplMob + "." + key));
+                } else {
+                    Object var10 = thisFile.get(thisMob + "." + key);
+                    if (var10 instanceof MemorySection) {
+                        MemorySection thisMemory = (MemorySection) var10;
+                        MemorySection templateMemory = (MemorySection) tmplFile.get(tmplMob + "." + key);
+                        Iterator var11 = templateMemory.getKeys(false).iterator();
+
+                        while (var11.hasNext()) {
+                            String node = (String) var11.next();
+                            if (!thisMemory.isSet(node)) {
+                                Object nodeValue = templateMemory.get(node);
+                                thisMemory.set(node, nodeValue);
+                            }
+                        }
+                    }
                 }
             }
         }
-
     }
 
     public File getFile() {

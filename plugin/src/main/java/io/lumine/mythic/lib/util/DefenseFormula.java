@@ -23,7 +23,7 @@ public class DefenseFormula {
         expression = expression.replace("#damage#", String.valueOf(damage));
 
         try {
-            return Math.max(0, (double)MythicLib.plugin.getInterpreter().eval(expression));
+            return Math.max(0, (double)MythicLib.plugin.getFormulaParser().eval(expression));
         } catch (EvalError exception) {
 
             /**

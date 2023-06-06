@@ -15,6 +15,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class MythicMobsHook implements Listener {
+    public MythicMobsHook() {
+        MythicBukkit.inst().getCompatibility().setupMMOBridge(new MythicLibSupportImpl());
+    }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void a(PlayerAttackEvent event) {
@@ -31,7 +34,6 @@ public class MythicMobsHook implements Listener {
         // Reload skills
         MythicLib.plugin.getSkills().initialize(true);
     }
-
 
     @EventHandler
     public void c(MythicConditionLoadEvent event) {

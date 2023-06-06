@@ -53,7 +53,7 @@ public class DoubleFormula {
     @SneakyThrows
     public double evaluate(SkillMetadata meta) {
         try {
-            return trivial ? trivialValue : (double) MythicLib.plugin.getInterpreter().eval(meta.parseString(value));
+            return trivial ? trivialValue : (double) MythicLib.plugin.getFormulaParser().eval(meta.parseString(value));
         } catch (EvalError exception) {
             MythicLib.plugin.getLogger().log(Level.WARNING, "Could not evaluate '" + value + "' while casting skill '" + meta.getCast().getHandler().getId() + "': " + exception.getMessage());
             return 0;

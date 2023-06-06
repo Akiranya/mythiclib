@@ -5,6 +5,7 @@ import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.lumine.mythic.lib.api.stat.StatMap;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -45,8 +46,8 @@ public interface StatProvider {
     static StatProvider get(LivingEntity living, EquipmentSlot actionHand, boolean cache) {
         if (!UtilityMethods.isRealPlayer(living))
             return new EntityStatProvider(living);
-
-        final StatMap statMap = MMOPlayerData.get(living.getUniqueId()).getStatMap();
+        Player player = (Player) living;
+        final StatMap statMap = MMOPlayerData.get(player).getStatMap();
         return cache ? statMap.cache(actionHand) : statMap;
     }
 }
