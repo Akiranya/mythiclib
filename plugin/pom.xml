@@ -13,7 +13,7 @@
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
-        <defaultGoal>clean package install</defaultGoal>
+        <defaultGoal>clean package</defaultGoal> <!-- Mewcraft -->
 
         <resources>
             <resource>
