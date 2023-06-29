@@ -79,17 +79,9 @@
 
     <distributionManagement>
         <repository>
-            <id>phoenixdevt-releases</id>
-            <name>PhoenixDevt Releases</name>
-            <url>https://nexus.phoenixdevt.fr/repository/maven-releases/</url>
+            <id>mewcraft-releases</id>
+            <url>file://${user.home}/MewcraftRepository</url>
         </repository>
-
-        <snapshotRepository>
-            <id>phoenixdevt-snapshots</id>
-            <name>PhoenixDevt Snapshots</name>
-            <url>https://nexus.phoenixdevt.fr/repository/maven-snapshots/</url>
-        </snapshotRepository>
-
     </distributionManagement>
 
     <dependencies>
