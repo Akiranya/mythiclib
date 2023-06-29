@@ -35,7 +35,7 @@ public class Evade extends SkillHandler<SimpleSkillResult> {
         Player caster = skillMeta.getCaster().getPlayer();
         caster.getWorld().playSound(caster.getLocation(), VersionSound.ENTITY_ENDERMAN_TELEPORT.toSound(), 1, 2);
         new SmallParticleEffect(caster, Particle.CLOUD);
-        new EvadeSkill(skillMeta.getCaster().getData(), skillMeta.getModifier("duration"));
+        new EvadeSkill(skillMeta.getCaster().getData(), skillMeta.getParameter("duration"));
     }
 
     private static class EvadeSkill extends BukkitRunnable implements Listener {

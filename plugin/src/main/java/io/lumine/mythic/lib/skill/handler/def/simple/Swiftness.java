@@ -23,8 +23,8 @@ public class Swiftness extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double duration = skillMeta.getModifier("duration");
-        int amplifier = (int) skillMeta.getModifier("amplifier");
+        double duration = skillMeta.getParameter("duration");
+        int amplifier = (int) skillMeta.getParameter("amplifier");
 
         Player caster = skillMeta.getCaster().getPlayer();
 

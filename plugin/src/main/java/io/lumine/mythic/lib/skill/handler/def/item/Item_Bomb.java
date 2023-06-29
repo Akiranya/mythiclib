@@ -10,6 +10,7 @@ import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.result.def.ItemSkillResult;
 import io.lumine.mythic.lib.util.NoClipItem;
 import io.lumine.mythic.lib.version.VersionSound;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -29,7 +30,7 @@ public class Item_Bomb extends SkillHandler<ItemSkillResult> {
 
     @Override
     public ItemSkillResult getResult(SkillMetadata meta) {
-        return new ItemSkillResult(meta);
+        return new ItemSkillResult(meta, Material.COAL_BLOCK);
     }
 
     @Override
@@ -46,10 +47,10 @@ public class Item_Bomb extends SkillHandler<ItemSkillResult> {
 
             public void run() {
                 if (j++ > 40) {
-                    double radius = skillMeta.getModifier("radius");
-                    double damage = skillMeta.getModifier("damage");
-                    double slowDuration = skillMeta.getModifier("slow-duration");
-                    double slowAmplifier = skillMeta.getModifier("slow-amplifier");
+                    double radius = skillMeta.getParameter("radius");
+                    double damage = skillMeta.getParameter("damage");
+                    double slowDuration = skillMeta.getParameter("slow-duration");
+                    double slowAmplifier = skillMeta.getParameter("slow-amplifier");
 
                     for (Entity entity : item.getEntity().getNearbyEntities(radius, radius, radius))
                         if (UtilityMethods.canTarget(caster, entity)) {

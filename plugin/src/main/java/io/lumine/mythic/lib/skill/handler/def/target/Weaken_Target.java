@@ -42,7 +42,7 @@ public class Weaken_Target extends SkillHandler<TargetSkillResult> implements Li
     public void whenCast(TargetSkillResult result, SkillMetadata skillMeta) {
         LivingEntity target = result.getTarget();
 
-        marked.put(target.getUniqueId(), new WeakenedInfo(skillMeta.getModifier("extra-damage")));
+        marked.put(target.getUniqueId(), new WeakenedInfo(skillMeta.getParameter("extra-damage")));
         effect(target.getLocation());
         target.getWorld().playSound(target.getLocation(), VersionSound.ENTITY_ENDERMAN_HURT.toSound(), 2, 1.5f);
 
@@ -51,7 +51,7 @@ public class Weaken_Target extends SkillHandler<TargetSkillResult> implements Li
          * the mark from the entity
          */
         new BukkitRunnable() {
-            final long duration = (long) (skillMeta.getModifier("duration") * 1000);
+            final long duration = (long) (skillMeta.getParameter("duration") * 1000);
 
             public void run() {
                 if (!marked.containsKey(target.getUniqueId()) || marked.get(target.getUniqueId()).date + duration < System.currentTimeMillis()) {

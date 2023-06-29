@@ -39,8 +39,8 @@ public class Snowman_Turret extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double duration = Math.min(skillMeta.getModifier("duration") * 20, 300);
-        double radiusSquared = Math.pow(skillMeta.getModifier("radius"), 2);
+        double duration = Math.min(skillMeta.getParameter("duration") * 20, 300);
+        double radiusSquared = Math.pow(skillMeta.getParameter("radius"), 2);
 
         loc.getWorld().playSound(loc, VersionSound.ENTITY_ENDERMAN_TELEPORT.toSound(), 2, 1);
         final Snowman snowman = (Snowman) loc.getWorld().spawnEntity(loc.add(0, 1, 0), EntityType.SNOWMAN);
@@ -49,7 +49,7 @@ public class Snowman_Turret extends SkillHandler<LocationSkillResult> {
         new BukkitRunnable() {
             int ti = 0;
             double j = 0;
-            final TurretHandler turret = new TurretHandler(skillMeta.getModifier("damage"));
+            final TurretHandler turret = new TurretHandler(skillMeta.getParameter("damage"));
 
             public void run() {
                 if (ti++ > duration || caster.isDead() || snowman == null || snowman.isDead()) {

@@ -30,7 +30,7 @@ public class HasDamageTypeCondition extends Condition {
 
     @Override
     public boolean isMet(SkillMetadata meta) {
-        final DamageMetadata damage = meta.getAttack().getDamage();
+        final DamageMetadata damage = meta.getAttackSource().getDamage();
         for (DamageType checked : types)
             if (damage.hasType(checked))
                 return true;

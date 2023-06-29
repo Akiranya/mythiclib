@@ -33,8 +33,13 @@ import java.util.regex.Pattern;
  */
 public class SkillMetadata {
     private final Skill cast;
-    private final PlayerMetadata caster;
     private final VariableList vars;
+
+    /**
+     * Entity by which the skill was cast
+     */
+    @NotNull
+    private final PlayerMetadata caster;
 
     /**
      * Location at which the skill was cast
@@ -43,40 +48,45 @@ public class SkillMetadata {
     private final Location source;
 
     /**
-     * Some skills like ray casts cache a target
-     * location which is later used in targeters
-     */
-    @Nullable
-    private final Location targetLocation;
-
-    /**
      * Some skills like projectiles or ray casts cache
      * a target entity which is later used in targeters
      */
     @Nullable
     private final Entity targetEntity;
 
+    /**
+     * Some skills like ray casts cache a target
+     * location which is later used in targeters
+     */
+    @Nullable
+    private final Location targetLocation;
+
+    @Nullable
+    private final AttackMetadata attackSource;
+
     @Nullable
     public final SkillOrientation orientation;
 
     public SkillMetadata(Skill cast, @NotNull MMOPlayerData caster) {
-        this(cast, caster.getStatMap().cache(EquipmentSlot.MAIN_HAND), new VariableList(VariableScope.SKILL), null, caster.getPlayer().getLocation(), null, null, null);
+        this(cast, caster.getStatMap().cache(EquipmentSlot.MAIN_HAND), new VariableList(VariableScope.SKILL), caster.getPlayer().getLocation(), null, null, null, null);
     }
 
-    /**
-     * @deprecated AttackMetadata no longer extends PlayerMetadata
-     */
     @Deprecated
     public SkillMetadata(Skill cast, @NotNull AttackMetadata attackMeta, @NotNull Location source, @Nullable Location targetLocation, @Nullable Entity targetEntity) {
-        this(cast, (PlayerMetadata) attackMeta.getAttacker(), new VariableList(VariableScope.SKILL), attackMeta, source, targetLocation, targetEntity, null);
+        this(cast, (PlayerMetadata) attackMeta.getAttacker(), new VariableList(VariableScope.SKILL), source, targetLocation, targetEntity, null, attackMeta);
     }
 
-    /**
-     * @deprecated SkillMetadatas no longer take as arguments attackMetadatas.
-     */
     @Deprecated
     public SkillMetadata(Skill cast, @NotNull PlayerMetadata caster, @NotNull VariableList vars, @Nullable AttackMetadata attackMeta, @NotNull Location source, @Nullable Location targetLocation, @Nullable Entity targetEntity, @Nullable SkillOrientation orientation) {
-        this(cast, caster, vars, source, targetLocation, targetEntity, orientation);
+        this(cast, caster, vars, source, targetLocation, targetEntity, orientation, attackMeta);
+    }
+
+    public SkillMetadata(Skill cast, @NotNull Location source, @Nullable Location targetLocation, @Nullable Entity targetEntity, @NotNull AttackMetadata attackMeta) {
+        this(cast, (PlayerMetadata) attackMeta.getAttacker(), new VariableList(VariableScope.SKILL), source, targetLocation, targetEntity, null, attackMeta);
+    }
+
+    public SkillMetadata(Skill cast, @NotNull PlayerMetadata caster, @NotNull VariableList vars, @NotNull Location source, @Nullable Location targetLocation, @Nullable Entity targetEntity, @Nullable SkillOrientation orientation) {
+        this(cast, caster, vars, source, targetLocation, targetEntity, orientation, null);
     }
 
     /**
@@ -87,8 +97,9 @@ public class SkillMetadata {
      * @param targetLocation The skill/mechanic target location
      * @param targetEntity   The skill/mechanic target entity
      * @param orientation    Skill orientation if some rotation is required later on
+     * @param attackSource   Attack which triggered the skill
      */
-    public SkillMetadata(Skill cast, @NotNull PlayerMetadata caster, @NotNull VariableList vars, @NotNull Location source, @Nullable Location targetLocation, @Nullable Entity targetEntity, @Nullable SkillOrientation orientation) {
+    public SkillMetadata(Skill cast, @NotNull PlayerMetadata caster, @NotNull VariableList vars, @NotNull Location source, @Nullable Location targetLocation, @Nullable Entity targetEntity, @Nullable SkillOrientation orientation, @Nullable AttackMetadata attackSource) {
         this.cast = cast;
         this.caster = caster;
         this.vars = vars;
@@ -96,35 +107,68 @@ public class SkillMetadata {
         this.targetLocation = targetLocation;
         this.targetEntity = targetEntity;
         this.orientation = orientation;
+        this.attackSource = attackSource;
     }
 
+    @NotNull
     public Skill getCast() {
         return cast;
     }
 
+    @NotNull
     public VariableList getVariableList() {
         return vars;
     }
 
+    @NotNull
     public PlayerMetadata getCaster() {
         return caster;
     }
 
+    @NotNull
     public Location getSourceLocation() {
         return source.clone();
     }
 
+    /**
+     * @deprecated See {@link #getAttackSource()}
+     */
     @Deprecated
     public boolean hasAttackBound() {
-        return targetEntity != null && MythicLib.plugin.getDamage().getRegisteredAttackMetadata(targetEntity) != null;
+        return hasAttackSource();
+    }
+
+    /**
+     * Looks into the target entity metadata for an AttackMetadata.
+     * If it finds one then it has to be from the skill caster.
+     *
+     * @return Eventual attack currently being dealt to the entity.
+     * @deprecated See {@link #getAttackSource()}
+     */
+    @NotNull
+    @Deprecated
+    public AttackMetadata getAttack() {
+        return getAttackSource();
+    }
+
+    public boolean hasAttackSource() {
+        return attackSource != null;
+    }
+
+    /**
+     * @return The attack which triggered the skill.
+     */
+    @NotNull
+    public AttackMetadata getAttackSource() {
+        return Objects.requireNonNull(attackSource, "Skill was not triggered by any attack");
     }
 
     /**
      * @deprecated Skill modifiers are now called "parameters"
      */
     @Deprecated
-    public double getModifier(String path) {
-        return getParameter(path);
+    public double getModifier(String param) {
+        return getParameter(param);
     }
 
     /**
@@ -134,7 +178,7 @@ public class SkillMetadata {
      * @return Skill parameter final value, taking into account skill mods
      */
     public double getParameter(String param) {
-        return caster.getData().getSkillModifierMap().getInstance(cast.getHandler(), param).getTotal(cast.getModifier(param));
+        return caster.getData().getSkillModifierMap().getInstance(cast.getHandler(), param).getTotal(cast.getParameter(param));
     }
 
     @NotNull
@@ -204,17 +248,6 @@ public class SkillMetadata {
     }
 
     /**
-     * Looks into the target entity metadata for an AttackMetadata.
-     * If it finds one then it has to be from the skill caster.
-     *
-     * @return Eventual attack currently being dealt to the entity.
-     */
-    @NotNull
-    public AttackMetadata getAttack() {
-        return Objects.requireNonNull(MythicLib.plugin.getDamage().getRegisteredAttackMetadata(getTargetEntity()), "Skill has no attack bound");
-    }
-
-    /**
      * Analog of {@link #getSkillEntity(boolean)} or {@link #getSkillLocation(boolean)}
      * being used when a location targeter requires an orientation in order
      * to potentially orient locations.
@@ -229,15 +262,26 @@ public class SkillMetadata {
     }
 
     /**
-     * Keeps the same skill caster and variables. Used when
-     * casting subskills with different targets. This has the
-     * effect of keeping every skill data, put aside targets.
+     * Keeps the same skill caster and variables. Used when casting subskills with different
+     * targets. This has the effect of keeping every skill data, put aside targets.
+     * <p>
+     * Data that is kept on cloning:
+     * - skill being cast
+     * - skill caster
+     * - variable list
+     * - attack source
+     * <p>
+     * Data being replaced on cloning:
+     * - source location
+     * - target entity
+     * - target location
+     * - skill orientation (not used yet)
      *
      * @return New skill metadata for other subskills
      */
     @NotNull
-    public SkillMetadata clone(Location source, Location targetLocation, Entity targetEntity, SkillOrientation orientation) {
-        return new SkillMetadata(cast, caster, vars, source, targetLocation, targetEntity, orientation);
+    public SkillMetadata clone(@NotNull Location source, @Nullable Location targetLocation, @Nullable Entity targetEntity, @Nullable SkillOrientation orientation) {
+        return new SkillMetadata(cast, caster, vars, source, targetLocation, targetEntity, orientation, attackSource);
     }
 
     /**
@@ -264,7 +308,7 @@ public class SkillMetadata {
             // Access modifiers
             case "modifier":
                 Validate.isTrue(args.length > 1, "Please specify a modifier name");
-                var = new DoubleVariable("temp", getModifier(args[i++]));
+                var = new DoubleVariable("temp", getParameter(args[i++]));
                 break;
 
             // Skill source location
@@ -284,7 +328,7 @@ public class SkillMetadata {
 
             // Skill caster
             case "attack":
-                var = new AttackMetadataVariable("temp", getAttack());
+                var = new AttackMetadataVariable("temp", getAttackSource());
                 break;
 
             // Cached stat map
@@ -333,13 +377,11 @@ public class SkillMetadata {
 
         // Prioritize SKILL scope
         Variable var = vars.getVariable(name);
-        if (var != null)
-            return var;
+        if (var != null) return var;
 
         // Check for PLAYER scope
         var = getCaster().getData().getVariableList().getVariable(name);
-        if (var != null)
-            return var;
+        if (var != null) return var;
 
         // Check for SERVER scope
         return Objects.requireNonNull(SERVER_VARIABLE_LIST.getVariable(name), "Could not find custom variable with name '" + name + "'");
@@ -347,6 +389,7 @@ public class SkillMetadata {
 
     private static final Pattern INTERNAL_PLACEHOLDER_PATTERN = Pattern.compile("<[^&|<>]*?>");
 
+    @NotNull
     public String parseString(String str) {
 
         // Parse any placeholders and apply color codes

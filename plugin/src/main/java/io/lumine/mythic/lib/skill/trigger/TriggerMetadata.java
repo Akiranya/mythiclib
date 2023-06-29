@@ -1,6 +1,6 @@
 package io.lumine.mythic.lib.skill.trigger;
 
-import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
 import io.lumine.mythic.lib.damage.AttackMetadata;
 import io.lumine.mythic.lib.player.PlayerMetadata;
 import io.lumine.mythic.lib.script.variable.VariableList;
@@ -12,29 +12,27 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TriggerMetadata extends PlayerMetadata {
+
+    @Nullable
     private final Entity target;
 
+    @Nullable
+    private final AttackMetadata attack;
+
     /**
-     * Instantiated every time a player performs an action linked
-     * to a skill trigger. This is used to temporarily cache the
-     * player stats and save the info needed to cast some skills
-     *
-     * @param attack Either the current attackMeta when the trigger type is DAMAGE for instance,
-     *               or an empty one for any other trigger type.
-     * @param target Potential skill target
-     * @deprecated AttackMetadata no longer extends PlayerMetadata
+     * @deprecated Use {@link #TriggerMetadata(PlayerAttackEvent)}
      */
     @Deprecated
     public TriggerMetadata(@NotNull AttackMetadata attack, @Nullable Entity target) {
-        this((PlayerMetadata) attack.getAttacker(), target);
+        this((PlayerMetadata) attack.getAttacker(), target, attack);
     }
 
-    /**
-     * @deprecated It is now useless to store AttackMetadatas in SkillMetadatas
-     */
-    @Deprecated
-    public TriggerMetadata(@NotNull PlayerMetadata attacker, @Nullable AttackMetadata attack, @Nullable Entity target) {
-        this(attacker, target);
+    public TriggerMetadata(@NotNull PlayerAttackEvent attackEvent) {
+        this(attackEvent.getAttacker(), attackEvent.getEntity(), attackEvent.getAttack());
+    }
+
+    public TriggerMetadata(@NotNull PlayerMetadata caster) {
+        this(caster, null, null);
     }
 
     /**
@@ -42,24 +40,25 @@ public class TriggerMetadata extends PlayerMetadata {
      * to a skill trigger. This is used to temporarily cache the
      * player stats and save the info needed to cast some skills
      *
-     * @param attacker Attacker metadata
-     * @param target   Potential skill target
+     * @param caster Player triggering the skills
+     * @param target Potential skill target
+     * @param attack Attack which triggered the skill
      */
-    public TriggerMetadata(@NotNull PlayerMetadata attacker, @Nullable Entity target) {
-        super(attacker);
+    public TriggerMetadata(@NotNull PlayerMetadata caster, @Nullable Entity target, @Nullable AttackMetadata attack) {
+        super(caster);
 
         this.target = target;
-    }
-
-    @Nullable
-    @Deprecated
-    public AttackMetadata getAttack() {
-        return target == null ? null : MythicLib.plugin.getDamage().getRegisteredAttackMetadata(target);
+        this.attack = attack;
     }
 
     @Nullable
     public Entity getTarget() {
         return target;
+    }
+
+    @Nullable
+    public AttackMetadata getAttack() {
+        return attack;
     }
 
     /**
@@ -69,7 +68,8 @@ public class TriggerMetadata extends PlayerMetadata {
      * @param cast Skill being cast
      * @return Skill cast information containing all the previous information
      */
+    @NotNull
     public SkillMetadata toSkillMetadata(Skill cast) {
-        return new SkillMetadata(cast, this, new VariableList(VariableScope.SKILL), getPlayer().getLocation(), null, target, null);
+        return new SkillMetadata(cast, this, new VariableList(VariableScope.SKILL), getPlayer().getLocation(), null, target, null, attack);
     }
 }

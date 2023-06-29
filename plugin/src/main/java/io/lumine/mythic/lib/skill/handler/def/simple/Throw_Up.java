@@ -28,8 +28,8 @@ public class Throw_Up extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double duration = skillMeta.getModifier("duration") * 10;
-        double dps = skillMeta.getModifier("damage") / 2;
+        double duration = skillMeta.getParameter("duration") * 10;
+        double dps = skillMeta.getParameter("damage") / 2;
 
         Player caster = skillMeta.getCaster().getPlayer();
 

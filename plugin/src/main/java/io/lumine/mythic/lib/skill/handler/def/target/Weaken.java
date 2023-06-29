@@ -35,7 +35,7 @@ public class Weaken extends SkillHandler<TargetSkillResult> {
 
         new ParabolicProjectile(caster.getPlayer().getLocation().add(0, 1, 0), target.getLocation().add(0, target.getHeight() / 2, 0), randomVector(caster.getPlayer()), () -> {
             if (!target.isDead())
-                new Weakened(target, skillMeta.getModifier("ratio"), skillMeta.getModifier("duration"));
+                new Weakened(target, skillMeta.getParameter("ratio"), skillMeta.getParameter("duration"));
         }, 2, Particle.SPELL_WITCH);
     }
 

@@ -32,9 +32,9 @@ public class Freeze extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        int duration = (int) (skillMeta.getModifier("duration") * 20);
-        int amplifier = (int) (skillMeta.getModifier("amplifier") - 1);
-        double radiusSquared = Math.pow(skillMeta.getModifier("radius"), 2);
+        int duration = (int) (skillMeta.getParameter("duration") * 20);
+        int amplifier = (int) (skillMeta.getParameter("amplifier") - 1);
+        double radiusSquared = Math.pow(skillMeta.getParameter("radius"), 2);
 
         loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc.add(0, .1, 0), 0);
         loc.getWorld().spawnParticle(Particle.SNOW_SHOVEL, loc, 48, 0, 0, 0, .2);

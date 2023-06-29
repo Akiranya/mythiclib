@@ -1,6 +1,7 @@
 package io.lumine.mythic.lib.listener;
 
 import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
 import io.lumine.mythic.lib.api.event.PlayerKillEntityEvent;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
@@ -43,7 +44,7 @@ public class SkillTriggers implements Listener {
     public void damagedByEntity(EntityDamageByEntityEvent event) {
 
         // Ignore fake events
-        if (event.getDamage() == 0) return;
+        if (UtilityMethods.isFakeEvent(event)) return;
 
         final MMOPlayerData caster;
         if (event.getEntity() instanceof Player && (caster = MMOPlayerData.getOrNull((Player) event.getEntity())) != null && MythicLib.plugin.getEntities().canInteract((Player) event.getEntity(), event.getDamager(), InteractionType.OFFENSE_SKILL))
@@ -86,7 +87,7 @@ public class SkillTriggers implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void shootTrident(ProjectileLaunchEvent event) {
         final MMOPlayerData caster;
-        if (event.getEntity() instanceof Trident && event.getEntity().getShooter() instanceof Player && (caster = MMOPlayerData.getOrNull((Player) event.getEntity())) != null) {
+        if (event.getEntity() instanceof Trident && event.getEntity().getShooter() instanceof Player && (caster = MMOPlayerData.getOrNull((Player) event.getEntity().getShooter())) != null) {
             final Player shooter = (Player) event.getEntity().getShooter();
             final EquipmentSlot actionHand = getShootHand(shooter.getInventory());
             caster.triggerSkills(TriggerType.SHOOT_TRIDENT, actionHand, event.getEntity());

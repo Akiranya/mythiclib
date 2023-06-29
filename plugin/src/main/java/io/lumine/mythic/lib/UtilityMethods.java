@@ -3,6 +3,7 @@ package io.lumine.mythic.lib;
 import io.lumine.mythic.lib.api.MMOLineConfig;
 import io.lumine.mythic.lib.api.condition.RegionCondition;
 import io.lumine.mythic.lib.api.condition.type.MMOCondition;
+import io.lumine.mythic.lib.api.event.DamageCheckEvent;
 import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
@@ -12,6 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,6 +43,18 @@ public class UtilityMethods {
         }
 
         return null;
+    }
+
+    /**
+     * Fake events are used very commonly in MythicLib and other plugins.
+     * This is used to pre-check if a player is able to fight with/target
+     * another player in anticipation i.e before casting the damage method.
+     *
+     * @param event Some damage event
+     * @return If the event is a fake event, used for an interaction check
+     */
+    public static boolean isFakeEvent(@NotNull EntityDamageEvent event) {
+        return event.getDamage() == 0 || event instanceof DamageCheckEvent;
     }
 
     public static boolean isAir(@Nullable ItemStack item) {

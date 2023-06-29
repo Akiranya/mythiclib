@@ -32,10 +32,10 @@ public class Explosive_Turkey extends SkillHandler<VectorSkillResult> {
     public void whenCast(VectorSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double duration = skillMeta.getModifier("duration") * 10;
-        double damage = skillMeta.getModifier("damage");
-        double radiusSquared = Math.pow(skillMeta.getModifier("radius"), 2);
-        double knockback = skillMeta.getModifier("knockback");
+        double duration = skillMeta.getParameter("duration") * 10;
+        double damage = skillMeta.getParameter("damage");
+        double radiusSquared = Math.pow(skillMeta.getParameter("radius"), 2);
+        double knockback = skillMeta.getParameter("knockback");
 
         Vector vec = result.getTarget().normalize().multiply(.6);
 

@@ -35,7 +35,7 @@ public class Human_Shield extends SkillHandler<TargetSkillResult> {
     public void whenCast(TargetSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_BLAZE_AMBIENT, 1, 1);
-        new HumanShield(skillMeta.getCaster().getData(), (Player) result.getTarget(), skillMeta.getModifier("reduction"), skillMeta.getModifier("redirect"), skillMeta.getModifier("duration"), skillMeta.getModifier("low"));
+        new HumanShield(skillMeta.getCaster().getData(), (Player) result.getTarget(), skillMeta.getParameter("reduction"), skillMeta.getParameter("redirect"), skillMeta.getParameter("duration"), skillMeta.getParameter("low"));
     }
 
     public static class HumanShield extends BukkitRunnable implements Listener {

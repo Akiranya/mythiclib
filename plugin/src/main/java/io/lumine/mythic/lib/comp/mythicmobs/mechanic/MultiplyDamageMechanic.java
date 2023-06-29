@@ -10,6 +10,7 @@ import io.lumine.mythic.core.utils.annotations.MythicMechanic;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.damage.AttackMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -50,7 +51,7 @@ public class MultiplyDamageMechanic implements INoTargetSkill {
     public SkillResult cast(SkillMetadata skillMetadata) {
 
         for (AbstractEntity target : skillMetadata.getEntityTargets()) {
-            AttackMetadata attackMeta = Objects.requireNonNull(MythicLib.plugin.getDamage().getRegisteredAttackMetadata(target.getBukkitEntity()));
+            final @Nullable AttackMetadata attackMeta = MythicLib.plugin.getDamage().getRegisteredAttackMetadata(target.getBukkitEntity());
             if (attackMeta == null)
                 continue;
 

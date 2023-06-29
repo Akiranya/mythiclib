@@ -28,7 +28,7 @@ public class Leap extends SkillHandler<SimpleSkillResult> {
 
         caster.getWorld().playSound(caster.getLocation(), VersionSound.ENTITY_ENDER_DRAGON_FLAP.toSound(), 1, 0);
         caster.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, caster.getLocation(), 16, 0, 0, 0.1);
-        Vector vec = caster.getEyeLocation().getDirection().multiply(2 * skillMeta.getModifier("force"));
+        Vector vec = caster.getEyeLocation().getDirection().multiply(2 * skillMeta.getParameter("force"));
         vec.setY(vec.getY() / 2);
         caster.setVelocity(vec);
         new BukkitRunnable() {

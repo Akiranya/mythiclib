@@ -29,8 +29,8 @@ public class AdditiveDamageBuffMechanic extends TargetMechanic {
     @Override
     public void cast(SkillMetadata meta, Entity target) {
         if (damageType == null)
-            meta.getAttack().getDamage().additiveModifier(amount.evaluate(meta));
+            meta.getAttackSource().getDamage().additiveModifier(amount.evaluate(meta));
         else
-            meta.getAttack().getDamage().additiveModifier(amount.evaluate(meta), damageType);
+            meta.getAttackSource().getDamage().additiveModifier(amount.evaluate(meta), damageType);
     }
 }

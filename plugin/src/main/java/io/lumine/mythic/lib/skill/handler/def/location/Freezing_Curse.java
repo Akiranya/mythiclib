@@ -2,8 +2,6 @@ package io.lumine.mythic.lib.skill.handler.def.location;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -56,10 +54,10 @@ public class Freezing_Curse extends SkillHandler<LocationSkillResult> {
                     for (double j = 0; j < Math.PI * 2; j += Math.PI / 32)
                         loc.getWorld().spawnParticle(Particle.CLOUD, loc.clone().add(Math.cos(j) * 3, .1, Math.sin(j) * 3), 0);
 
-                    double radius = skillMeta.getModifier("radius");
-                    double amplifier = skillMeta.getModifier("amplifier");
-                    double duration = skillMeta.getModifier("duration");
-                    double damage = skillMeta.getModifier("damage");
+                    double radius = skillMeta.getParameter("radius");
+                    double amplifier = skillMeta.getParameter("amplifier");
+                    double duration = skillMeta.getParameter("duration");
+                    double damage = skillMeta.getParameter("damage");
                     for (Entity entity : UtilityMethods.getNearbyChunkEntities(loc))
                         if (entity.getLocation().distanceSquared(loc) < radius * radius && UtilityMethods.canTarget(caster, entity)) {
                             skillMeta.getCaster().attack((LivingEntity) entity, damage, DamageType.SKILL, DamageType.MAGIC);

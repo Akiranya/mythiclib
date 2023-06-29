@@ -3,9 +3,11 @@ package io.lumine.mythic.lib.api.stat;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
+import io.lumine.mythic.lib.api.stat.handler.StatHandler;
 import io.lumine.mythic.lib.api.stat.provider.StatProvider;
 import io.lumine.mythic.lib.player.PlayerMetadata;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -79,7 +81,8 @@ public class StatMap implements StatProvider {
      */
     @Deprecated
     public void update(String stat) {
-        MythicLib.plugin.getStats().runUpdate(this, stat);
+        final @Nullable StatHandler handler = MythicLib.plugin.getStats().getStatHandler(stat);
+        if (handler != null) handler.runUpdate(getInstance(stat));
     }
 
     /**

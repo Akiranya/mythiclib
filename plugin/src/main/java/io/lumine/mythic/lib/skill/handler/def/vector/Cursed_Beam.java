@@ -36,7 +36,7 @@ public class Cursed_Beam extends SkillHandler<VectorSkillResult> {
     public void whenCast(VectorSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double duration = skillMeta.getModifier("duration");
+        double duration = skillMeta.getParameter("duration");
 
         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_WITHER_SHOOT, 2, 2);
         new BukkitRunnable() {
@@ -63,7 +63,7 @@ public class Cursed_Beam extends SkillHandler<VectorSkillResult> {
                     for (Entity target : entities)
                         if (UtilityMethods.canTarget(caster, loc, target)) {
                             effect(target);
-                            double damage = skillMeta.getModifier("damage");
+                            double damage = skillMeta.getParameter("damage");
                             loc.getWorld().playSound(loc, VersionSound.ENTITY_ENDERMAN_TELEPORT.toSound(), 2, .7f);
 
                             for (Entity entity : entities)

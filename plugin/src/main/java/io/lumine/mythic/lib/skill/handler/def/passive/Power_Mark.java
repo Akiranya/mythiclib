@@ -9,7 +9,6 @@ import io.lumine.mythic.lib.player.skill.PassiveSkill;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.result.def.AttackSkillResult;
-import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import io.lumine.mythic.lib.skill.trigger.TriggerMetadata;
 import io.lumine.mythic.lib.util.ParabolicProjectile;
 import io.lumine.mythic.lib.version.VersionSound;
@@ -50,7 +49,7 @@ public class Power_Mark extends SkillHandler<AttackSkillResult> implements Liste
         if (skill == null)
             return;
 
-        skill.getTriggeredSkill().cast(new TriggerMetadata(event.getAttacker(), event.getEntity()));
+        skill.getTriggeredSkill().cast(new TriggerMetadata(event.getAttacker(), event.getEntity(), event.getAttack()));
     }
 
     public class PowerMark extends BukkitRunnable implements Listener {
@@ -70,9 +69,9 @@ public class Power_Mark extends SkillHandler<AttackSkillResult> implements Liste
 
             loc.getWorld().playSound(loc, Sound.BLOCK_END_PORTAL_FRAME_FILL, 2, 1);
 
-            duration = skillMeta.getModifier("duration");
-            ratio = skillMeta.getModifier("ratio") / 100;
-            stun = skillMeta.getModifier("stun");
+            duration = skillMeta.getParameter("duration");
+            ratio = skillMeta.getParameter("ratio") / 100;
+            stun = skillMeta.getParameter("stun");
 
             runTaskTimer(MythicLib.plugin, 0, 1);
             Bukkit.getPluginManager().registerEvents(this, MythicLib.plugin);

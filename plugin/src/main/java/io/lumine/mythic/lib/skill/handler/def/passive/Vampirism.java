@@ -8,7 +8,6 @@ import io.lumine.mythic.lib.player.skill.PassiveSkill;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.result.def.AttackSkillResult;
-import io.lumine.mythic.lib.skill.result.def.TargetSkillResult;
 import io.lumine.mythic.lib.skill.trigger.TriggerMetadata;
 import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
@@ -54,7 +53,7 @@ public class Vampirism extends SkillHandler<AttackSkillResult> implements Listen
             }
         }.runTaskTimer(MythicLib.plugin, 0, 1);
         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_WITCH_DRINK, 1, 2);
-        UtilityMethods.heal(caster, skillMeta.getAttack().getDamage().getDamage() * skillMeta.getModifier("drain") / 100);
+        UtilityMethods.heal(caster, skillMeta.getAttackSource().getDamage().getDamage() * skillMeta.getParameter("drain") / 100);
     }
 
 
@@ -67,6 +66,6 @@ public class Vampirism extends SkillHandler<AttackSkillResult> implements Listen
         if (skill == null)
             return;
 
-        skill.getTriggeredSkill().cast(new TriggerMetadata(event.getAttacker(), event.getEntity()));
+        skill.getTriggeredSkill().cast(new TriggerMetadata(event));
     }
 }

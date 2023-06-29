@@ -1,7 +1,6 @@
 package io.lumine.mythic.lib.skill.handler.def.target;
 
 import io.lumine.mythic.lib.MythicLib;
-import io.lumine.mythic.lib.api.stat.StatMap;
 import io.lumine.mythic.lib.player.PlayerMetadata;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -38,7 +37,7 @@ public class Control extends SkillHandler<TargetSkillResult> {
         Player caster = skillMeta.getCaster().getPlayer();
         caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 1);
         result.getTarget().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 2, 0));
-        new TelekinesyRunnable(skillMeta.getCaster(), result.getTarget(), skillMeta.getModifier("knockback") / 100, skillMeta.getModifier("duration"));
+        new TelekinesyRunnable(skillMeta.getCaster(), result.getTarget(), skillMeta.getParameter("knockback") / 100, skillMeta.getParameter("duration"));
     }
 
     public static class TelekinesyRunnable extends BukkitRunnable implements Listener {

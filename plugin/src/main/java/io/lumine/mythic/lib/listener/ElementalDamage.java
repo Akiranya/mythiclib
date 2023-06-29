@@ -45,7 +45,7 @@ public class ElementalDamage implements Listener {
         }
 
         // Apply elemental damage modifiers
-        final double critChance = Math.min(attacker.getStat("CRITICAL_STRIKE_CHANCE"), MythicLib.plugin.getAttackEffects().getMaxWeaponCritChance());
+        final double critChanceCoef = attacker.getStat("CRITICAL_STRIKE_CHANCE") / 100;
         for (Element element : MythicLib.plugin.getElements().getAll()) {
             if (!event.getDamage().hasElement(element))
                 continue;
@@ -65,10 +65,10 @@ public class ElementalDamage implements Listener {
             event.getDamage().multiplicativeModifier(finalDamage / initialDamage, element);
 
             // Apply critical strikes & on-hit skill
-            final boolean crit = RANDOM.nextDouble() < critChance / 100;
+            final boolean crit = RANDOM.nextDouble() < critChanceCoef;
             final Skill skill = element.getSkill(crit);
             if (skill != null && attacker instanceof PlayerMetadata)
-                skill.cast(new TriggerMetadata((PlayerMetadata) attacker, event.getEntity()));
+                skill.cast(new TriggerMetadata((PlayerMetadata) attacker, event.getEntity(), event.getAttack()));
             if (crit)
                 event.getDamage().registerElementalCriticalStrike(element);
         }

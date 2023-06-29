@@ -3,8 +3,6 @@ package io.lumine.mythic.lib.skill.handler.def.simple;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.player.PlayerMetadata;
 import io.lumine.mythic.lib.skill.SkillMetadata;
@@ -41,7 +39,7 @@ public class Empowered_Attack extends SkillHandler<SimpleSkillResult> {
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
         caster.playSound(caster.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 1);
-        new EmpoweredAttack(skillMeta.getCaster(), skillMeta.getModifier("extra"), skillMeta.getModifier("ratio"), skillMeta.getModifier("radius"));
+        new EmpoweredAttack(skillMeta.getCaster(), skillMeta.getParameter("extra"), skillMeta.getParameter("ratio"), skillMeta.getParameter("radius"));
     }
 
     private void drawVector(Location loc, Vector vec) {

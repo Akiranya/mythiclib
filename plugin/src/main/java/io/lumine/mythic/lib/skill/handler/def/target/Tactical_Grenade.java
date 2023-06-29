@@ -37,8 +37,8 @@ public class Tactical_Grenade extends SkillHandler<TargetSkillResult> {
 
         new BukkitRunnable() {
             final Location loc = caster.getLocation().add(0, .1, 0);
-            final double radius = skillMeta.getModifier("radius");
-            final double knockup = .7 * skillMeta.getModifier("knock-up");
+            final double radius = skillMeta.getParameter("radius");
+            final double knockup = .7 * skillMeta.getParameter("knock-up");
             final List<Integer> hit = new ArrayList<>();
             int j = 0;
 
@@ -68,7 +68,7 @@ public class Tactical_Grenade extends SkillHandler<TargetSkillResult> {
                         if (entity.equals(target))
                             cancel();
 
-                        skillMeta.getCaster().attack((LivingEntity) entity, skillMeta.getModifier("damage"), DamageType.SKILL, DamageType.MAGIC);
+                        skillMeta.getCaster().attack((LivingEntity) entity, skillMeta.getParameter("damage"), DamageType.SKILL, DamageType.MAGIC);
                         entity.setVelocity(entity.getVelocity().add(offsetVector(knockup)));
                     }
             }

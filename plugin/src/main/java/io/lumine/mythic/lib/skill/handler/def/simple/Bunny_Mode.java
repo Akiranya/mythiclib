@@ -28,9 +28,9 @@ public class Bunny_Mode extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double duration = skillMeta.getModifier("duration") * 20;
-        double y = skillMeta.getModifier("jump-force");
-        double xz = skillMeta.getModifier("speed");
+        double duration = skillMeta.getParameter("duration") * 20;
+        double y = skillMeta.getParameter("jump-force");
+        double xz = skillMeta.getParameter("speed");
 
         Player caster = skillMeta.getCaster().getPlayer();
 

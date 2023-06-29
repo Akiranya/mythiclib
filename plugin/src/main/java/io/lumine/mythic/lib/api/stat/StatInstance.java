@@ -3,8 +3,10 @@ package io.lumine.mythic.lib.api.stat;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.stat.api.ModifiedInstance;
+import io.lumine.mythic.lib.api.stat.handler.StatHandler;
 import io.lumine.mythic.lib.api.stat.modifier.StatModifier;
 import io.lumine.mythic.lib.util.Closeable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
@@ -13,45 +15,54 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class StatInstance extends ModifiedInstance<StatModifier> {
+    @NotNull
     private final StatMap map;
+    @NotNull
     private final String stat;
 
-    public StatInstance(StatMap map, String stat) {
+    public StatInstance(@NotNull StatMap map, @NotNull String stat) {
         this.map = map;
         this.stat = stat;
     }
 
+    @NotNull
     public StatMap getMap() {
         return map;
     }
 
+    @NotNull
     public String getStat() {
         return stat;
     }
 
     public double getBase() {
-        return MythicLib.inst().getStats().getBaseValue(stat, map);
+        return MythicLib.plugin.getStats().getBaseValue(this);
+    }
+
+    @Nullable
+    public StatHandler findHandler() {
+        return MythicLib.plugin.getStats().getStatHandler(stat);
     }
 
     /**
      * @return The final stat value taking into account the default stat value
-     * as well as the stat modifiers. The relative stat modifiers are
-     * applied afterwards, onto the sum of the base value + flat
-     * modifiers.
+     *         as well as the stat modifiers. The relative stat modifiers are
+     *         applied afterwards, onto the sum of the base value + flat
+     *         modifiers.
      */
     public double getTotal() {
-        return getFilteredTotal(getBase(), EquipmentSlot.MAIN_HAND::isCompatible, mod -> mod);
+        return getFilteredTotal(EquipmentSlot.MAIN_HAND::isCompatible, mod -> mod);
     }
 
     /**
      * @param filter Filters stat modifications taken into account for the calculation
      * @return The final stat value taking into account the default stat value
-     * as well as the stat modifiers. The relative stat modifiers are
-     * applied afterwards, onto the sum of the base value + flat
-     * modifiers.
+     *         as well as the stat modifiers. The relative stat modifiers are
+     *         applied afterwards, onto the sum of the base value + flat
+     *         modifiers.
      */
     public double getFilteredTotal(Predicate<StatModifier> filter) {
-        return getFilteredTotal(getBase(), filter, mod -> mod);
+        return getFilteredTotal(filter, mod -> mod);
     }
 
     /**
@@ -60,12 +71,12 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
      *                     reduce debuffs, by checking if a stat modifier has a negative
      *                     value and returning a modifier with a reduced absolute value
      * @return The final stat value taking into account the default stat value
-     * as well as the stat modifiers. The relative stat modifiers are
-     * applied afterwards, onto the sum of the base value + flat
-     * modifiers.
+     *         as well as the stat modifiers. The relative stat modifiers are
+     *         applied afterwards, onto the sum of the base value + flat
+     *         modifiers.
      */
     public double getTotal(Function<StatModifier, StatModifier> modification) {
-        return getFilteredTotal(getBase(), EquipmentSlot.MAIN_HAND::isCompatible, modification);
+        return getFilteredTotal(EquipmentSlot.MAIN_HAND::isCompatible, modification);
     }
 
     /**
@@ -75,12 +86,15 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
      *                     reduce debuffs, by checking if a stat modifier has a negative
      *                     value and returning a modifier with a reduced absolute value
      * @return The final stat value taking into account the default stat value
-     * as well as the stat modifiers. The relative stat modifiers are
-     * applied afterwards, onto the sum of the base value + flat
-     * modifiers.
+     *         as well as the stat modifiers. The relative stat modifiers are
+     *         applied afterwards, onto the sum of the base value + flat
+     *         modifiers.
      */
     public double getFilteredTotal(Predicate<StatModifier> filter, Function<StatModifier, StatModifier> modification) {
-        return getFilteredTotal(getBase(), filter, modification);
+        final @NotNull StatHandler handler = findHandler();
+        final double base = handler == null ? 0 : handler.getBaseValue(this);
+        final double total = getFilteredTotal(base, filter, modification);
+        return handler == null ? total : handler.clampValue(total);
     }
 
     /**
@@ -99,7 +113,7 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
      */
     @Override
     public void addModifier(StatModifier modifier) {
-        final ModifierPacket packet = new ModifierPacket();
+        final ModifierPacket packet = new ModifierPacket(this);
         packet.addModifier(modifier);
         packet.runUpdate();
     }
@@ -108,12 +122,12 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
      * Iterates through registered stat modifiers and unregisters them if a
      * certain condition based on their string key is met
      *
-     * @param condition Condition on the modifier key, if it should be unregistered or
-     *                  not
+     * @param condition Condition on the modifier key, if it should be
+     *                  unregistered or not
      */
     @Override
     public void removeIf(Predicate<String> condition) {
-        final ModifierPacket packet = new ModifierPacket();
+        final ModifierPacket packet = new ModifierPacket(this);
         packet.removeIf(condition);
         packet.runUpdate();
     }
@@ -125,13 +139,13 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
      */
     @Override
     public void remove(String key) {
-        final ModifierPacket packet = new ModifierPacket();
+        final ModifierPacket packet = new ModifierPacket(this);
         packet.remove(key);
         packet.runUpdate();
     }
 
     public ModifierPacket newPacket() {
-        return new ModifierPacket();
+        return new ModifierPacket(this);
     }
 
     /**
@@ -145,12 +159,17 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
      * @author indyuce
      */
     public class ModifierPacket {
+        private final StatInstance instance;
 
         /**
          * Set to true if some update is required. This is a small
          * performance improvement as it reduces useless stat updates.
          */
         private boolean updateRequired;
+
+        public ModifierPacket(StatInstance instance) {
+            this.instance = instance;
+        }
 
         /**
          * Registers a stat modifier and run the required player stat updates.
@@ -161,8 +180,7 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
          */
         public void addModifier(StatModifier modifier) {
             final StatModifier current = modifiers.put(modifier.getKey(), modifier);
-            if (current != null && current instanceof Closeable)
-                ((Closeable) current).close();
+            if (current != null && current instanceof Closeable) ((Closeable) current).close();
             updateRequired = true;
         }
 
@@ -175,16 +193,14 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
 
             // Find and remove current value
             final StatModifier mod = modifiers.remove(key);
-            if (mod == null)
-                return;
+            if (mod == null) return;
 
             /*
              * Closing modifier is really important with temporary stats because
              * otherwise the runnable will try to remove the key from the map even
              * though the attribute was cancelled before hand
              */
-            if (mod instanceof Closeable)
-                ((Closeable) mod).close();
+            if (mod instanceof Closeable) ((Closeable) mod).close();
 
             updateRequired = true;
         }
@@ -201,8 +217,7 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
                 if (condition.test(entry.getKey())) {
 
                     final StatModifier modifier = entry.getValue();
-                    if (modifier instanceof Closeable)
-                        ((Closeable) modifier).close();
+                    if (modifier instanceof Closeable) ((Closeable) modifier).close();
 
                     iterator.remove();
                     updateRequired = true;
@@ -214,8 +229,8 @@ public class StatInstance extends ModifiedInstance<StatModifier> {
          * Only runs an update if absolutely necessary
          */
         public void runUpdate() {
-            if (updateRequired)
-                MythicLib.plugin.getStats().runUpdate(map, stat);
+            final StatHandler handler;
+            if (updateRequired && (handler = findHandler()) != null) handler.runUpdate(instance);
         }
     }
 }

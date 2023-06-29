@@ -30,7 +30,7 @@ public class Heavy_Charge extends SkillHandler<VectorSkillResult> {
     public void whenCast(VectorSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double knockback = skillMeta.getModifier("knockback");
+        double knockback = skillMeta.getParameter("knockback");
 
         new BukkitRunnable() {
             final Vector vec = result.getTarget().setY(-1);
@@ -51,7 +51,7 @@ public class Heavy_Charge extends SkillHandler<VectorSkillResult> {
                         caster.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, target.getLocation().add(0, 1, 0), 0);
                         target.setVelocity(caster.getVelocity().setY(0.3).multiply(1.7 * knockback));
                         caster.setVelocity(caster.getVelocity().setX(0).setY(0).setZ(0));
-                        skillMeta.getCaster().attack((LivingEntity) target, skillMeta.getModifier("damage"), DamageType.SKILL, DamageType.PHYSICAL);
+                        skillMeta.getCaster().attack((LivingEntity) target, skillMeta.getParameter("damage"), DamageType.SKILL, DamageType.PHYSICAL);
                         cancel();
                         break;
                     }

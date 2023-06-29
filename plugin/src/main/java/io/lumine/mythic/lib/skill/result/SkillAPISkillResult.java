@@ -24,7 +24,7 @@ public class SkillAPISkillResult implements SkillResult {
     public SkillAPISkillResult(SkillMetadata skillMeta, Skill skill) {
         this.skillPlayerData = SkillAPI.getPlayerData(skillMeta.getCaster().getPlayer());
         this.skill = skill;
-        this.level = (int) skillMeta.getModifier("level");
+        this.level = (int) skillMeta.getParameter("level");
     }
 
     public Skill getSkill() {

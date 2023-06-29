@@ -29,7 +29,7 @@ public class Shock extends SkillHandler<TargetSkillResult> {
         LivingEntity target = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double duration = skillMeta.getModifier("duration");
+        double duration = skillMeta.getParameter("duration");
 
         target.getWorld().playSound(target.getLocation(), VersionSound.ENTITY_ZOMBIE_PIGMAN_ANGRY.toSound(), 1, 2);
         new BukkitRunnable() {

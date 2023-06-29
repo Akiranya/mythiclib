@@ -13,16 +13,16 @@
         <module>dist</module>
         <module>v1_19</module>
         <module>v1_19_r2</module>
-        <module>mythiclib_v1_19_r3</module>
+        <module>mythiclib-v1_19_r3</module>
+        <module>mythiclib-v1_20_r1</module>
     </modules>
 
     <name>MythicLib</name>
-    <description>A great item solution for your RPG server!!</description>
+    <description>A hard dependency for the MMO plugins.</description>
 
     <properties>
         <downloadSources>false</downloadSources>
         <downloadJavadocs>false</downloadJavadocs>
-        <revision>1.5.2-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 

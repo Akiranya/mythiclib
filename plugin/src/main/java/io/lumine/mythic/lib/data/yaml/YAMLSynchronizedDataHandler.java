@@ -7,6 +7,7 @@ import io.lumine.mythic.lib.data.SynchronizedDataManager;
 import io.lumine.mythic.lib.util.ConfigFile;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public abstract class YAMLSynchronizedDataHandler<H extends SynchronizedDataHold
 
     /**
      * @param owning        Plugin saving data
-     * @param profilePlugin See {@link SynchronizedDataManager#SynchronizedDataManager(Plugin, SynchronizedDataHandler, boolean)}
+     * @param profilePlugin See {@link SynchronizedDataManager#SynchronizedDataManager(JavaPlugin, SynchronizedDataHandler, boolean)}
      */
     public YAMLSynchronizedDataHandler(Plugin owning, boolean profilePlugin) {
         this.owning = Objects.requireNonNull(owning, "Plugin cannot be null");

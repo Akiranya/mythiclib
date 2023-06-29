@@ -1,8 +1,6 @@
 package io.lumine.mythic.lib.skill.handler.def.simple;
 
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -31,9 +29,9 @@ public class Circular_Slash extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double damage = skillMeta.getModifier("damage");
-        double radius = skillMeta.getModifier("radius");
-        double knockback = skillMeta.getModifier("knockback");
+        double damage = skillMeta.getParameter("damage");
+        double radius = skillMeta.getParameter("radius");
+        double knockback = skillMeta.getParameter("knockback");
 
         Player caster = skillMeta.getCaster().getPlayer();
 

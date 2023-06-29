@@ -2,8 +2,6 @@ package io.lumine.mythic.lib.skill.handler.def.simple;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -33,7 +31,7 @@ public class Firefly extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double duration = skillMeta.getModifier("duration") * 20;
+        double duration = skillMeta.getParameter("duration") * 20;
 
         Player caster = skillMeta.getCaster().getPlayer();
 
@@ -55,8 +53,8 @@ public class Firefly extends SkillHandler<SimpleSkillResult> {
 
                 for (Entity entity : caster.getNearbyEntities(1, 1, 1))
                     if (UtilityMethods.canTarget(caster, entity)) {
-                        double damage = skillMeta.getModifier("damage");
-                        double knockback = skillMeta.getModifier("knockback");
+                        double damage = skillMeta.getParameter("damage");
+                        double knockback = skillMeta.getParameter("knockback");
 
                         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1, .5f);
                         caster.getWorld().spawnParticle(Particle.LAVA, caster.getLocation().add(0, 1, 0), 32);

@@ -7,7 +7,6 @@ import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -29,8 +28,8 @@ public class Shockwave extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double knockUp = skillMeta.getModifier("knock-up");
-        double length = skillMeta.getModifier("length");
+        double knockUp = skillMeta.getParameter("knock-up");
+        double length = skillMeta.getParameter("length");
 
         Player caster = skillMeta.getCaster().getPlayer();
 

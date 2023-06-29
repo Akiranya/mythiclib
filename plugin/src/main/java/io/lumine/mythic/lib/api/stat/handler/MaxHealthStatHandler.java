@@ -1,8 +1,12 @@
 package io.lumine.mythic.lib.api.stat.handler;
 
 import io.lumine.mythic.lib.api.stat.SharedStat;
+import io.lumine.mythic.lib.api.stat.StatInstance;
 import io.lumine.mythic.lib.api.stat.StatMap;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This fixes an issue where, when the player's max health decreases
@@ -18,20 +22,21 @@ import org.bukkit.attribute.Attribute;
  * @author indyuce
  */
 public class MaxHealthStatHandler extends AttributeStatHandler {
-    public MaxHealthStatHandler() {
-        super(Attribute.GENERIC_MAX_HEALTH, SharedStat.MAX_HEALTH, false);
+    public MaxHealthStatHandler(@NotNull ConfigurationSection config) {
+        super(config, Attribute.GENERIC_MAX_HEALTH, SharedStat.MAX_HEALTH, false);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void runUpdate(StatMap stats) {
+    public void runUpdate(@NotNull StatInstance instance) {
 
         // Do everything like normal
-        super.runUpdate(stats);
+        super.runUpdate(instance);
 
-        // Fix the player health
-        double max = stats.getPlayerData().getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        double fixed = Math.max(0, Math.min(max, stats.getPlayerData().getPlayer().getHealth()));
-        stats.getPlayerData().getPlayer().setHealth(fixed);
+        // Fix player health
+        final Player player = instance.getMap().getPlayerData().getPlayer();
+        final double max = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+        final double fixed = Math.max(0, Math.min(max, player.getHealth()));
+        player.setHealth(fixed);
     }
 }

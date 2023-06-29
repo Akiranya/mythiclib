@@ -31,7 +31,7 @@ public class TNT_Throw extends SkillHandler<VectorSkillResult> {
     public void whenCast(VectorSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
 
-        Vector vec = result.getTarget().multiply(2 * skillMeta.getModifier("force"));
+        Vector vec = result.getTarget().multiply(2 * skillMeta.getParameter("force"));
         TNTPrimed tnt = (TNTPrimed) caster.getWorld().spawnEntity(caster.getLocation().add(0, 1, 0), EntityType.PRIMED_TNT);
         tnt.setFuseTicks(80);
         tnt.setVelocity(vec);

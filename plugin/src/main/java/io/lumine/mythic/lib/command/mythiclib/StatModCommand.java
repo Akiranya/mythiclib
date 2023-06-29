@@ -45,7 +45,7 @@ public class StatModCommand extends CommandTreeNode {
         final MMOPlayerData playerData = MMOPlayerData.get(target);
         final ModifierType type = args[3].toCharArray()[args[3].length() - 1] == '%' ? ModifierType.RELATIVE : ModifierType.FLAT;
         final double value = Double.parseDouble(type == ModifierType.RELATIVE ? args[3].substring(0, args[3].length() - 1) : args[3]);
-        final long duration = args.length > 4 ? Math.max(1, Long.parseLong(args[4])) : 0;
+        final long duration = args.length > 4 ? Math.max(1, (long) Double.parseDouble(args[4])) : 0;
 
         if (duration <= 0)
             new StatModifier(UUID.randomUUID().toString(), statName, value, type, EquipmentSlot.OTHER, ModifierSource.OTHER).register(playerData);

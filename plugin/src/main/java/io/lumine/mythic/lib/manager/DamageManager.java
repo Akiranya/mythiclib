@@ -1,12 +1,14 @@
 package io.lumine.mythic.lib.manager;
 
 import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.api.event.AttackUnregisteredEvent;
 import io.lumine.mythic.lib.api.player.EquipmentSlot;
 import io.lumine.mythic.lib.api.stat.provider.StatProvider;
 import io.lumine.mythic.lib.damage.*;
 import io.lumine.mythic.lib.player.PlayerMetadata;
 import io.lumine.mythic.lib.util.CustomProjectile;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -48,7 +50,7 @@ public class DamageManager implements Listener {
      * I switched back to using a weak hash map to save the current attack
      * metadata for a mob. Weak hash maps are great for garbage collection.
      */
-    private final WeakHashMap<UUID, AttackMetadata> attackMetadatas = new WeakHashMap<>();
+    private final Map<UUID, AttackMetadata> attackMetadatas = new WeakHashMap<>();
 
     private static final AttributeModifier NO_KNOCKBACK = new AttributeModifier(UUID.randomUUID(), "noKnockback", 100, AttributeModifier.Operation.ADD_NUMBER);
 
@@ -108,10 +110,6 @@ public class DamageManager implements Listener {
      * @param ignoreImmunity The attack will not produce immunity frames.
      */
     public void registerAttack(@NotNull AttackMetadata attack, boolean knockback, boolean ignoreImmunity) {
-        final double damage = attack.getDamage().getDamage();
-        if (damage <= 0)
-            return;
-
         Validate.notNull(attack.getTarget(), "Target cannot be null"); // BW compatibility check
         markAsMetadata(attack);
 
@@ -156,10 +154,8 @@ public class DamageManager implements Listener {
             // Just damage entity
         } else {
             Validate.isTrue(damage > 0, "Damage must be strictly positive");
-            if (damager == null)
-                target.damage(damage);
-            else
-                target.damage(damage, damager);
+            if (damager == null) target.damage(damage);
+            else target.damage(damage, damager);
         }
     }
 
@@ -198,8 +194,7 @@ public class DamageManager implements Listener {
 
         // MythicLib attack registry
         @Nullable AttackMetadata found = getRegisteredAttackMetadata(entity);
-        if (found != null)
-            return found;
+        if (found != null) return found;
 
         // Attack registries from other plugins
         for (AttackHandler handler : handlers) {
@@ -249,8 +244,7 @@ public class DamageManager implements Listener {
                 final Projectile projectile = (Projectile) damager;
                 final @Nullable CustomProjectile projectileData = CustomProjectile.getCustomData(projectile);
                 if (projectileData != null) {
-                    final AttackMetadata attackMeta = new ProjectileAttackMetadata(new DamageMetadata(event.getDamage(), DamageType.WEAPON, DamageType.PROJECTILE),
-                            (LivingEntity) event.getEntity(), projectileData.getCaster(), projectile);
+                    final AttackMetadata attackMeta = new ProjectileAttackMetadata(new DamageMetadata(event.getDamage(), DamageType.WEAPON, DamageType.PROJECTILE), (LivingEntity) event.getEntity(), projectileData.getCaster(), projectile);
                     markAsMetadata(attackMeta);
                     return attackMeta;
                 }
@@ -259,8 +253,7 @@ public class DamageManager implements Listener {
                 final ProjectileSource source = projectile.getShooter();
                 if (source != null && !source.equals(event.getEntity()) && source instanceof LivingEntity) {
                     final StatProvider attacker = StatProvider.get((LivingEntity) source, EquipmentSlot.MAIN_HAND, true);
-                    final AttackMetadata attackMeta = new ProjectileAttackMetadata(new DamageMetadata(event.getDamage(), DamageType.WEAPON, DamageType.PROJECTILE),
-                            (LivingEntity) event.getEntity(), attacker, projectile);
+                    final AttackMetadata attackMeta = new ProjectileAttackMetadata(new DamageMetadata(event.getDamage(), DamageType.WEAPON, DamageType.PROJECTILE), (LivingEntity) event.getEntity(), attacker, projectile);
                     markAsMetadata(attackMeta);
                     return attackMeta;
                 }
@@ -282,7 +275,7 @@ public class DamageManager implements Listener {
     public void markAsMetadata(AttackMetadata attackMeta) {
         final @Nullable AttackMetadata found = attackMetadatas.put(attackMeta.getTarget().getUniqueId(), attackMeta);
         if (found != null)
-            MythicLib.plugin.getLogger().log(Level.WARNING, "Please report this issue to the developper: persistent attack metadata was found.");
+            MythicLib.plugin.getLogger().log(Level.WARNING, "Please report this issue to the developer: persistent attack metadata was found.");
     }
 
     /**
@@ -392,9 +385,11 @@ public class DamageManager implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void unregisterCustomAttacks(EntityDamageEvent event) {
-
-        if (event.getEntity() instanceof LivingEntity)
-            attackMetadatas.remove(event.getEntity().getUniqueId());
+        if (event.getEntity() instanceof LivingEntity) {
+            final @Nullable AttackMetadata attack = attackMetadatas.remove(event.getEntity().getUniqueId());
+            if (attack != null && !event.isCancelled() && event.getFinalDamage() > 0)
+                Bukkit.getPluginManager().callEvent(new AttackUnregisteredEvent(event, attack));
+        }
     }
 
     // Purely arbitrary but works decently

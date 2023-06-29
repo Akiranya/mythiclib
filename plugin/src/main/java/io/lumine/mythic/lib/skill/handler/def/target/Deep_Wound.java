@@ -1,10 +1,8 @@
 package io.lumine.mythic.lib.skill.handler.def.target;
 
-import io.lumine.mythic.lib.damage.AttackMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
-import io.lumine.mythic.lib.skill.result.SkillResult;
 import io.lumine.mythic.lib.skill.result.def.TargetSkillResult;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -36,7 +34,7 @@ public class Deep_Wound extends SkillHandler<TargetSkillResult> {
 
         final double max = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
         final double ratio = (max - target.getHealth()) / max;
-        final double damage = skillMeta.getModifier("damage") * (1 + skillMeta.getModifier("extra") * ratio / 100);
+        final double damage = skillMeta.getParameter("damage") * (1 + skillMeta.getParameter("extra") * ratio / 100);
         skillMeta.getCaster().attack(target, damage, DamageType.SKILL, DamageType.PHYSICAL);
     }
 }

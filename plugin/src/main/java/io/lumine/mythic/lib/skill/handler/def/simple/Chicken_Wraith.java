@@ -32,14 +32,14 @@ public class Chicken_Wraith extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double duration = skillMeta.getModifier("duration") * 10;
-        double force = skillMeta.getModifier("force");
-        double inaccuracy = skillMeta.getModifier("inaccuracy");
+        double duration = skillMeta.getParameter("duration") * 10;
+        double force = skillMeta.getParameter("force");
+        double inaccuracy = skillMeta.getParameter("inaccuracy");
 
         Player caster = skillMeta.getCaster().getPlayer();
 
         new BukkitRunnable() {
-            final CustomEggRegistry handler = new CustomEggRegistry(skillMeta.getModifier("damage"));
+            final CustomEggRegistry handler = new CustomEggRegistry(skillMeta.getParameter("damage"));
             int j = 0;
 
             public void run() {

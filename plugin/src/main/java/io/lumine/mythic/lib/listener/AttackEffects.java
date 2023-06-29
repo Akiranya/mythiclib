@@ -22,7 +22,7 @@ import java.util.Random;
 public class AttackEffects implements Listener {
 
     // Critical strike configs
-    private double weaponCritCoef, skillCritCoef, maxWeaponCritChance, maxSkillCritChance, weaponCritCooldown, skillCritCooldown;
+    private double weaponCritCooldown, skillCritCooldown;
 
     private static final Random RANDOM = new Random();
 
@@ -31,18 +31,8 @@ public class AttackEffects implements Listener {
     }
 
     public void reload() {
-        weaponCritCoef = MythicLib.plugin.getConfig().getDouble("critical-strikes.weapon.coefficient", 2);
-        skillCritCoef = MythicLib.plugin.getConfig().getDouble("critical-strikes.skill.coefficient", 1.5);
-
-        maxWeaponCritChance = MythicLib.plugin.getConfig().getDouble("critical-strikes.weapon.max-chance", 80);
-        maxSkillCritChance = MythicLib.plugin.getConfig().getDouble("critical-strikes.skill.max-chance", 80);
-
         weaponCritCooldown = MythicLib.plugin.getConfig().getDouble("critical-strikes.weapon.cooldown", 3);
         skillCritCooldown = MythicLib.plugin.getConfig().getDouble("critical-strikes.skill.cooldown", 3);
-    }
-
-    public double getMaxWeaponCritChance() {
-        return maxWeaponCritChance;
     }
 
     /**
@@ -68,12 +58,12 @@ public class AttackEffects implements Listener {
 
         // Weapon critical strikes
         if ((event.getDamage().hasType(DamageType.WEAPON) || event.getDamage().hasType(DamageType.UNARMED))
-                && RANDOM.nextDouble() <= Math.min(stats.getStat("CRITICAL_STRIKE_CHANCE"), maxWeaponCritChance) / 100
+                && RANDOM.nextDouble() <= stats.getStat("CRITICAL_STRIKE_CHANCE") / 100
                 && !event.getAttacker().getData().isOnCooldown(CooldownType.WEAPON_CRIT)) {
             event.getAttacker().getData().applyCooldown(CooldownType.WEAPON_CRIT, weaponCritCooldown);
 
             // Works for both weapon and unarmed damage
-            final double damageMultiplicator = weaponCritCoef + stats.getStat("CRITICAL_STRIKE_POWER") / 100;
+            final double damageMultiplicator = stats.getStat("CRITICAL_STRIKE_POWER") / 100;
             event.getDamage().multiplicativeModifier(damageMultiplicator, DamageType.WEAPON);
             event.getDamage().multiplicativeModifier(damageMultiplicator, DamageType.UNARMED);
             event.getDamage().registerWeaponCriticalStrike();
@@ -84,10 +74,10 @@ public class AttackEffects implements Listener {
 
         // Skill critical strikes
         if (event.getDamage().hasType(DamageType.SKILL)
-                && RANDOM.nextDouble() <= Math.min(stats.getStat("SKILL_CRITICAL_STRIKE_CHANCE"), maxSkillCritChance) / 100
+                && RANDOM.nextDouble() <= stats.getStat("SKILL_CRITICAL_STRIKE_CHANCE") / 100
                 && !event.getAttacker().getData().isOnCooldown(CooldownType.SKILL_CRIT)) {
             event.getAttacker().getData().applyCooldown(CooldownType.SKILL_CRIT, skillCritCooldown);
-            event.getDamage().multiplicativeModifier(skillCritCoef + stats.getStat("SKILL_CRITICAL_STRIKE_POWER") / 100, DamageType.SKILL);
+            event.getDamage().multiplicativeModifier(stats.getStat("SKILL_CRITICAL_STRIKE_POWER") / 100, DamageType.SKILL);
             event.getDamage().registerSkillCriticalStrike();
             event.getEntity().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1, 2);
             applyCritEffects(event.getEntity(), Particle.TOTEM, 16, .4f);

@@ -1,21 +1,18 @@
 package io.lumine.mythic.lib.listener.option;
 
-
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.api.event.AttackEvent;
+import io.lumine.mythic.lib.api.event.AttackUnregisteredEvent;
 import io.lumine.mythic.lib.api.event.IndicatorDisplayEvent;
 import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamagePacket;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.element.Element;
 import io.lumine.mythic.lib.util.CustomFont;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
@@ -60,27 +57,23 @@ public class DamageIndicators extends GameIndicators {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void a(AttackEvent event) {
-
+    @EventHandler
+    public void a(AttackUnregisteredEvent event) {
         final Entity entity = event.getEntity();
-        if (event.getDamage().getDamage() < 2 * DamageMetadata.MINIMAL_DAMAGE)
-            return;
+        if (event.getDamage().getDamage() < 2 * DamageMetadata.MINIMAL_DAMAGE) return;
 
         // Display no indicator around vanished player
-        if (entity instanceof Player && UtilityMethods.isVanished((Player) entity))
-            return;
+        if (entity instanceof Player && UtilityMethods.isVanished((Player) entity)) return;
 
-        // Calculate holograms, take into account DAMAGE MODIFIERS (bug fix)
+        // Calculate holograms, take into account DAMAGE MODIFIERS (bug fix) + change in event damage for external compatibility
         final List<String> holos = new ArrayList<>();
         final Map<IndicatorType, Double> mappedDamage = mapDamage(event.getDamage());
-        final double modifierDue = (event.toBukkit().getFinalDamage() - event.toBukkit().getDamage()) / Math.max(1, mappedDamage.size());
+        final double modifierDue = (event.toBukkit().getFinalDamage() - event.getDamage().getDamage()) / Math.max(1, mappedDamage.size());
         mappedDamage.forEach((type, val) -> holos.add(type.computeFormat(val + modifierDue)));
 
         // Display multiple indicators
-        if (splitHolograms)
-            for (String holo : holos)
-                displayIndicator(entity, holo, getDirection(event.toBukkit()), IndicatorDisplayEvent.IndicatorType.DAMAGE);
+        if (splitHolograms) for (String holo : holos)
+            displayIndicator(entity, holo, getDirection(event.toBukkit()), IndicatorDisplayEvent.IndicatorType.DAMAGE);
 
             // Only display one indicator
         else {
@@ -156,14 +149,11 @@ public class DamageIndicators extends GameIndicators {
             final StringBuilder build = new StringBuilder();
 
             // Append damage type
-            if (physical)
-                build.append(crit ? weaponIconCrit : weaponIcon);
-            else
-                build.append(crit ? skillIconCrit : skillIcon);
+            if (physical) build.append(crit ? weaponIconCrit : weaponIcon);
+            else build.append(crit ? skillIconCrit : skillIcon);
 
             // Append element
-            if (element != null)
-                build.append(element.getColor() + element.getLoreIcon());
+            if (element != null) build.append(element.getColor() + element.getLoreIcon());
 
             return build.toString();
         }
@@ -173,9 +163,7 @@ public class DamageIndicators extends GameIndicators {
             @Nullable final CustomFont indicatorFont = crit && fontCrit != null ? fontCrit : font;
             @NotNull final String formattedDamage = indicatorFont == null ? formatNumber(damage) : indicatorFont.format(formatNumber(damage));
 
-            return MythicLib.plugin.getPlaceholderParser().parse(null, getRaw()
-                    .replace("{icon}", computeIcon())
-                    .replace("{value}", formattedDamage));
+            return MythicLib.plugin.getPlaceholderParser().parse(null, getRaw().replace("{icon}", computeIcon()).replace("{value}", formattedDamage));
         }
 
         @Override

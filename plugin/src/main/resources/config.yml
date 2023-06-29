@@ -47,11 +47,9 @@ critical-strikes:
   weapon:
     coefficient: 2 # Default = 2 meaning crits deal 200% of the initial damage
     cooldown: 3
-    max-chance: 80
   skill:
     coefficient: 1.5 # Default = 1.5 meaning crits deal 150% of the initial damage
     cooldown: 3
-    max-chance: 80
 
 # What happens when the player is waiting for his skill to cast
 # Does not apply if skill delay (it is a skill parameter) is set to 0
@@ -101,31 +99,15 @@ mitigation:
     dodge: '&cYou just dodged #damage# damage.'
 
   block:
-    power:
-      default: 25.0
-      max: 75.0
-    rating-max: 80.0
-    cooldown:
-      base: 5.0
-      min: 1.0
+    cooldown: 5.0
 
   dodge:
-    knockback:
-      enabled: true
-      force: 1.0
-    rating-max: 80.0
-    cooldown:
-      base: 5.0
-      min: 1.0
+    knockback: 1.0
+    cooldown: 5
 
   parry:
-    knockback:
-      enabled: true
-      force: 1.0
-    rating-max: 80.0
-    cooldown:
-      base: 8.0
-      min: 2.0
+    knockback: 1.0
+    cooldown: 8.0
 
 # Displays in-game damage or heal indicators.
 # Requires /reload when changed.

@@ -2,8 +2,6 @@ package io.lumine.mythic.lib.skill.handler.def.location;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -41,8 +39,8 @@ public class Ice_Spikes extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double damage = skillMeta.getModifier("damage");
-        int slow = (int) (20 * skillMeta.getModifier("slow"));
+        double damage = skillMeta.getParameter("damage");
+        int slow = (int) (20 * skillMeta.getParameter("slow"));
 
         new BukkitRunnable() {
             int j = 0;

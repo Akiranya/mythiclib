@@ -28,9 +28,9 @@ public class Frozen_Aura extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double duration = skillMeta.getModifier("duration") * 20;
-        double radiusSquared = Math.pow(skillMeta.getModifier("radius"), 2);
-        double amplifier = skillMeta.getModifier("amplifier") - 1;
+        double duration = skillMeta.getParameter("duration") * 20;
+        double radiusSquared = Math.pow(skillMeta.getParameter("radius"), 2);
+        double amplifier = skillMeta.getParameter("amplifier") - 1;
 
         Player caster = skillMeta.getCaster().getPlayer();
 

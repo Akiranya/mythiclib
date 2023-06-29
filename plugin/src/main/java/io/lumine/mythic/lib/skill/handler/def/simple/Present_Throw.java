@@ -4,8 +4,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -56,13 +54,13 @@ public class Present_Throw extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double damage = skillMeta.getModifier("damage");
-        double radiusSquared = Math.pow(skillMeta.getModifier("radius"), 2);
+        double damage = skillMeta.getParameter("damage");
+        double radiusSquared = Math.pow(skillMeta.getParameter("radius"), 2);
 
         Player caster = skillMeta.getCaster().getPlayer();
 
         final NoClipItem item = new NoClipItem(caster.getLocation().add(0, 1.2, 0), present);
-        item.getEntity().setVelocity(caster.getEyeLocation().getDirection().multiply(1.5 * skillMeta.getModifier("force")));
+        item.getEntity().setVelocity(caster.getEyeLocation().getDirection().multiply(1.5 * skillMeta.getParameter("force")));
 
         /*
          * when items are moving through the air, they loose a percent of their

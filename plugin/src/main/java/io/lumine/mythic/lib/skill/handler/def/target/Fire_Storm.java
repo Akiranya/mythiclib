@@ -1,8 +1,6 @@
 package io.lumine.mythic.lib.skill.handler.def.target;
 
 import io.lumine.mythic.lib.MythicLib;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -33,8 +31,8 @@ public class Fire_Storm extends SkillHandler<TargetSkillResult> {
         Player caster = skillMeta.getCaster().getPlayer();
         LivingEntity target = result.getTarget();
 
-        final double damage = skillMeta.getModifier("damage");
-        final int ignite = (int) (20 * skillMeta.getModifier("ignite"));
+        final double damage = skillMeta.getParameter("damage");
+        final int ignite = (int) (20 * skillMeta.getParameter("ignite"));
 
         caster.getPlayer().getWorld().playSound(caster.getPlayer().getLocation(), VersionSound.ENTITY_FIREWORK_ROCKET_BLAST.toSound(), 1, 1);
         new BukkitRunnable() {

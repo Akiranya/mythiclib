@@ -25,7 +25,7 @@ public class Greater_Healings extends SkillHandler<TargetSkillResult> {
     @Override
     public void whenCast(TargetSkillResult result, SkillMetadata skillMeta) {
         LivingEntity target = result.getTarget();
-        UtilityMethods.heal(target, skillMeta.getModifier("heal"));
+        UtilityMethods.heal(target, skillMeta.getParameter("heal"));
         new SmallParticleEffect(target, Particle.HEART, 1);
         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 2);
     }

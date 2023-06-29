@@ -19,7 +19,7 @@ public class CustomFont {
         final StringBuilder builder = new StringBuilder();
         for (char c : raw.toCharArray()) {
             final int index = c - '0';
-            if (middle != 0 && !builder.isEmpty())
+            if (middle != 0 && builder.length() != 0)
                 builder.append(middle);
             builder.append(index < 0 || index > 9 ? separator : characters[index]);
         }

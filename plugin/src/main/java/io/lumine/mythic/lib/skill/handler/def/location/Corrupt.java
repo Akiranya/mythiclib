@@ -32,9 +32,9 @@ public class Corrupt extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double damage = skillMeta.getModifier("damage");
-        double duration = skillMeta.getModifier("duration");
-        double amplifier = skillMeta.getModifier("amplifier");
+        double damage = skillMeta.getParameter("damage");
+        double duration = skillMeta.getParameter("duration");
+        double amplifier = skillMeta.getParameter("amplifier");
         double radius = 2.7;
 
         loc.add(0, -1, 0);

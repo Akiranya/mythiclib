@@ -2,12 +2,9 @@ package io.lumine.mythic.lib.skill.handler.def.location;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
-import io.lumine.mythic.lib.skill.handler.def.simple.Magical_Path;
 import io.lumine.mythic.lib.skill.result.def.LocationSkillResult;
 import io.lumine.mythic.lib.version.VersionSound;
 import org.bukkit.Color;
@@ -35,11 +32,11 @@ public class Contamination extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double duration = Math.min(30, skillMeta.getModifier("duration")) * 20;
+        double duration = Math.min(30, skillMeta.getParameter("duration")) * 20;
 
         loc.add(0, .1, 0);
         new BukkitRunnable() {
-            final double dps = skillMeta.getModifier("damage") / 2;
+            final double dps = skillMeta.getParameter("damage") / 2;
             double ti = 0;
             int j = 0;
 

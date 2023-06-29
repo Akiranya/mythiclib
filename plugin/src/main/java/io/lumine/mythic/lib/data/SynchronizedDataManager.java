@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,6 +117,10 @@ public abstract class SynchronizedDataManager<H extends SynchronizedDataHolder, 
      * Saves all currently loaded data. It is either used on server
      * shutdown, which requires to save all the data of currently
      * connected players, or when performing frequent autosaves.
+     *
+     * On server shutdown (/restart) pending async methods must be
+     * completed before the program stops, otherwise data saving
+     * tasks are lost, deleting the players' progressions.
      */
     public void saveAll(boolean autosave) {
         for (H holder : getLoaded())
@@ -123,6 +128,11 @@ public abstract class SynchronizedDataManager<H extends SynchronizedDataHolder, 
                 if (!autosave && holder instanceof Closeable) ((Closeable) holder).close();
                 getDataHandler().saveData(holder, autosave);
             }
+
+        // Execute pending async tasks (supports /restart and /stop)
+        if (!autosave) for (BukkitTask pending : Bukkit.getScheduler().getPendingTasks())
+            if (pending.getOwner().equals(owning))
+                ((Runnable) pending).run();
     }
 
     private static final Listener FICTIVE_LISTENER = new Listener() {

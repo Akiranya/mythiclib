@@ -31,7 +31,7 @@ public class Magical_Path extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        new MagicalPathEffect(skillMeta.getCaster().getPlayer(), skillMeta.getModifier("duration"));
+        new MagicalPathEffect(skillMeta.getCaster().getPlayer(), skillMeta.getParameter("duration"));
     }
 
     public class MagicalPathEffect extends BukkitRunnable implements Listener {

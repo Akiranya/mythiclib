@@ -31,7 +31,7 @@ public class Backstab extends SkillHandler<AttackSkillResult> implements Listene
     @Override
     public void whenCast(AttackSkillResult result, SkillMetadata skillMeta) {
         LivingEntity target = (LivingEntity) skillMeta.getTargetEntityOrNull();
-        skillMeta.getAttack().getDamage().multiplicativeModifier(1 + skillMeta.getModifier("extra") / 100, DamageType.PHYSICAL);
+        skillMeta.getAttackSource().getDamage().multiplicativeModifier(1 + skillMeta.getParameter("extra") / 100, DamageType.PHYSICAL);
         target.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, target.getHeight() / 2, 0), 32, 0, 0, 0, .05);
         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_ENDERMAN_HURT, 1, 1.5f);
     }
@@ -49,6 +49,6 @@ public class Backstab extends SkillHandler<AttackSkillResult> implements Listene
         if (skill == null)
             return;
 
-        skill.getTriggeredSkill().cast(new TriggerMetadata(event.getAttacker(), event.getEntity()));
+        skill.getTriggeredSkill().cast(new TriggerMetadata(event));
     }
 }

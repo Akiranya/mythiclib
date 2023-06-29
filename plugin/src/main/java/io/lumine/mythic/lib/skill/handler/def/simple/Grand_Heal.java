@@ -5,7 +5,6 @@ import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
 import io.lumine.mythic.lib.skill.result.def.SimpleSkillResult;
-import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -26,8 +25,8 @@ public class Grand_Heal extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        final double heal = skillMeta.getModifier("heal");
-        final double radius = skillMeta.getModifier("radius");
+        final double heal = skillMeta.getParameter("heal");
+        final double radius = skillMeta.getParameter("radius");
 
         final Player caster = skillMeta.getCaster().getPlayer();
         UtilityMethods.heal(caster, heal);

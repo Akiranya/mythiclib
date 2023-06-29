@@ -48,7 +48,7 @@ public class Warp extends SkillHandler<Warp.WarpSkillResult> {
 
         public WarpSkillResult(SkillMetadata meta) {
             Player caster = meta.getCaster().getPlayer();
-            RayTraceResult res = caster.rayTraceBlocks(meta.getModifier("range"), FluidCollisionMode.NEVER);
+            RayTraceResult res = caster.rayTraceBlocks(meta.getParameter("range"), FluidCollisionMode.NEVER);
             loc = res == null ? null : res.getHitPosition().toLocation(caster.getWorld());
             if (loc != null)
                 loc.setDirection(caster.getEyeLocation().getDirection());

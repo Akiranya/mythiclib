@@ -30,8 +30,8 @@ public class Combo_Attack extends SkillHandler<TargetSkillResult> {
 
     @Override
     public void whenCast(TargetSkillResult result, SkillMetadata skillMeta) {
-        final int count = (int) Math.max(1, skillMeta.getModifier("count"));
-        final double damage = skillMeta.getModifier("damage") / count;
+        final int count = (int) Math.max(1, skillMeta.getParameter("count"));
+        final double damage = skillMeta.getParameter("damage") / count;
         final LivingEntity target = result.getTarget();
 
         playEffect(target);

@@ -1,8 +1,6 @@
 package io.lumine.mythic.lib.skill.handler.def.simple;
 
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -30,8 +28,8 @@ public class Sky_Smash extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double damage = skillMeta.getModifier("damage");
-        double knockUp = skillMeta.getModifier("knock-up");
+        double damage = skillMeta.getParameter("damage");
+        double knockUp = skillMeta.getParameter("knock-up");
 
         Player caster = skillMeta.getCaster().getPlayer();
 

@@ -34,8 +34,8 @@ public class Holy_Missile extends SkillHandler<VectorSkillResult> {
     public void whenCast(VectorSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double duration = skillMeta.getModifier("duration") * 10;
-        double damage = skillMeta.getModifier("damage");
+        double duration = skillMeta.getParameter("duration") * 10;
+        double damage = skillMeta.getParameter("damage");
 
         caster.getWorld().playSound(caster.getLocation(), VersionSound.ENTITY_FIREWORK_ROCKET_BLAST.toSound(), 1, 1);
         new BukkitRunnable() {

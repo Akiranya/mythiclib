@@ -75,7 +75,7 @@ public class CustomProjectile extends TemporaryListener {
         runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                caster.triggerSkills(projectileType.getTickTrigger(), CustomProjectile.this.caster, projectile, cachedSkills);
+                caster.triggerSkills(projectileType.getTickTrigger(), CustomProjectile.this.caster, cachedSkills, projectile);
             }
         };
         runnable.runTaskTimer(MythicLib.plugin, 0, 1);
@@ -98,7 +98,7 @@ public class CustomProjectile extends TemporaryListener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void triggerHit(PlayerAttackEvent event) {
         if (event.getAttack() instanceof ProjectileAttackMetadata && ((ProjectileAttackMetadata) event.getAttack()).getProjectile().getEntityId() == entityId)
-            caster.getData().triggerSkills(projectileType.getHitTrigger(), caster, event.getEntity(), cachedSkills);
+            caster.getData().triggerSkills(projectileType.getHitTrigger(), caster, cachedSkills, event.getEntity());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -106,7 +106,7 @@ public class CustomProjectile extends TemporaryListener {
 
         // Make sure the projectile landed on a block
         if (event.getHitBlock() != null && event.getEntity().getEntityId() == entityId)
-            caster.getData().triggerSkills(projectileType.getLandTrigger(), caster, event.getEntity(), cachedSkills);
+            caster.getData().triggerSkills(projectileType.getLandTrigger(), caster, cachedSkills, event.getEntity());
     }
 
     @EventHandler

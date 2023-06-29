@@ -62,8 +62,8 @@ public class Fireball extends SkillHandler<SimpleSkillResult> {
                     loc.getWorld().spawnParticle(Particle.LAVA, loc, 8);
                     loc.getWorld().spawnParticle(Particle.FLAME, loc, 32, 0, 0, 0, .1);
                     loc.getWorld().playSound(loc, Sound.ENTITY_BLAZE_HURT, 2, 1);
-                    target.setFireTicks((int) (target.getFireTicks() + skillMeta.getModifier("ignite") * 20));
-                    double damage = skillMeta.getModifier("damage");
+                    target.setFireTicks((int) (target.getFireTicks() + skillMeta.getParameter("ignite") * 20));
+                    double damage = skillMeta.getParameter("damage");
                     skillMeta.getCaster().attack((LivingEntity) target, damage, DamageType.SKILL, DamageType.MAGIC);
 
                     new BukkitRunnable() {

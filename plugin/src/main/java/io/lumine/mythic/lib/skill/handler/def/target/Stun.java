@@ -28,6 +28,6 @@ public class Stun extends SkillHandler<TargetSkillResult> {
         target.getWorld().playSound(target.getLocation(), Sound.BLOCK_ANVIL_LAND, 1, 2);
         target.getWorld().playEffect(target.getLocation(), Effect.STEP_SOUND, 42);
         target.getWorld().playEffect(target.getLocation().add(0, 1, 0), Effect.STEP_SOUND, 42);
-        target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (skillMeta.getModifier("duration") * 20), 254));
+        target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (skillMeta.getParameter("duration") * 20), 254));
     }
 }

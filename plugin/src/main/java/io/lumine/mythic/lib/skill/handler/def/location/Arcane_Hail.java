@@ -2,8 +2,6 @@ package io.lumine.mythic.lib.skill.handler.def.location;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -34,9 +32,9 @@ public class Arcane_Hail extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double damage = skillMeta.getModifier("damage");
-        double duration = skillMeta.getModifier("duration") * 10;
-        double radius = skillMeta.getModifier("radius");
+        double damage = skillMeta.getParameter("damage");
+        double duration = skillMeta.getParameter("duration") * 10;
+        double radius = skillMeta.getParameter("radius");
 
         new BukkitRunnable() {
             int j = 0;

@@ -27,6 +27,6 @@ public class Heal extends SkillHandler<SimpleSkillResult> {
         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
         caster.getWorld().spawnParticle(Particle.HEART, caster.getLocation().add(0, .75, 0), 16, 1, 1, 1, 0);
         caster.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, caster.getLocation().add(0, .75, 0), 16, 1, 1, 1, 0);
-        UtilityMethods.heal(caster, skillMeta.getModifier("heal"));
+        UtilityMethods.heal(caster, skillMeta.getParameter("heal"));
     }
 }

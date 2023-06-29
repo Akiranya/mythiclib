@@ -2,8 +2,6 @@ package io.lumine.mythic.lib.skill.handler.def.simple;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.player.PlayerMetadata;
 import io.lumine.mythic.lib.skill.SkillMetadata;
@@ -57,12 +55,12 @@ public class Fire_Rage extends SkillHandler<SimpleSkillResult> {
 
         public RageEffect(SkillMetadata skillMeta) {
             this.caster = skillMeta.getCaster();
-            this.ignite = (int) (20 * skillMeta.getModifier("ignite"));
-            this.damage = skillMeta.getModifier("damage");
-            c = count = (int) skillMeta.getModifier("count");
+            this.ignite = (int) (20 * skillMeta.getParameter("ignite"));
+            this.damage = skillMeta.getParameter("damage");
+            c = count = (int) skillMeta.getParameter("count");
 
             Bukkit.getPluginManager().registerEvents(this, MythicLib.plugin);
-            Bukkit.getScheduler().runTaskLater(MythicLib.plugin, this::close, (long) (skillMeta.getModifier("duration") * 20));
+            Bukkit.getScheduler().runTaskLater(MythicLib.plugin, this::close, (long) (skillMeta.getParameter("duration") * 20));
             runTaskTimer(MythicLib.plugin, 0, 1);
         }
 

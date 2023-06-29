@@ -1,7 +1,5 @@
 package io.lumine.mythic.lib.skill.handler.def.location;
 
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -32,9 +30,9 @@ public class Minor_Explosion extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double damage = skillMeta.getModifier("damage");
-        double radiusSquared = Math.pow(skillMeta.getModifier("radius"), 2);
-        double knockback = skillMeta.getModifier("knockback");
+        double damage = skillMeta.getParameter("damage");
+        double radiusSquared = Math.pow(skillMeta.getParameter("radius"), 2);
+        double knockback = skillMeta.getParameter("knockback");
 
         loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc.add(0, .1, 0), 32, 1.7, 1.7, 1.7, 0);
         loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc, 64, 0, 0, 0, .3);

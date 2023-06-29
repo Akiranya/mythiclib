@@ -2,8 +2,6 @@ package io.lumine.mythic.lib.skill.handler.def.location;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -35,9 +33,9 @@ public class Life_Ender extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double damage = skillMeta.getModifier("damage");
-        double knockback = skillMeta.getModifier("knockback");
-        double radius = skillMeta.getModifier("radius");
+        double damage = skillMeta.getParameter("damage");
+        double knockback = skillMeta.getParameter("knockback");
+        double radius = skillMeta.getParameter("radius");
 
         caster.getWorld().playSound(caster.getLocation(), VersionSound.ENTITY_ENDERMAN_TELEPORT.toSound(), 2, 1);
         new BukkitRunnable() {

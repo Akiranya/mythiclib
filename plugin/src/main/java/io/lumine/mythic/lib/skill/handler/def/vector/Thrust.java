@@ -30,7 +30,7 @@ public class Thrust extends SkillHandler<VectorSkillResult> {
     @Override
     public void whenCast(VectorSkillResult result, SkillMetadata skillMeta) {
         final Player caster = skillMeta.getCaster().getPlayer();
-        final double damage = skillMeta.getModifier("damage");
+        final double damage = skillMeta.getParameter("damage");
 
         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1, 0);
         caster.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 2, 3));

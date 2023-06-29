@@ -43,7 +43,7 @@ public class CastingDelayHandler extends TemporaryListener {
         super(PlayerMoveEvent.getHandlerList(), PlayerCastSkillEvent.getHandlerList());
 
         this.metadata = metadata;
-        this.delayTicks = (int) (metadata.getModifier("delay") * 20);
+        this.delayTicks = (int) (metadata.getParameter("delay") * 20);
 
         // Implement a runnable to run the task later
         (runnable = new BukkitRunnable() {

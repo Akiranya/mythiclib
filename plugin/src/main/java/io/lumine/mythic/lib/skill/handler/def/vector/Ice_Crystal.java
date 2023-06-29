@@ -73,9 +73,9 @@ public class Ice_Crystal extends SkillHandler<VectorSkillResult> {
                             loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc, 0);
                             loc.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, loc, 48, 0, 0, 0, .2);
                             loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2, 1);
-                            skillMeta.getCaster().attack((LivingEntity) entity, skillMeta.getModifier("damage"), DamageType.SKILL, DamageType.MAGIC);
+                            skillMeta.getCaster().attack((LivingEntity) entity, skillMeta.getParameter("damage"), DamageType.SKILL, DamageType.MAGIC);
                             ((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.SLOW,
-                                    (int) (skillMeta.getModifier("duration") * 20), (int) skillMeta.getModifier("amplifier")));
+                                    (int) (skillMeta.getParameter("duration") * 20), (int) skillMeta.getParameter("amplifier")));
                             cancel();
                             return;
                         }

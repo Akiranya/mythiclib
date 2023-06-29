@@ -28,12 +28,12 @@ public class Furtive_Strike extends SkillHandler<TargetSkillResult> {
         target.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, target.getHeight() / 2, 0), 32, 0, 0, 0, .5);
         target.getWorld().spawnParticle(Particle.SMOKE_NORMAL, target.getLocation().add(0, target.getHeight() / 2, 0), 64, 0, 0, 0, .08);
 
-        double damage = skillMeta.getModifier("damage");
-        double radius = skillMeta.getModifier("radius");
+        double damage = skillMeta.getParameter("damage");
+        double radius = skillMeta.getParameter("radius");
 
         if (target.getNearbyEntities(radius, radius, radius).stream().allMatch(entity -> entity.equals(skillMeta.getCaster().getPlayer()))) {
             new SmallParticleEffect(target, Particle.SPELL_WITCH);
-            damage *= 1 + skillMeta.getModifier("extra") / 100;
+            damage *= 1 + skillMeta.getParameter("extra") / 100;
         }
 
         skillMeta.getCaster().attack(target, damage, DamageType.SKILL, DamageType.PHYSICAL);

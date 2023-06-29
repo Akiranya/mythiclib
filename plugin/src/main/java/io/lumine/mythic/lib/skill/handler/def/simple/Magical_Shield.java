@@ -30,9 +30,9 @@ public class Magical_Shield extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double duration = skillMeta.getModifier("duration");
-        double radiusSquared = Math.pow(skillMeta.getModifier("radius"), 2);
-        double power = skillMeta.getModifier("power") / 100;
+        double duration = skillMeta.getParameter("duration");
+        double radiusSquared = Math.pow(skillMeta.getParameter("radius"), 2);
+        double power = skillMeta.getParameter("power") / 100;
 
         new MagicalShieldEffect(skillMeta.getCaster().getPlayer(), duration, radiusSquared, power);
     }

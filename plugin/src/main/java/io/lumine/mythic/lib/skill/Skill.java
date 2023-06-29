@@ -53,7 +53,7 @@ public abstract class Skill implements CooldownObject {
             return result;
 
         // If the delay is null we cast normally the skill
-        final int delayTicks = (int) (meta.getModifier("delay") * 20);
+        final int delayTicks = (int) (meta.getParameter("delay") * 20);
         if (delayTicks <= 0)
             castInstantly(meta, result);
         else
@@ -132,7 +132,7 @@ public abstract class Skill implements CooldownObject {
      * @return The skill parameter value UNAFFECTED by skill modifiers.
      */
     public double getParameter(String path) {
-        throw new NotImplementedException("#getParameter(String) has not been implemented");
+        return getModifier(path);
     }
 
     @Override

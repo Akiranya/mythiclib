@@ -36,15 +36,15 @@ public class Arcane_Rift extends SkillHandler<VectorSkillResult> {
     public void whenCast(VectorSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double damage = skillMeta.getModifier("damage");
-        double slowDuration = skillMeta.getModifier("duration");
-        double slowAmplifier = skillMeta.getModifier("amplifier");
+        double damage = skillMeta.getParameter("damage");
+        double slowDuration = skillMeta.getParameter("duration");
+        double slowAmplifier = skillMeta.getParameter("amplifier");
 
         caster.getWorld().playSound(caster.getLocation(), VersionSound.ENTITY_ENDERMAN_DEATH.toSound(), 2, .5f);
         new BukkitRunnable() {
-            final Vector vec = result.getTarget().setY(0).normalize().multiply(.5 * skillMeta.getModifier("speed"));
+            final Vector vec = result.getTarget().setY(0).normalize().multiply(.5 * skillMeta.getParameter("speed"));
             final Location loc = caster.getLocation();
-            final int duration = (int) (20 * Math.min(skillMeta.getModifier("duration"), 10.));
+            final int duration = (int) (20 * Math.min(skillMeta.getParameter("duration"), 10.));
             final List<Integer> hit = new ArrayList<>();
             int ti = 0;
 

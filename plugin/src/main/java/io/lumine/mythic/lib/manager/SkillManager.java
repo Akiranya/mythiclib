@@ -44,6 +44,7 @@ import io.lumine.mythic.lib.script.mechanic.visual.TellMechanic;
 import io.lumine.mythic.lib.script.targeter.EntityTargeter;
 import io.lumine.mythic.lib.script.targeter.LocationTargeter;
 import io.lumine.mythic.lib.script.targeter.entity.*;
+import io.lumine.mythic.lib.script.targeter.location.LookingAtTargeter;
 import io.lumine.mythic.lib.script.targeter.location.*;
 import io.lumine.mythic.lib.skill.handler.MythicLibSkillHandler;
 import io.lumine.mythic.lib.skill.handler.MythicMobsSkillHandler;
@@ -179,6 +180,7 @@ public class SkillManager {
         registerEntityTargeter("nearest_entity", config -> new NearestEntityTargeter(config));
         registerEntityTargeter("target", config -> new TargetTargeter());
         registerEntityTargeter("variable", config -> new VariableEntityTargeter(config));
+        registerEntityTargeter("looking_at", config -> new io.lumine.mythic.lib.script.targeter.entity.LookingAtTargeter(config));
 
         registerLocationTargeter("caster", config -> new CasterLocationTargeter(config));
         registerLocationTargeter("circle", config -> new CircleLocationTargeter(config));
@@ -269,8 +271,9 @@ public class SkillManager {
     public Collection<SkillHandler> getHandlers() {
         return handlers.values();
     }
+
     @Nullable
-    public SkillHandler getHandler(String handlerId){
+    public SkillHandler getHandler(String handlerId) {
         return handlers.get(handlerId);
     }
 
@@ -427,7 +430,8 @@ public class SkillManager {
                 }
             }
             file.close();
-        } catch (IOException | InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException exception) {
+        } catch (IOException | InstantiationException | IllegalAccessException | ClassNotFoundException |
+                 NoSuchMethodException | InvocationTargetException exception) {
             exception.printStackTrace();
         }
 

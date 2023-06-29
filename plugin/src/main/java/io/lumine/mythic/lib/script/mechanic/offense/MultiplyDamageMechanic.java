@@ -48,18 +48,18 @@ public class MultiplyDamageMechanic extends TargetMechanic {
 
         if (additive) {
             if (element != null)
-                meta.getAttack().getDamage().additiveModifier(amount.evaluate(meta), element);
+                meta.getAttackSource().getDamage().additiveModifier(amount.evaluate(meta), element);
             else if (damageType != null)
-                meta.getAttack().getDamage().additiveModifier(amount.evaluate(meta), damageType);
+                meta.getAttackSource().getDamage().additiveModifier(amount.evaluate(meta), damageType);
             else
-                meta.getAttack().getDamage().additiveModifier(amount.evaluate(meta));
+                meta.getAttackSource().getDamage().additiveModifier(amount.evaluate(meta));
         } else {
             if (element != null)
-                meta.getAttack().getDamage().multiplicativeModifier(amount.evaluate(meta), element);
+                meta.getAttackSource().getDamage().multiplicativeModifier(amount.evaluate(meta), element);
             else if (damageType != null)
-                meta.getAttack().getDamage().multiplicativeModifier(amount.evaluate(meta), damageType);
+                meta.getAttackSource().getDamage().multiplicativeModifier(amount.evaluate(meta), damageType);
             else
-                meta.getAttack().getDamage().multiplicativeModifier(amount.evaluate(meta));
+                meta.getAttackSource().getDamage().multiplicativeModifier(amount.evaluate(meta));
         }
     }
 }

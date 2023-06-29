@@ -1,8 +1,8 @@
 package io.lumine.mythic.lib.listener.event;
 
 import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.event.AttackEvent;
-import io.lumine.mythic.lib.api.event.DamageCheckEvent;
 import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
 import io.lumine.mythic.lib.api.event.PlayerKillEntityEvent;
 import io.lumine.mythic.lib.damage.AttackMetadata;
@@ -47,7 +47,7 @@ public class AttackEventListener implements Listener {
     public void registerEvents(EntityDamageEvent event) {
 
         // Ignore fake events from RDW/mcMMO/...
-        if (!(event.getEntity() instanceof LivingEntity) || event instanceof DamageCheckEvent || event.getDamage() == 0)
+        if (!(event.getEntity() instanceof LivingEntity) || UtilityMethods.isFakeEvent(event))
             return;
 
         // Call the Bukkit event with the attack meta found

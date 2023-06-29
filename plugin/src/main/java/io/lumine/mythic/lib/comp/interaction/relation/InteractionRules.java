@@ -14,7 +14,15 @@ import java.util.Map;
  * @see {@url https://gitlab.com/phoenix-dvpmt/mythiclib/-/wikis/Combat/}
  */
 public class InteractionRules {
+
+    /**
+     * Map coding:
+     * - First boolean: true if PvP is on, false otherwise.
+     * - Second boolean: true if interaction type is offensive, false otherwise.
+     * - Third: player relationship.
+     */
     private final Map<Triplet<Boolean, Boolean, Relationship>, Boolean> rules = new HashMap<>();
+
     public final boolean supportSkillsOnMobs;
 
     public InteractionRules(@Nullable ConfigurationSection config) {
@@ -24,17 +32,10 @@ public class InteractionRules {
         }
 
         for (Relationship rel : Relationship.values()) {
-            Triplet<Boolean, Boolean, Relationship> triplet = Triplet.of(true, true, rel);
-            rules.put(triplet, config.getBoolean("pvp_on.offense." + rel.name().toLowerCase(), true));
-
-            triplet = Triplet.of(true, false, rel);
-            rules.put(triplet, config.getBoolean("pvp_on.support." + rel.name().toLowerCase(), true));
-
-            triplet = Triplet.of(false, true, rel);
-            rules.put(triplet, config.getBoolean("pvp_off.offense." + rel.name().toLowerCase(), true));
-
-            triplet = Triplet.of(false, false, rel);
-            rules.put(triplet, config.getBoolean("pvp_off.support." + rel.name().toLowerCase(), true));
+            rules.put(Triplet.of(true, true, rel), config.getBoolean("pvp_on.offense." + rel.name().toLowerCase(), true));
+            rules.put(Triplet.of(true, false, rel), config.getBoolean("pvp_on.support." + rel.name().toLowerCase(), true));
+            rules.put(Triplet.of(false, true, rel), config.getBoolean("pvp_off.offense." + rel.name().toLowerCase(), true));
+            rules.put(Triplet.of(false, false, rel), config.getBoolean("pvp_off.support." + rel.name().toLowerCase(), true));
         }
 
         // Hard coded

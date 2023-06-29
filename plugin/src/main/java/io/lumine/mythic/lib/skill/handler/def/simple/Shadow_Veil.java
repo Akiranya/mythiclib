@@ -31,7 +31,7 @@ public class Shadow_Veil extends SkillHandler<SimpleSkillResult> {
 
     @Override
     public void whenCast(SimpleSkillResult result, SkillMetadata skillMeta) {
-        double duration = skillMeta.getModifier("duration");
+        double duration = skillMeta.getParameter("duration");
 
         Player caster = skillMeta.getCaster().getPlayer();
 
@@ -45,7 +45,7 @@ public class Shadow_Veil extends SkillHandler<SimpleSkillResult> {
                 serverEntities.setTarget(null);
 
         ShadowVeilEffect svh = new ShadowVeilEffect(caster, duration);
-        svh.setDeceptions(SilentNumbers.floor(skillMeta.getModifier("deception")));
+        svh.setDeceptions(SilentNumbers.floor(skillMeta.getParameter("deception")));
     }
 
     public class ShadowVeilEffect extends BukkitRunnable implements Listener {

@@ -255,7 +255,7 @@ water_critical_strike:
             source:
                 type: target
                 position: FEET
-            radius: 'Sin[<var.angle>]'
+            radius: 'sin(<var.angle>)'
             tick: water_crit_subskill_2
         subskill:
             type: script

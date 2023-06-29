@@ -27,9 +27,9 @@ public class Ignite extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        int maxIgnite = (int) (skillMeta.getModifier("max-ignite") * 20);
-        int ignite = (int) (skillMeta.getModifier("duration") * 20);
-        double radiusSquared = Math.pow(skillMeta.getModifier("radius"), 2);
+        int maxIgnite = (int) (skillMeta.getParameter("max-ignite") * 20);
+        int ignite = (int) (skillMeta.getParameter("duration") * 20);
+        double radiusSquared = Math.pow(skillMeta.getParameter("radius"), 2);
 
         loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc.add(0, .1, 0), 0);
         loc.getWorld().spawnParticle(Particle.LAVA, loc, 12);

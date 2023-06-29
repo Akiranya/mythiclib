@@ -50,6 +50,6 @@ public class Burn extends SkillHandler<TargetSkillResult> {
          * value. For players it returns -20 which reduce the apparent
          * skill duration by one second, hence Math#max(...)
          */
-        target.setFireTicks((int) (Math.max(0, target.getFireTicks()) + skillMeta.getModifier("duration") * 20));
+        target.setFireTicks((int) (Math.max(0, target.getFireTicks()) + skillMeta.getParameter("duration") * 20));
     }
 }

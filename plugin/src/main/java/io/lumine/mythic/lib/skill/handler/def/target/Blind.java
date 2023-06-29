@@ -39,6 +39,6 @@ public class Blind extends SkillHandler<TargetSkillResult> {
                         caster.getLocation().getDirection());
                 loc.getWorld().spawnParticle(Particle.REDSTONE, loc.add(vec), 1, new Particle.DustOptions(Color.BLACK, 1));
             }
-        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (skillMeta.getModifier("duration") * 20), 0));
+        target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (skillMeta.getParameter("duration") * 20), 0));
     }
 }

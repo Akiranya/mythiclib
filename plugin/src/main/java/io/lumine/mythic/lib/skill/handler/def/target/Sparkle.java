@@ -30,9 +30,9 @@ public class Sparkle extends SkillHandler<TargetSkillResult> {
         LivingEntity target = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double damage = skillMeta.getModifier("damage");
-        double radius = skillMeta.getModifier("radius");
-        double limit = skillMeta.getModifier("limit");
+        double damage = skillMeta.getParameter("damage");
+        double radius = skillMeta.getParameter("radius");
+        double limit = skillMeta.getParameter("limit");
 
         skillMeta.getCaster().attack(target, damage, DamageType.SKILL, DamageType.MAGIC);
         target.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, target.getLocation().add(0, 1, 0), 0);

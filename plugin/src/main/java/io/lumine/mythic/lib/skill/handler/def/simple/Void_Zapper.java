@@ -1,8 +1,6 @@
 package io.lumine.mythic.lib.skill.handler.def.simple;
 
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.player.PlayerMetadata;
 import io.lumine.mythic.lib.skill.SkillMetadata;
@@ -53,9 +51,9 @@ public class Void_Zapper extends SkillHandler<SimpleSkillResult> {
         SkillHandler(SkillMetadata skillMeta) {
             this.caster = skillMeta.getCaster();
             this.skillMeta = skillMeta;
-            this.maxBounces = (int) skillMeta.getModifier("max");
+            this.maxBounces = (int) skillMeta.getParameter("max");
 
-            castRay(caster.getPlayer().getEyeLocation(), caster.getPlayer().getEyeLocation().getDirection(), skillMeta.getModifier("length"));
+            castRay(caster.getPlayer().getEyeLocation(), caster.getPlayer().getEyeLocation().getDirection(), skillMeta.getParameter("length"));
         }
 
         void castRay(Location loc, Vector dir, double lengthRemaining) {
@@ -79,9 +77,9 @@ public class Void_Zapper extends SkillHandler<SimpleSkillResult> {
         }
 
         void hit(LivingEntity target, Vector dir) {
-            double damage = skillMeta.getModifier("damage") * (1 + skillMeta.getModifier("extra") * bounces / 100d);
+            double damage = skillMeta.getParameter("damage") * (1 + skillMeta.getParameter("extra") * bounces / 100d);
             skillMeta.getCaster().attack(target, damage, DamageType.SKILL, DamageType.MAGIC);
-            target.setVelocity(dir.multiply(skillMeta.getModifier("knockback")));
+            target.setVelocity(dir.multiply(skillMeta.getParameter("knockback")));
         }
 
         private static final double STEP = .2;

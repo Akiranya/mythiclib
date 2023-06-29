@@ -33,7 +33,7 @@ public class Bouncy_Fireball extends SkillHandler<VectorSkillResult> {
 
         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_SNOWBALL_THROW, 2, 0);
         new BukkitRunnable() {
-            final Vector vec = result.getTarget().setY(0).normalize().multiply(.5 * skillMeta.getModifier("speed"));
+            final Vector vec = result.getTarget().setY(0).normalize().multiply(.5 * skillMeta.getParameter("speed"));
             final Location loc = caster.getLocation().clone().add(0, 1.2, 0);
             int j = 0;
             int bounces = 0;
@@ -66,9 +66,9 @@ public class Bouncy_Fireball extends SkillHandler<VectorSkillResult> {
                 }
 
                 if (bounces > 2) {
-                    double radius = skillMeta.getModifier("radius");
-                    double damage = skillMeta.getModifier("damage");
-                    double ignite = skillMeta.getModifier("ignite");
+                    double radius = skillMeta.getParameter("radius");
+                    double damage = skillMeta.getParameter("damage");
+                    double ignite = skillMeta.getParameter("ignite");
 
                     for (Entity entity : UtilityMethods.getNearbyChunkEntities(loc))
                         if (entity.getLocation().distanceSquared(loc) < radius * radius)

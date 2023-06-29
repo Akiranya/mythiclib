@@ -48,6 +48,6 @@ public class Slow extends SkillHandler<TargetSkillResult> {
         }.runTaskTimer(MythicLib.plugin, 0, 1);
         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_LLAMA_ANGRY, 1, 2);
         target.addPotionEffect(
-                new PotionEffect(PotionEffectType.SLOW, (int) (skillMeta.getModifier("duration") * 20), (int) skillMeta.getModifier("amplifier")));
+                new PotionEffect(PotionEffectType.SLOW, (int) (skillMeta.getParameter("duration") * 20), (int) skillMeta.getParameter("amplifier")));
     }
 }

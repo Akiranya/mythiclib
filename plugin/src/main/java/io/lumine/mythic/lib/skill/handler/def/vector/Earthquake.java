@@ -36,9 +36,9 @@ public class Earthquake extends SkillHandler<VectorSkillResult> {
     public void whenCast(VectorSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double damage = skillMeta.getModifier("damage");
-        double slowDuration = skillMeta.getModifier("duration");
-        double slowAmplifier = skillMeta.getModifier("amplifier");
+        double damage = skillMeta.getParameter("damage");
+        double slowDuration = skillMeta.getParameter("duration");
+        double slowAmplifier = skillMeta.getParameter("amplifier");
 
         new BukkitRunnable() {
             final Vector vec = result.getTarget().setY(0);

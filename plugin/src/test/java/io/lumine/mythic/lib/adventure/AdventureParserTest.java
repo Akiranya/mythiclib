@@ -6,8 +6,8 @@ import io.lumine.mythic.lib.comp.adventure.tag.implementation.decorations.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * mythiclib
@@ -279,12 +279,13 @@ public class AdventureParserTest {
         parser.forceRegister(tag);
 
         // Valid tag
-        Collection<String> i1 = List.of("Hey!", "What a good<newline><newline>day!", "Init?", "Yeah!<newline>It a pretty day<newline>We could go out, nah?");
+
+        Collection<String> i1 = Arrays.asList("Hey!", "What a good<newline><newline>day!", "Init?", "Yeah!<newline>It a pretty day<newline>We could go out, nah?");
         Collection<String> result = parser.parse(i1);
         Assertions.assertEquals(result.size(), 8);
 
         // Alias tag
-        Collection<String> i2 = List.of("Hey!", "What a good<br><br>day!", "Init?", "Yeah!<br>It a pretty day<br>We could go out, nah?");
+        Collection<String> i2 = Arrays.asList("Hey!", "What a good<br><br>day!", "Init?", "Yeah!<br>It a pretty day<br>We could go out, nah?");
         Collection<String> result2 = parser.parse(i2);
         Assertions.assertEquals(result2.size(), 8);
 
@@ -484,5 +485,16 @@ public class AdventureParserTest {
 //        input = "<gradient>This is a <bold>gradient text";
 //        expected = "§x§f§f§f§f§f§f§§x§f§8§f§8§f§8l§x§f§2§f§2§f§2g§x§e§b§e§b§e§b§§x§e§4§e§4§e§4l§x§d§d§d§d§d§dr§x§d§7§d§7§d§7§§x§d§0§d§0§d§0l§x§c§9§c§9§c§9a§x§c§3§c§3§c§3§§x§b§c§b§c§b§cl§x§b§5§b§5§b§5d§x§a§e§a§e§a§e§§x§a§8§a§8§a§8l§x§a§1§a§1§a§1i§x§9§a§9§a§9§a§§x§9§4§9§4§9§4l§x§8§d§8§d§8§de§x§8§6§8§6§8§6§§x§8§0§8§0§8§0l§x§7§9§7§9§7§9n§x§7§2§7§2§7§2§§x§6§b§6§b§6§bl§x§6§5§6§5§6§5t§x§5§e§5§e§5§e§§x§5§7§5§7§5§7l§x§5§1§5§1§5§1 §x§4§a§4§a§4§a§§x§4§3§4§3§4§3l§x§3§c§3§c§3§ct§x§3§6§3§6§3§6§§x§2§f§2§f§2§fl§x§2§8§2§8§2§8e§x§2§2§2§2§2§2§§x§1§b§1§b§1§bl§x§1§4§1§4§1§4x§x§0§d§0§d§0§d§§x§0§7§0§7§0§7l§x§0§0§0§0§0§0t";
 //        Assertions.assertEquals(expected, parser.parse(input));
+    }
+
+    @Test
+    void testSpecial() {
+        AdventureParser parser = new AdventureParser(true);
+        parser.forceRegister(new GradientTag());
+        parser.forceRegister(new AdventureColorTag());
+        parser.forceRegister(new HexColorTag());
+
+        String input = "<#a1c7a1>❍ <gradient:#aff0af:#d5f2aa>Amplistone <#e0e0e0>Moon <#a1c7a1>❍";
+        Assertions.assertFalse(parser.parse(input).contains(">"));
     }
 }

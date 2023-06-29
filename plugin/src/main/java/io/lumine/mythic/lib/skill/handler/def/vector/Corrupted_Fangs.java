@@ -43,8 +43,8 @@ public class Corrupted_Fangs extends SkillHandler<VectorSkillResult> {
         new BukkitRunnable() {
             final Vector vec = result.getTarget().setY(0).multiply(2);
             final Location loc = caster.getLocation();
-            final FangsHandler handler = new FangsHandler(skillMeta.getCaster(), skillMeta.getModifier("damage"));
-            final double fangAmount = skillMeta.getModifier("fangs");
+            final FangsHandler handler = new FangsHandler(skillMeta.getCaster(), skillMeta.getParameter("damage"));
+            final double fangAmount = skillMeta.getParameter("fangs");
             double ti = 0;
 
             public void run() {

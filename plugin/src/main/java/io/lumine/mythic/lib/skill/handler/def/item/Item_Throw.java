@@ -2,8 +2,6 @@ package io.lumine.mythic.lib.skill.handler.def.item;
 
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.UtilityMethods;
-import io.lumine.mythic.lib.damage.AttackMetadata;
-import io.lumine.mythic.lib.damage.DamageMetadata;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.lumine.mythic.lib.skill.SkillMetadata;
 import io.lumine.mythic.lib.skill.handler.SkillHandler;
@@ -35,7 +33,7 @@ public class Item_Throw extends SkillHandler<ItemSkillResult> {
         Player caster = skillMeta.getCaster().getPlayer();
 
         final NoClipItem item = new NoClipItem(caster.getLocation().add(0, 1.2, 0), itemStack);
-        item.getEntity().setVelocity(result.getTarget().multiply(1.5 * skillMeta.getModifier("force")));
+        item.getEntity().setVelocity(result.getTarget().multiply(1.5 * skillMeta.getParameter("force")));
         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_SNOWBALL_THROW, 1, 0);
         new BukkitRunnable() {
             double ti = 0;
@@ -49,7 +47,7 @@ public class Item_Throw extends SkillHandler<ItemSkillResult> {
                 item.getEntity().getWorld().spawnParticle(Particle.CRIT, item.getEntity().getLocation(), 0);
                 for (Entity target : item.getEntity().getNearbyEntities(1, 1, 1))
                     if (UtilityMethods.canTarget(caster, target)) {
-                        skillMeta.getCaster().attack((LivingEntity) target, skillMeta.getModifier("damage"), DamageType.SKILL, DamageType.PHYSICAL);
+                        skillMeta.getCaster().attack((LivingEntity) target, skillMeta.getParameter("damage"), DamageType.SKILL, DamageType.PHYSICAL);
                         item.close();
                         cancel();
                     }

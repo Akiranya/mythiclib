@@ -27,6 +27,6 @@ public class Bloodbath extends SkillHandler<TargetSkillResult> {
 
         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_COW_HURT, 1, 2);
         target.getWorld().playEffect(target.getLocation().add(0, 1, 0), Effect.STEP_SOUND, 152);
-        caster.setFoodLevel((int) Math.min(20, caster.getFoodLevel() + skillMeta.getModifier("amount")));
+        caster.setFoodLevel((int) Math.min(20, caster.getFoodLevel() + skillMeta.getParameter("amount")));
     }
 }

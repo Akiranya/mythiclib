@@ -27,8 +27,8 @@ public class Regen_Ally extends SkillHandler<TargetSkillResult> {
         LivingEntity target = result.getTarget();
 
         new BukkitRunnable() {
-            final double duration = Math.min(skillMeta.getModifier("duration"), 60) * 20;
-            final double hps = skillMeta.getModifier("heal") / duration * 4;
+            final double duration = Math.min(skillMeta.getParameter("duration"), 60) * 20;
+            final double hps = skillMeta.getParameter("heal") / duration * 4;
             double ti = 0;
             double a = 0;
 

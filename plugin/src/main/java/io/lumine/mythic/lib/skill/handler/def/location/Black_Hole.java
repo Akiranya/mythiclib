@@ -12,7 +12,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 public class Black_Hole extends SkillHandler<LocationSkillResult> {
     public Black_Hole() {
@@ -31,8 +30,8 @@ public class Black_Hole extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        double duration = skillMeta.getModifier("duration") * 20;
-        double radius = skillMeta.getModifier("radius");
+        double duration = skillMeta.getParameter("duration") * 20;
+        double radius = skillMeta.getParameter("radius");
 
         loc.getWorld().playSound(loc, VersionSound.ENTITY_ENDERMAN_TELEPORT.toSound(), 3, 1);
         new BukkitRunnable() {

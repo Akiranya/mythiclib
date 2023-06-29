@@ -30,9 +30,9 @@ public class Corrosion extends SkillHandler<LocationSkillResult> {
         Location loc = result.getTarget();
         Player caster = skillMeta.getCaster().getPlayer();
 
-        int duration = (int) (skillMeta.getModifier("duration") * 20);
-        int amplifier = (int) skillMeta.getModifier("amplifier");
-        double radiusSquared = Math.pow(skillMeta.getModifier("radius"), 2);
+        int duration = (int) (skillMeta.getParameter("duration") * 20);
+        int amplifier = (int) skillMeta.getParameter("amplifier");
+        double radiusSquared = Math.pow(skillMeta.getParameter("radius"), 2);
 
         loc.getWorld().spawnParticle(Particle.SLIME, loc, 48, 2, 2, 2, 0);
         loc.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, loc, 32, 2, 2, 2, 0);

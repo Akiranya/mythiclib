@@ -13,7 +13,6 @@ import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class MythicGlowModule implements GlowModule {
 
@@ -37,7 +36,7 @@ public class MythicGlowModule implements GlowModule {
         for (ChatColor color : ChatColor.values())
             if (color.isColor()) {
                 final String teamName = getTeamName(color);
-                final Team team = Objects.requireNonNullElseGet(scoreboard.getTeam(teamName), () -> scoreboard.registerNewTeam(teamName));
+                final Team team = scoreboard.getTeam(teamName) == null ? scoreboard.registerNewTeam(teamName) : scoreboard.getTeam(teamName);
                 team.setColor(color);
                 scoreboardTeams.put(color, team);
             }

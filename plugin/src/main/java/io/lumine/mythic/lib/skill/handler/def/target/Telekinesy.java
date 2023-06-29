@@ -35,7 +35,7 @@ public class Telekinesy extends SkillHandler<TargetSkillResult> {
     public void whenCast(TargetSkillResult result, SkillMetadata skillMeta) {
         Player caster = skillMeta.getCaster().getPlayer();
         caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 1);
-        new TelekinesyRunnable(skillMeta.getCaster().getData(), result.getTarget(), skillMeta.getModifier("duration"), skillMeta.getModifier("knockback") / 100);
+        new TelekinesyRunnable(skillMeta.getCaster().getData(), result.getTarget(), skillMeta.getParameter("duration"), skillMeta.getParameter("knockback") / 100);
     }
 
     public static class TelekinesyRunnable extends BukkitRunnable implements Listener {
