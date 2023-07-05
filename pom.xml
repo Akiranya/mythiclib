@@ -57,23 +57,7 @@
                 </configuration>
             </plugin>
 
-            <!--
-            Clears all 'target' folders before building the plugin again.
-            This prevents MythicLib from including old versions of previous
-            classes when building the same version again -->
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>auto-clean</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- Mewcraft - remove auto clean to fix no out jar in deployment -->
         </plugins>
     </build>
 
@@ -84,18 +68,7 @@
         </repository>
     </distributionManagement>
 
-    <dependencies>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-clean-plugin -->
-        <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-clean-plugin</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-    </dependencies>
+    <!-- Mewcraft - remove auto clean to fix no out jar in deployment -->
 
     <pluginRepositories>
         <pluginRepository>
