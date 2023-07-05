@@ -7,7 +7,7 @@
     <parent>
         <artifactId>MythicLib</artifactId>
         <groupId>io.lumine</groupId>
-        <version>1.6-SNAPSHOT</version>
+        <version>1.6.2-SNAPSHOT</version>
     </parent>
 
     <build>
@@ -129,6 +129,12 @@
             <artifactId>HikariCP</artifactId>
             <version>3.4.5</version>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache-extras.beanshell</groupId>
@@ -249,7 +255,7 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.3.0</version>
+            <version>5.4.0</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

@@ -252,6 +252,14 @@ public class MythicConfigImpl implements GenericConfig, Cloneable, MythicConfig 
         return this.fc.getDouble(this.getNode() + field, def);
     }
 
+    public float getFloat(String field) {
+        return (float) getDouble(field);
+    }
+
+    public float getFloat(String field, float def) {
+        return (float) getDouble(field, def);
+    }
+
     public List<String> getStringList(String field) {
         String var10000 = this.getNode();
         String key = var10000 + field;

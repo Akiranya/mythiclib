@@ -25,6 +25,9 @@ public class Blink extends SkillHandler<SimpleSkillResult> {
         return new SimpleSkillResult();
     }
 
+    /**
+     * Lower bound to prevent the player from not teleporting at all
+     */
     private static final double MIN_RANGE = 1;
 
     @Override

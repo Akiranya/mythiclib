@@ -5,7 +5,7 @@
     <parent>
         <artifactId>MythicLib</artifactId>
         <groupId>io.lumine</groupId>
-        <version>1.6-SNAPSHOT</version>
+        <version>1.6.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -37,17 +37,12 @@
                         </goals>
                         <configuration>
 
-                            <!-- Removed useless folders -->
+                            <!-- Removes useless folders -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>assets/**</exclude>
                                         <exclude>META-INF/**</exclude>
-
-                                        <exclude>org/intellij/**</exclude>
-                                        <exclude>org/jetbrains/**</exclude>
-                                        <exclude>org/slf4j/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -69,6 +64,13 @@
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>io.lumine.mythic.lib.metrics</shadedPattern>
                                 </relocation>
+                                <!-- <relocation>
+                                    <pattern>bsh</pattern>
+                                    <shadedPattern>io.lumine.mythic.lib.bsh</shadedPattern>
+                                    <includes>
+                                        <include>bsh.*</include>
+                                    </includes>
+                                </relocation> -->
                             </relocations>
                             <minimizeJar>false</minimizeJar>
                         </configuration>
@@ -105,56 +107,56 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-plugin</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6.2-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_17</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6.2-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_18</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6.2-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_18_r2</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6.2-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_19</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6.2-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_19_r2</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6.2-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_19_r3</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6.2-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>mythiclib-v1_20_r1</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.6.2-SNAPSHOT</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

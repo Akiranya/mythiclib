@@ -6,6 +6,7 @@ import io.lumine.mythic.api.skills.ITargetedEntitySkill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
 import io.lumine.mythic.api.skills.placeholders.PlaceholderDouble;
+import io.lumine.mythic.core.logging.MythicLogger;
 import io.lumine.mythic.core.skills.SkillExecutor;
 import io.lumine.mythic.core.skills.damage.DamagingMechanic;
 import io.lumine.mythic.core.utils.annotations.MythicMechanic;
@@ -113,7 +114,8 @@ public class MMODamageMechanic extends DamagingMechanic implements ITargetedEnti
         // Register damage in ML and apply damage
         MythicLib.plugin.getDamage().markAsMetadata(attackMeta);
         try {
-            doDamage(data.getCaster(), target, damage);
+            doDamage(data, target, damage);
+            MythicLogger.debug(MythicLogger.DebugLevel.MECHANIC, "+ MMODamageMechanic fired for {0} with {1} power", new Object[]{damage, data.getPower()});
         } catch (Exception exception) {
             MythicLib.plugin.getLogger().log(Level.SEVERE, "Caught an exception (4) while damaging entity '" + target.getUniqueId() + "':");
             exception.printStackTrace();
